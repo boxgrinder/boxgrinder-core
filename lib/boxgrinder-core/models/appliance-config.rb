@@ -20,6 +20,7 @@
 
 require 'boxgrinder-core/defaults'
 require 'ostruct'
+require 'rbconfig'
 
 module BoxGrinder
   class ApplianceConfig
@@ -68,6 +69,12 @@ module BoxGrinder
     attr_accessor :version
     attr_accessor :release
     attr_accessor :post
+
+    def init
+      @hardware.arch = RbConfig::CONFIG['host_cpu']
+      initialize_paths
+      self
+    end
 
     def initialize_paths
       @path = OpenStruct.new
