@@ -20,7 +20,6 @@
 
 require 'boxgrinder-core/defaults'
 require 'ostruct'
-require 'rbconfig'
 
 module BoxGrinder
   class ApplianceConfig
@@ -38,7 +37,6 @@ module BoxGrinder
 
       @hardware = OpenStruct.new
 
-      @hardware.arch      = RbConfig::CONFIG['host_cpu']
       @hardware.cpus      = 0
       @hardware.memory    = 0
       @hardware.network   = APPLIANCE_DEFAULTS[:hardware][:network]
@@ -54,8 +52,6 @@ module BoxGrinder
       @packages     = []
       @version      = 1
       @release      = 0
-
-      initialize_paths
     end
 
     attr_reader :definition
