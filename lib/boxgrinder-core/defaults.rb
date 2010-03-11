@@ -78,7 +78,7 @@ module BoxGrinder
   }
 
   DEFAULT_LOCATION = {
-          :log => 'log/boxgridner.log'
+          :log => 'log/boxgrinder.log'
   }
 
   DEFAULT_HELP_TEXT = {
