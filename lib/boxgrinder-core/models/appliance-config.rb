@@ -71,8 +71,13 @@ module BoxGrinder
     attr_accessor :post
 
     def init
-      @hardware.arch = RbConfig::CONFIG['host_cpu']
+      init_arch
       initialize_paths
+      self
+    end
+
+    def init_arch
+      @hardware.arch = RbConfig::CONFIG['host_cpu']
       self
     end
 
@@ -130,6 +135,7 @@ module BoxGrinder
                       :zip => "#{@path.dir.packages}/#{@name}-#{@version}.#{@release}-#{@hardware.arch}-VMware.zip"
               }
       }
+      self
     end
 
     # used to checking if configuration differs from previous in appliance-kickstart
