@@ -1,0 +1,1 @@
+require 'boxgrinder-core/defaults'
