@@ -23,21 +23,15 @@ require 'boxgrinder-core/validators/errors'
 module BoxGrinder
   class ApplianceConfigHelper
 
-    def initialize( appliance_definitions )
-      @appliance_definitions = appliance_definitions
+    def initialize( appliance_configs )
+      @appliance_configs  = appliance_configs.values.reverse
     end
 
     def merge( appliance_config )
       @appliance_config = appliance_config
 
-      # add current appliance definition
-      @appliance_definitions[@appliance_config.name] = @appliance_config.definition unless @appliance_definitions.has_key?( @appliance_config.name )
-
-      @current_appliances = get_appliances( @appliance_config.name ).reverse
-
       prepare_os
       prepare_appliances
-      prepare_version_and_release
 
       merge_hardware
       merge_repos
@@ -56,28 +50,16 @@ module BoxGrinder
     end
 
     def merge_cpus
-      unless @appliance_config.definition['hardware'].nil? or @appliance_config.definition['hardware']['cpus'].nil?
-        @appliance_config.hardware.cpus = @appliance_config.definition['hardware']['cpus']
-      end
-
-      merge_field('cpus', 'hardware'){ |cpus| @appliance_config.hardware.cpus = cpus if cpus > @appliance_config.hardware.cpus }
-
-      @appliance_config.hardware.cpus = APPLIANCE_DEFAULTS[:hardware][:cpus] if @appliance_config.hardware.cpus == 0
+      merge_field('hardware.cpus') { |cpus| @appliance_config.hardware.cpus = cpus if cpus > @appliance_config.hardware.cpus }
     end
 
     # This will merge partitions from multiple appliances.
     def merge_partitions
       partitions = {}
 
-      unless @appliance_config.definition['hardware'].nil? or @appliance_config.definition['hardware']['partitions'].nil?
-        for partition in @appliance_config.definition['hardware']['partitions']
-          partitions[partition['root']] = partition
-        end
-      end
+      #partitions['/'] = { 'root' => '/', 'size' => APPLIANCE_DEFAULTS[:hardware][:partition] } unless partitions.keys.include?('/')
 
-      partitions['/'] = { 'root' => '/', 'size' => APPLIANCE_DEFAULTS[:hardware][:partition] } unless partitions.keys.include?('/')
-
-      merge_field('partitions', 'hardware') do |parts|
+      merge_field('hardware.partitions') do |parts|
         for partition in parts
           if partitions.keys.include?(partition['root'])
             partitions[partition['root']]['size'] = partition['size'] if partitions[partition['root']]['size'] < partition['size']
@@ -91,47 +73,37 @@ module BoxGrinder
     end
 
     def merge_memory
-      @appliance_config.hardware.memory = @appliance_config.definition['hardware']['memory'] unless @appliance_config.definition['hardware'].nil? or @appliance_config.definition['hardware']['memory'].nil?
-
-      merge_field('memory', 'hardware') { |memory| @appliance_config.hardware.memory = memory if memory > @appliance_config.hardware.memory }
-
-      @appliance_config.hardware.memory = APPLIANCE_DEFAULTS[:hardware][:memory] if @appliance_config.hardware.memory == 0
+      merge_field('hardware.memory') { |memory| @appliance_config.hardware.memory = memory if memory > @appliance_config.hardware.memory }
     end
 
     def prepare_os
-      merge_field( 'name', 'os' ) { |name| @appliance_config.os.name = name.to_s }
-      merge_field( 'version', 'os' ) { |version| @appliance_config.os.version = version.to_s }
-      merge_field( 'password', 'os' ) { |password| @appliance_config.os.password = password.to_s }
+      merge_field( 'os.name' ) { |name| @appliance_config.os.name = name.to_s }
+      merge_field( 'os.version' ) { |version| @appliance_config.os.version = version.to_s }
+      merge_field( 'os.password' ) { |password| @appliance_config.os.password = password.to_s }
+
+      @appliance_config.os.password = APPLIANCE_DEFAULTS[:os][:password] if @appliance_config.os.password.nil?
     end
 
     def prepare_appliances
-      for appliance in @current_appliances
-        @appliance_config.appliances << appliance
-      end
-    end
+      @appliance_config.appliances.clear
 
-    def prepare_version_and_release
-      unless @appliance_config.definition['version'].nil?
-        @appliance_config.version = @appliance_config.definition['version']
-      end
-
-      unless @appliance_config.definition['release'].nil?
-        @appliance_config.release = @appliance_config.definition['release']
+      @appliance_configs.each do |appliance_config|
+        @appliance_config.appliances << appliance_config.name unless appliance_config.name == @appliance_config.name
       end
     end
 
     def merge_repos
-      for appliance_name in @current_appliances
-        definition = @appliance_definitions[appliance_name]
+      @appliance_config.repos.clear
 
-        for repo in definition['repos']
+      @appliance_configs.each do |appliance_config|
+        for repo in appliance_config.repos
           repo['name'] = substitute_repo_parameters( repo['name'] )
           ['baseurl', 'mirrorlist'].each  do |type|
             repo[type] = substitute_repo_parameters( repo[type] ) unless repo[type].nil?
           end
 
           @appliance_config.repos << repo
-        end unless definition['repos'].nil?
+        end
       end
     end
 
@@ -141,68 +113,47 @@ module BoxGrinder
     end
 
     def merge_packages
-      for appliance_name in @current_appliances
-        definition = @appliance_definitions[appliance_name]
+      @appliance_config.packages.includes.clear
+      @appliance_config.packages.excludes.clear
 
-        unless definition['packages'].nil?
-          for package in definition['packages']['includes']
-            @appliance_config.packages << package
-          end unless definition['packages']['includes'].nil?
+      @appliance_configs.each do |appliance_config|
+        appliance_config.packages.includes.each do |package|
+          @appliance_config.packages.includes << package
+        end
 
-          for package in definition['packages']['excludes']
-            @appliance_config.packages << "-#{package}"
-          end unless definition['packages']['excludes'].nil?
+        appliance_config.packages.excludes.each do |package|
+          @appliance_config.packages.excludes << package
         end
       end
     end
 
+    # TODO this needs to be plugin independent!
     def merge_post_operations
-      for appliance_name in @current_appliances
-        definition = @appliance_definitions[appliance_name]
+      @appliance_config.post.base.clear
+      @appliance_config.post.ec2.clear
+      @appliance_config.post.vmware.clear
 
-        unless definition['post'].nil?
-          for cmd in definition['post']['base']
-            @appliance_config.post.base << cmd
-          end unless definition['post']['base'].nil?
-
-          for cmd in definition['post']['ec2']
-            @appliance_config.post.ec2 << cmd
-          end unless definition['post']['ec2'].nil?
-
-          for cmd in definition['post']['vmware']
-            @appliance_config.post.vmware << cmd
-          end unless definition['post']['vmware'].nil?
+      @appliance_configs.each do |appliance_config|
+        appliance_config.post.base do |cmd|
+          @appliance_config.post.base << cmd
         end
 
+        appliance_config.post.ec2 do |cmd|
+          @appliance_config.post.ec2 << cmd
+        end
+
+        appliance_config.post.vmware do |cmd|
+          @appliance_config.post.vmware << cmd
+        end
       end
     end
 
-    def merge_field( field, section )
-      for appliance_name in @current_appliances
-        appliance_definition = @appliance_definitions[appliance_name]
-        next if appliance_definition[section].nil? or appliance_definition[section][field].nil?
-        val = appliance_definition[section][field]
-        yield val
-      end unless @appliance_config.definition['appliances'].nil?
-    end
-
-    def get_appliances( appliance_name )
-      appliances = []
-
-      if @appliance_definitions.has_key?( appliance_name )
-        definition = @appliance_definitions[appliance_name]
-        # add current appliance name
-        appliances << definition['name']
-
-        definition['appliances'].each do |appl|
-          appliances += get_appliances( appl ) unless appliances.include?( appl )
-        end unless definition['appliances'].nil? or definition['appliances'].empty?
-      else
-        raise ApplianceValidationError, "Not valid appliance name: Specified appliance name '#{appliance_name}' could not be found in appliance list. Please correct your definition file."
+    def merge_field( field, force = false )
+      @appliance_configs.each do |appliance_config|
+        value = eval("appliance_config.#{field}")
+        next if value.nil? and !force
+        yield value
       end
-
-      appliances
     end
-
   end
 end

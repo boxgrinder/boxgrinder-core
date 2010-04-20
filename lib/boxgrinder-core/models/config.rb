@@ -24,14 +24,27 @@ require 'rbconfig'
 
 module BoxGrinder
   class Config
-    def initialize( name, version, release, dir, config_file )
-      @name         = name
-      @dir          = dir
-      @config_file  = config_file
+    def initialize
+
+      @name = DEFAULT_PROJECT_CONFIG[:name]
+
+      @dir = OpenStruct.new
+      @dir.root        = `pwd`.strip
+      @dir.base        = "#{File.dirname( __FILE__ )}/../../"
+      @dir.build       =  DEFAULT_PROJECT_CONFIG[:dir_build]
+      @dir.top         = "#{@dir.build}/topdir"
+      @dir.src_cache   =  DEFAULT_PROJECT_CONFIG[:dir_src_cache]
+      @dir.rpms_cache  =  DEFAULT_PROJECT_CONFIG[:dir_rpms_cache]
+      @dir.specs       =  DEFAULT_PROJECT_CONFIG[:dir_specs]
+      @dir.appliances  =  DEFAULT_PROJECT_CONFIG[:dir_appliances]
+      @dir.src         =  DEFAULT_PROJECT_CONFIG[:dir_src]
+      @dir.kickstarts  =  DEFAULT_PROJECT_CONFIG[:dir_kickstarts]
+
+      @config_file  = ENV['BG_CONFIG_FILE'] || "#{ENV['HOME']}/.boxgrinder/config"
 
       @version = OpenStruct.new
-      @version.version = version
-      @version.release = release
+      @version.version = DEFAULT_PROJECT_CONFIG[:version]
+      @version.release = DEFAULT_PROJECT_CONFIG[:release]
 
       @files = OpenStruct.new
       @data = {}

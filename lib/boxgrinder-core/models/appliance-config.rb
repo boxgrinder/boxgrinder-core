@@ -24,22 +24,22 @@ require 'rbconfig'
 
 module BoxGrinder
   class ApplianceConfig
-    def initialize( definition )
-      @definition = definition
+    def initialize #( definition )
+      #@definition = definition
 
-      @name     = @definition['name']
-      @summary  = @definition['summary']
+      @name     = nil #@definition['name']
+      @summary  = nil #@definition['summary']
 
       @os = OpenStruct.new
 
-      @os.name      = APPLIANCE_DEFAULTS[:os][:name]
-      @os.version   = APPLIANCE_DEFAULTS[:os][:version]
-      @os.password  = APPLIANCE_DEFAULTS[:os][:password]
+      @os.name      = nil #APPLIANCE_DEFAULTS[:os][:name]
+      @os.version   = nil #APPLIANCE_DEFAULTS[:os][:version]
+      @os.password  = nil #APPLIANCE_DEFAULTS[:os][:password]
 
       @hardware = OpenStruct.new
 
-      @hardware.cpus      = 0
-      @hardware.memory    = 0
+      @hardware.cpus      = APPLIANCE_DEFAULTS[:hardware][:cpus]
+      @hardware.memory    = APPLIANCE_DEFAULTS[:hardware][:memory]
       @hardware.network   = APPLIANCE_DEFAULTS[:hardware][:network]
 
       @post = OpenStruct.new
@@ -48,24 +48,33 @@ module BoxGrinder
       @post.ec2     = []
       @post.vmware  = []
 
+      @packages = OpenStruct.new
+      @packages.includes = []
+      @packages.excludes = []
+
       @appliances   = []
       @repos        = []
-      @packages     = []
+
       @version      = 1
       @release      = 0
     end
 
-    attr_reader :definition
-    attr_reader :name
-    attr_reader :summary
-    attr_reader :appliances
+    #attr_reader :definition
+    #attr_reader :name
+    #attr_reader :summary
+    #attr_reader :appliances
     attr_reader :os
     attr_reader :hardware
-    attr_reader :repos
-    attr_reader :packages
+    #attr_reader :repos
+    #attr_reader :packages
     attr_reader :path
     attr_reader :file
 
+    attr_accessor :packages
+    attr_accessor :repos
+    attr_accessor :appliances
+    attr_accessor :summary
+    attr_accessor :name
     attr_accessor :version
     attr_accessor :release
     attr_accessor :post
@@ -98,6 +107,8 @@ module BoxGrinder
 
       @path.dir.packages = "build/#{appliance_path}/packages"
 
+      @path.dir.build = "build/#{appliance_path}"
+
       @path.dir.raw.build = "build/#{appliance_path}/raw"
       @path.dir.raw.build_full = "build/#{appliance_path}/raw/#{@name}"
 
@@ -115,15 +126,15 @@ module BoxGrinder
       @path.file.raw.xml = "#{@path.dir.raw.build_full}/#{@name}.xml"
 
       @path.file.ec2.disk = "#{@path.dir.ec2.build}/#{@name}.ec2"
-      @path.file.ec2.manifest = "#{@path.dir.ec2.bundle}/#{@name}.ec2.manifest.xml"
+      @path.file.ec2.manifest = "#{@path.dir.ec2.bundle}/#{@name}-sda.raw.manifest.xml"
 
-      @path.file.vmware.disk = "#{@path.dir.vmware.build}/#{@name}-sda.raw"
+      @path.file.vmware.disk = "#{@path.dir.vmware.build}/#{@name}.raw"
       @path.file.vmware.personal.vmx = "#{@path.dir.vmware.personal}/#{@name}.vmx"
       @path.file.vmware.personal.vmdk = "#{@path.dir.vmware.personal}/#{@name}.vmdk"
-      @path.file.vmware.personal.disk = "#{@path.dir.vmware.personal}/#{@name}-sda.raw"
+      @path.file.vmware.personal.disk = "#{@path.dir.vmware.personal}/#{@name}.raw"
       @path.file.vmware.enterprise.vmx = "#{@path.dir.vmware.enterprise}/#{@name}.vmx"
       @path.file.vmware.enterprise.vmdk = "#{@path.dir.vmware.enterprise}/#{@name}.vmdk"
-      @path.file.vmware.enterprise.disk = "#{@path.dir.vmware.enterprise}/#{@name}-sda.raw"
+      @path.file.vmware.enterprise.disk = "#{@path.dir.vmware.enterprise}/#{@name}.raw"
 
       @path.file.package = {
               :raw => {
@@ -140,7 +151,7 @@ module BoxGrinder
 
     # used to checking if configuration differs from previous in appliance-kickstart
     def hash
-      "#{@name}-#{@summary}-#{@version}-#{@release}-#{@os.name}-#{@os.version}-#{@os.password}-#{@hardware.cpus}-#{@hardware.memory}-#{@hardware.partitions}-#{@appliances.join("-")}".hash
+      "#{@name}-#{@summary}-#{@version}-#{@release}-#{@os.name}-#{@os.version}-#{@os.password}-#{@hardware.cpus}-#{@hardware.memory}-#{@hardware.partitions}-#{@appliances}".hash
     end
 
     def simple_name
