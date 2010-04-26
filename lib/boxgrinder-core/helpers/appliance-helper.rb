@@ -18,7 +18,6 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-
 require 'yaml'
 
 module BoxGrinder
@@ -31,7 +30,6 @@ module BoxGrinder
       @log.debug "Reading definition from '#{definition_file}' file..."
 
       definition_file_extension = File.extname( definition_file )
-
       configs = {}
 
       appliance_config =
@@ -66,7 +64,7 @@ module BoxGrinder
       begin
         definition = YAML.load_file( file )
         raise if definition.nil?
-      rescue => e
+      rescue
         raise "File '#{file}' could not be read."
       end
 
