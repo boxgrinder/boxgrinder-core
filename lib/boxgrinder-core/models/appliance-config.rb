@@ -154,6 +154,7 @@ module BoxGrinder
       "#{@name}-#{@summary}-#{@version}-#{@release}-#{@os.name}-#{@os.version}-#{@os.password}-#{@hardware.cpus}-#{@hardware.memory}-#{@hardware.partitions}-#{@appliances}".hash
     end
 
+    # TODO remove this, leave only :name
     def simple_name
       @name
     end
@@ -178,8 +179,13 @@ module BoxGrinder
       @hardware.arch.eql?("x86_64")
     end
 
-    def is_os_version_stable?
-      DEVELOPMENT_RELEASES[@os.name].eql?(@os.version)
+    def clone
+      Marshal::load(Marshal.dump(self))
+    end
+
+    def os_family
+      return :linux if [ 'fedora' ].include?( @os.name )
+      return :unknown
     end
   end
 end

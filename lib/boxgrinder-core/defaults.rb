@@ -21,23 +21,9 @@
 module BoxGrinder
   # here are global variables
   SUPPORTED_ARCHES = [ "i386", "x86_64" ]
-  SUPPORTED_OSES = {
-          "fedora" => [ "12", "11", "rawhide" ]
-  }
-
-  LATEST_STABLE_RELEASES = {
-          "fedora" => "12",
-          "rhel" => "5"
-  }
-
-  DEVELOPMENT_RELEASES = {
-          "fedora" => "rawhide"
-  }
 
   APPLIANCE_DEFAULTS = {
           :os => {
-                  :name => "fedora",
-                  :version => LATEST_STABLE_RELEASES['fedora'],
                   :password => "boxgrinder"
           },
           :hardware => {
@@ -49,33 +35,6 @@ module BoxGrinder
   }
 
   SUPPORTED_DESKTOP_TYPES = [ "gnome" ]
-
-  # you can use #ARCH# variable to specify build arch
-  REPOS = {
-          "fedora" => {
-                  "12" => {
-                          "base" => {
-                                  "mirrorlist" => "http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-12&arch=#ARCH#"
-                          },
-                          "updates" => {
-                                  "mirrorlist" => "http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f12&arch=#ARCH#"
-                          }
-                  },
-                  "11" => {
-                          "base" => {
-                                  "mirrorlist" => "http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-11&arch=#ARCH#"
-                          },
-                          "updates" => {
-                                  "mirrorlist" => "http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f11&arch=#ARCH#"
-                          }
-                  },
-                  "rawhide" => {
-                          "base" => {
-                                  "mirrorlist" => "http://mirrors.fedoraproject.org/mirrorlist?repo=rawhide&arch=#ARCH#"
-                          }
-                  }
-          }
-  }
 
   DEFAULT_LOCATION = {
           :log => 'log/boxgrinder.log'
