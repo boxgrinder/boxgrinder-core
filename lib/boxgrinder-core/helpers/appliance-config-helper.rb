@@ -23,11 +23,11 @@ require 'boxgrinder-core/validators/errors'
 module BoxGrinder
   class ApplianceConfigHelper
 
-    def initialize( appliance_configs )
+    def initialize(appliance_configs)
       @appliance_configs  = appliance_configs.values.reverse
     end
 
-    def merge( appliance_config )
+    def merge(appliance_config)
       @appliance_config = appliance_config
 
       prepare_os
@@ -57,14 +57,12 @@ module BoxGrinder
     def merge_partitions
       partitions = {}
 
-      #partitions['/'] = { 'root' => '/', 'size' => APPLIANCE_DEFAULTS[:hardware][:partition] } unless partitions.keys.include?('/')
-
       merge_field('hardware.partitions') do |parts|
-        for partition in parts
-          if partitions.keys.include?(partition['root'])
-            partitions[partition['root']]['size'] = partition['size'] if partitions[partition['root']]['size'] < partition['size']
+        parts.each do |root, partition|
+          if partitions.keys.include?(root)
+            partitions[root]['size'] = partition['size'] if partitions[root]['size'] < partition['size']
           else
-            partitions[partition['root']] = partition
+            partitions[root] = partition
           end
         end
       end
@@ -77,9 +75,9 @@ module BoxGrinder
     end
 
     def prepare_os
-      merge_field( 'os.name' ) { |name| @appliance_config.os.name = name.to_s }
-      merge_field( 'os.version' ) { |version| @appliance_config.os.version = version.to_s }
-      merge_field( 'os.password' ) { |password| @appliance_config.os.password = password.to_s }
+      merge_field('os.name') { |name| @appliance_config.os.name = name.to_s }
+      merge_field('os.version') { |version| @appliance_config.os.version = version.to_s }
+      merge_field('os.password') { |password| @appliance_config.os.password = password.to_s }
 
       @appliance_config.os.password = APPLIANCE_DEFAULTS[:os][:password] if @appliance_config.os.password.nil?
     end
@@ -97,9 +95,9 @@ module BoxGrinder
 
       @appliance_configs.each do |appliance_config|
         for repo in appliance_config.repos
-          repo['name'] = substitute_repo_parameters( repo['name'] )
-          ['baseurl', 'mirrorlist'].each  do |type|
-            repo[type] = substitute_repo_parameters( repo[type] ) unless repo[type].nil?
+          repo['name'] = substitute_repo_parameters(repo['name'])
+          ['baseurl', 'mirrorlist'].each do |type|
+            repo[type] = substitute_repo_parameters(repo[type]) unless repo[type].nil?
           end
 
           @appliance_config.repos << repo
@@ -107,9 +105,9 @@ module BoxGrinder
       end
     end
 
-    def substitute_repo_parameters( str )
+    def substitute_repo_parameters(str)
       return if str.nil?
-      str.gsub( /#OS_NAME#/, @appliance_config.os.name ).gsub( /#OS_VERSION#/, @appliance_config.os.version ).gsub( /#ARCH#/, @appliance_config.hardware.arch )
+      str.gsub(/#OS_NAME#/, @appliance_config.os.name).gsub(/#OS_VERSION#/, @appliance_config.os.version).gsub(/#ARCH#/, @appliance_config.hardware.arch)
     end
 
     def merge_packages
@@ -148,7 +146,7 @@ module BoxGrinder
       end
     end
 
-    def merge_field( field, force = false )
+    def merge_field(field, force = false)
       @appliance_configs.each do |appliance_config|
         value = eval("appliance_config.#{field}")
         next if value.nil? and !force

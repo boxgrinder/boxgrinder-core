@@ -22,29 +22,29 @@ require 'yaml'
 
 module BoxGrinder
   class ApplianceHelper
-    def initialize( options = {}  )
+    def initialize(options = {})
       @log = options[:log] || Logger.new(STDOUT)
     end
 
-    def read_definitions( definition_file, content_type = nil )
+    def read_definitions(definition_file, content_type = nil)
       @log.debug "Reading definition from '#{definition_file}' file..."
 
-      definition_file_extension = File.extname( definition_file )
+      definition_file_extension = File.extname(definition_file)
       configs = {}
 
       appliance_config =
               case definition_file_extension
                 when '.appl', '.yml'
-                  read_yaml( definition_file )
+                  read_yaml(definition_file)
                 when '.xml'
-                  read_xml( definition_file )
+                  read_xml(definition_file)
                 else
                   unless content_type.nil?
                     case content_type
                       when 'application/x-yaml', 'text/yaml'
-                        read_yaml( definition_file )
+                        read_yaml(definition_file)
                       when 'application/xml', 'text/xml', 'application/x-xml'
-                        read_xml( definition_file )
+                        read_xml(definition_file)
                     end
                   else
                     raise 'Unsupported file format for appliance definition file'
@@ -54,19 +54,21 @@ module BoxGrinder
       configs[appliance_config.name] = appliance_config
 
       appliance_config.appliances.each do |appliance_name|
-        configs.merge!(read_definitions( "#{File.dirname( definition_file )}/#{appliance_name}#{definition_file_extension}" ))
+        configs.merge!(read_definitions("#{File.dirname(definition_file)}/#{appliance_name}#{definition_file_extension}"))
       end unless appliance_config.appliances.nil? or !appliance_config.appliances.is_a?(Array)
 
       configs
     end
 
-    def read_yaml( file )
+    def read_yaml(file)
       begin
-        definition = YAML.load_file( file )
+        definition = YAML.load_file(file)
         raise if definition.nil?
       rescue
         raise "File '#{file}' could not be read."
       end
+
+      return definition if definition.is_a?(ApplianceConfig)
 
       appliance_config = ApplianceConfig.new
 
@@ -90,22 +92,23 @@ module BoxGrinder
       end
 
       unless definition['hardware'].nil?
-        appliance_config.hardware.cpus        = definition['hardware']['cpus']   unless definition['hardware']['cpus'].nil?
+        appliance_config.hardware.arch        = definition['hardware']['cpus'] unless definition['hardware']['arch'].nil?
+        appliance_config.hardware.cpus        = definition['hardware']['cpus'] unless definition['hardware']['cpus'].nil?
         appliance_config.hardware.memory      = definition['hardware']['memory'] unless definition['hardware']['memory'].nil?
         appliance_config.hardware.network     = definition['hardware']['network'] unless definition['hardware']['network'].nil?
         appliance_config.hardware.partitions  = definition['hardware']['partitions'] unless definition['hardware']['partitions'].nil?
       end
 
       unless definition['post'].nil?
-        appliance_config.post.base      = definition['post']['base']    unless definition['post']['base'].nil?
-        appliance_config.post.ec2       = definition['post']['ec2']     unless definition['post']['ec2'].nil?
-        appliance_config.post.vmware    = definition['post']['vmware']  unless definition['post']['vmware'].nil?
+        appliance_config.post.base      = definition['post']['base'] unless definition['post']['base'].nil?
+        appliance_config.post.ec2       = definition['post']['ec2'] unless definition['post']['ec2'].nil?
+        appliance_config.post.vmware    = definition['post']['vmware'] unless definition['post']['vmware'].nil?
       end
 
       appliance_config
     end
 
-    def read_xml( file )
+    def read_xml(file)
       raise "Reading XML files is not supported right now. File '#{file}' could not be read"
     end
   end

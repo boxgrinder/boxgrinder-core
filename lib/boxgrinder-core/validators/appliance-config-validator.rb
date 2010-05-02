@@ -23,8 +23,9 @@ require 'boxgrinder-core/defaults'
 
 module BoxGrinder
   class ApplianceConfigValidator
-    def initialize( appliance_config )
+    def initialize( appliance_config, options = {} )
       @appliance_config = appliance_config
+      @options          = options
     end
 
     def validate
@@ -45,10 +46,12 @@ module BoxGrinder
     def validate_os
       raise ApplianceValidationError, "No operating system selected" if @appliance_config.os.name.nil?
 
-      os_plugin = OperatingSystemPluginManager.instance.plugins[@appliance_config.os.name.to_sym]
+      unless @options[:os_plugins].nil?
+        os_plugin = @options[:os_plugins][@appliance_config.os.name.to_sym]
 
-      raise ApplianceValidationError, "Not supported operating system selected: #{@appliance_config.os.name}. Supported OSes are: #{OperatingSystemPluginManager.instance.plugins.keys.join(", ")}" if os_plugin.nil?
-      raise ApplianceValidationError, "Not supported operating system version selected: #{@appliance_config.os.version}. Supported versions are: #{os_plugin.info[:versions].join(", ")}" unless @appliance_config.os.version.nil? or os_plugin.info[:versions].include?( @appliance_config.os.version )
+        raise ApplianceValidationError, "Not supported operating system selected: #{@appliance_config.os.name}. Supported OSes are: #{OperatingSystemPluginManager.instance.plugins.keys.join(", ")}" if os_plugin.nil?
+        raise ApplianceValidationError, "Not supported operating system version selected: #{@appliance_config.os.version}. Supported versions are: #{os_plugin.info[:versions].join(", ")}" unless @appliance_config.os.version.nil? or os_plugin.info[:versions].include?( @appliance_config.os.version )
+      end
     end
 
     def validate_hardware
