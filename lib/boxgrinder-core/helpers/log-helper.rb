@@ -21,10 +21,31 @@
 require 'logger'
 require 'boxgrinder-core/defaults'
 
+Logger.const_set(:TRACE, 0)
+Logger.const_set(:DEBUG, 1)
+Logger.const_set(:INFO, 2)
+Logger.const_set(:WARN, 3)
+Logger.const_set(:ERROR, 4)
+Logger.const_set(:FATAL, 5)
+Logger.const_set(:UNKNOWN, 6)
+
+Logger::SEV_LABEL.insert(0, 'TRACE')
+
+class Logger
+  def trace?
+    @level <= TRACE
+  end
+
+  def trace(progname = nil, & block)
+    add(TRACE, nil, progname, & block)
+  end
+end
+
 module BoxGrinder
   class LogHelper
 
     THRESHOLDS = {
+            :trace  => Logger::TRACE,
             :fatal  => Logger::FATAL,
             :debug  => Logger::DEBUG,
             :error  => Logger::ERROR,
@@ -32,7 +53,7 @@ module BoxGrinder
             :info   => Logger::INFO
     }
 
-    def initialize( log_location = ENV['BG_LOG_LOCATION'] )
+    def initialize(log_location = ENV['BG_LOG_LOCATION'])
       threshold     = ENV['BG_LOG_THRESHOLD']
       log_location  ||= DEFAULT_LOCATION[:log]
 
@@ -45,14 +66,14 @@ module BoxGrinder
       @stdout_log         = Logger.new(STDOUT)
       @stdout_log.level   = threshold || Logger::INFO
 
-      @file_log           = Logger.new( log_location, 10, 1024000 )
-      @file_log.level     = Logger::DEBUG
+      @file_log           = Logger.new(log_location, 10, 1024000)
+      @file_log.level     = Logger::TRACE
     end
 
-    def method_missing( method_name, *args )
-      if THRESHOLDS.keys.include?( method_name )
-        @stdout_log.send( method_name, *args )
-        @file_log.send( method_name, *args )
+    def method_missing(method_name, * args)
+      if THRESHOLDS.keys.include?(method_name)
+        @stdout_log.send(method_name, * args)
+        @file_log.send(method_name, * args)
       else
         raise NoMethodError
       end
