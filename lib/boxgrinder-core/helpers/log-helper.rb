@@ -53,30 +53,38 @@ module BoxGrinder
             :info   => Logger::INFO
     }
 
-    def initialize(log_location = ENV['BG_LOG_LOCATION'])
-      threshold     = ENV['BG_LOG_THRESHOLD']
-      log_location  ||= DEFAULT_LOCATION[:log]
+    def initialize(options = {})
+      location      = options[:location] || DEFAULT_LOCATION[:log]
+      threshold     = options[:threshold] || :info
+      type          = options[:type] || [:stdout, :file]
 
-      unless File.directory?(File.dirname(log_location))
-        FileUtils.mkdir_p(File.dirname(log_location))
+      unless type.is_a?(Array)
+        type = [type.to_s.to_sym]
       end
 
       threshold = THRESHOLDS[threshold.to_sym] unless threshold.nil?
+      formatter = Logger::Formatter.new
 
-      @stdout_log         = Logger.new(STDOUT)
-      @stdout_log.level   = threshold || Logger::INFO
+      if type.include?(:file)
+        unless File.directory?(File.dirname(location))
+          FileUtils.mkdir_p(File.dirname(location))
+        end
 
-      @file_log           = Logger.new(log_location, 10, 1024000)
-      @file_log.level     = Logger::TRACE
+        @file_log             = Logger.new(location, 10, 1024000)
+        @file_log.level       = Logger::TRACE
+        @file_log.formatter   = formatter
+      end
+
+      if type.include?(:stdout)
+        @stdout_log           = Logger.new(STDOUT)
+        @stdout_log.level     = threshold || Logger::INFO
+        @stdout_log.formatter = formatter
+      end
     end
 
     def method_missing(method_name, * args)
-      if THRESHOLDS.keys.include?(method_name)
-        @stdout_log.send(method_name, * args)
-        @file_log.send(method_name, * args)
-      else
-        raise NoMethodError
-      end
+      @stdout_log.send(method_name, * args) unless @stdout_log.nil?
+      @file_log.send(method_name, * args) unless @file_log.nil?
     end
   end
 end
