@@ -36,8 +36,8 @@ class Logger
     @level <= TRACE
   end
 
-  def trace(progname = nil, & block)
-    add(TRACE, nil, progname, & block)
+  def trace(progname = nil, &block)
+    add(TRACE, nil, progname, &block)
   end
 end
 
@@ -82,9 +82,9 @@ module BoxGrinder
       end
     end
 
-    def method_missing(method_name, * args)
-      @stdout_log.send(method_name, * args) unless @stdout_log.nil?
-      @file_log.send(method_name, * args) unless @file_log.nil?
+    def method_missing(method_name, *args)
+      @stdout_log.send(method_name, *args) unless @stdout_log.nil?
+      @file_log.send(method_name, *args) unless @file_log.nil?
     end
   end
 end

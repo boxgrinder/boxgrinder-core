@@ -55,25 +55,11 @@ module BoxGrinder
     end
 
     def validate_hardware
-#      return if @appliance_definition['hardware'].nil?
-#
-#      unless @appliance_definition['hardware']['cpus'].nil?
-#        raise ApplianceValidationError, "Not valid CPU amount: '#{@appliance_definition['hardware']['cpus']}' is not allowed here. Please correct your appliance definition file, thanks." if @appliance_definition['hardware']['cpus'] =~ /\d/
-#        raise ApplianceValidationError, "Not valid CPU amount: Too many or too less CPU's: '#{@appliance_definition['hardware']['cpus']}'. Please choose from 1-4. Please correct your appliance definition file, thanks." unless @appliance_definition['hardware']['cpus'] >= 1 and @appliance_definition['hardware']['cpus'] <= 4
-#      end
-
+      raise ApplianceValidationError, "Not valid CPU amount: Too many or too less CPU's: '#{@appliance_config.hardware.cpus}'. Please choose from 1-4. Please correct your appliance definition file, thanks." unless @appliance_config.hardware.cpus >= 1 and @appliance_config.hardware.cpus <= 4
       raise ApplianceValidationError, "Not valid memory amount: '#{@appliance_config.hardware.memory}' is wrong value. Please correct your appliance definition file" if @appliance_config.hardware.memory =~ /\d/
       raise ApplianceValidationError, "Not valid memory amount: '#{@appliance_config.hardware.memory}' is not allowed here. Memory should be multiplicity of 64. Please correct your appliance definition file" if (@appliance_config.hardware.memory.to_i % 64 > 0)
 
-#      unless @appliance_definition['hardware']['partitions'].nil?
-#        raise ApplianceValidationError, "Not valid partitions format: Please correct your appliance definition file, thanks." unless @appliance_definition['hardware']['partitions'].class.eql?(Array)
-#
-#        for partition in @appliance_definition['hardware']['partitions']
-#          raise ApplianceValidationError, "Not valid partition format: '#{partition}' is wrong value. Please correct your appliance definition file, thanks." unless partition.class.eql?(Hash)
-#          raise ApplianceValidationError, "Not valid partition format: Keys 'root' and 'size' should be specified for every partition. Please correct your appliance definition file, thanks." if !partition.keys.include?("root") or !partition.keys.include?("size")
-#          raise ApplianceValidationError, "Not valid partition size: '#{partition['size']}' is not a valid value. Please correct your appliance definition file, thanks." if partition['size'] =~ /\d/ or partition['size'].to_i < 1
-#        end
-#      end
+      raise ApplianceValidationError, "No partitions found. Please correct your appliance definition file" if @appliance_config.hardware.partitions.size == 0
     end
 
     def validate_repos
