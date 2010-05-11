@@ -132,15 +132,15 @@ module BoxGrinder
       @appliance_config.post.vmware.clear
 
       @appliance_configs.each do |appliance_config|
-        appliance_config.post.base do |cmd|
+        appliance_config.post.base.each do |cmd|
           @appliance_config.post.base << cmd
         end
 
-        appliance_config.post.ec2 do |cmd|
+        appliance_config.post.ec2.each do |cmd|
           @appliance_config.post.ec2 << cmd
         end
 
-        appliance_config.post.vmware do |cmd|
+        appliance_config.post.vmware.each do |cmd|
           @appliance_config.post.vmware << cmd
         end
       end
