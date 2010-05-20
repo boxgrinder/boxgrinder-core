@@ -3,7 +3,7 @@ require 'rubygems'
 Gem::Specification.new do |s|
   s.platform  = Gem::Platform::RUBY
   s.name      = "boxgrinder-core"
-  s.version   = "0.0.7"
+  s.version   = "0.0.8"
   s.author    = "BoxGrinder Project"
   s.homepage  = "http://www.jboss.org/stormgrind/projects/boxgrinder.html"
   s.email     = "info@boxgrinder.org"
