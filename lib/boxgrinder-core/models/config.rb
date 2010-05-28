@@ -55,16 +55,17 @@ module BoxGrinder
       end
     end
 
-    attr_reader :name
-    attr_reader :version
-    attr_reader :release
-    attr_reader :data
-    attr_reader :config_file
-    attr_reader :dir
-    attr_reader :files
-
     def version_with_release
       @version.version + ((@version.release.nil? or @version.release.empty?) ? "" : "-" + @version.release)
     end
+
+    attr_accessor :name
+    attr_accessor :version
+    attr_accessor :release
+    attr_accessor :config_file
+    attr_reader :files
+
+    attr_reader :data
+    attr_reader :dir
   end
 end

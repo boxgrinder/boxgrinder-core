@@ -46,7 +46,7 @@ module BoxGrinder
 
   DEFAULT_PROJECT_CONFIG = {
           :name           => 'BoxGrinder',
-          :version        => '1.0.0.Beta2',
+          :version        => '1.0.0',
           :release        => 'SNAPSHOT',
           :dir_build      => 'build',
           #:topdir            => "#{self.} build/topdir",

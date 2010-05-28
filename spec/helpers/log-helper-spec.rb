@@ -16,7 +16,7 @@ module BoxGrinder
       file_log    = @helper.instance_variable_get(:@file_log)
 
       stdout_log.level.should == Logger::INFO
-      file_log.level.should   == Logger::DEBUG
+      file_log.level.should == Logger::TRACE
     end
 
     it "should allow to log in every known log level" do
@@ -28,27 +28,23 @@ module BoxGrinder
     end
 
     it "should change log level" do
-      ENV['BG_LOG_THRESHOLD'] = "debug"
-
-      @helper = LogHelper.new
+      @helper = LogHelper.new( :threshold => "debug" )
 
       stdout_log  = @helper.instance_variable_get(:@stdout_log)
       file_log    = @helper.instance_variable_get(:@file_log)
 
       stdout_log.level.should == Logger::DEBUG
-      file_log.level.should   == Logger::DEBUG
+      file_log.level.should == Logger::TRACE
     end
 
     it "should change log level" do
-      ENV['BG_LOG_THRESHOLD'] = "notexists"
-
-      @helper = LogHelper.new
+      @helper = LogHelper.new( :thrshold => "doesntexists" )
 
       stdout_log  = @helper.instance_variable_get(:@stdout_log)
       file_log    = @helper.instance_variable_get(:@file_log)
 
       stdout_log.level.should == Logger::INFO
-      file_log.level.should   == Logger::DEBUG
+      file_log.level.should == Logger::TRACE
     end
   end
 end
