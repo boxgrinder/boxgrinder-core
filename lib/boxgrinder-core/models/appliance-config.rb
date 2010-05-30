@@ -86,7 +86,7 @@ module BoxGrinder
     end
 
     def init_arch
-      @hardware.arch = RbConfig::CONFIG['host_cpu']
+      @hardware.arch = RbConfig::CONFIG['target_cpu']
       self
     end
 
