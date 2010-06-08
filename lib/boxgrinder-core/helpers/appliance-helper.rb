@@ -92,14 +92,14 @@ module BoxGrinder
       end
 
       unless definition['hardware'].nil?
-        appliance_config.hardware.arch        = definition['hardware']['cpus'] unless definition['hardware']['arch'].nil?
+        appliance_config.hardware.arch        = definition['hardware']['arch'] unless definition['hardware']['arch'].nil?
         appliance_config.hardware.cpus        = definition['hardware']['cpus'] unless definition['hardware']['cpus'].nil?
         appliance_config.hardware.memory      = definition['hardware']['memory'] unless definition['hardware']['memory'].nil?
         appliance_config.hardware.network     = definition['hardware']['network'] unless definition['hardware']['network'].nil?
         appliance_config.hardware.partitions  = definition['hardware']['partitions'] unless definition['hardware']['partitions'].nil?
       end
 
-      definition['post'].each { |key, value| eval("appliance_config.post.#{key} = #{value}") } unless definition['post'].nil?
+      definition['post'].each { |key, value| appliance_config.post[key] = value } unless definition['post'].nil?
 
       appliance_config
     end

@@ -125,23 +125,12 @@ module BoxGrinder
       end
     end
 
-    # TODO this needs to be plugin independent!
     def merge_post_operations
-      @appliance_config.post.base.clear
-      @appliance_config.post.ec2.clear
-      @appliance_config.post.vmware.clear
+      @appliance_config.post.each_value {|cmds| cmds.clear}
 
       @appliance_configs.each do |appliance_config|
-        appliance_config.post.base.each do |cmd|
-          @appliance_config.post.base << cmd
-        end
-
-        appliance_config.post.ec2.each do |cmd|
-          @appliance_config.post.ec2 << cmd
-        end
-
-        appliance_config.post.vmware.each do |cmd|
-          @appliance_config.post.vmware << cmd
+        appliance_config.post.each do |platform, cmds|
+          cmds.each { |cmd| @appliance_config.post[platform] << cmd }
         end
       end
     end

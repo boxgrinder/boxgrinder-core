@@ -42,7 +42,7 @@ module BoxGrinder
       @hardware.memory    = APPLIANCE_DEFAULTS[:hardware][:memory]
       @hardware.network   = APPLIANCE_DEFAULTS[:hardware][:network]
 
-      @post = OpenStruct.new
+      @post = {}
 
       @packages = OpenStruct.new
       @packages.includes = []
@@ -65,6 +65,7 @@ module BoxGrinder
     #attr_reader :packages
     attr_reader :path
     attr_reader :file
+    attr_reader :post
 
     attr_accessor :packages
     attr_accessor :repos
@@ -73,7 +74,6 @@ module BoxGrinder
     attr_accessor :name
     attr_accessor :version
     attr_accessor :release
-    attr_accessor :post
 
     def init
       init_arch
