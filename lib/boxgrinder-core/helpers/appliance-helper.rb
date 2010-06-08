@@ -99,11 +99,7 @@ module BoxGrinder
         appliance_config.hardware.partitions  = definition['hardware']['partitions'] unless definition['hardware']['partitions'].nil?
       end
 
-      unless definition['post'].nil?
-        appliance_config.post.base      = definition['post']['base'] unless definition['post']['base'].nil?
-        appliance_config.post.ec2       = definition['post']['ec2'] unless definition['post']['ec2'].nil?
-        appliance_config.post.vmware    = definition['post']['vmware'] unless definition['post']['vmware'].nil?
-      end
+      definition['post'].each { |key, value| eval("appliance_config.post.#{key} = #{OpenStruct.new(value)}") } unless definition['post'].nil?
 
       appliance_config
     end

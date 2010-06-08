@@ -44,10 +44,6 @@ module BoxGrinder
 
       @post = OpenStruct.new
 
-      @post.base    = []
-      @post.ec2     = []
-      @post.vmware  = []
-
       @packages = OpenStruct.new
       @packages.includes = []
       @packages.excludes = []
