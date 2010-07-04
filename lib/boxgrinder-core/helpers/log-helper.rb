@@ -20,6 +20,7 @@
 
 require 'logger'
 require 'boxgrinder-core/defaults'
+require 'fileutils'
 
 Logger.const_set(:TRACE, 0)
 Logger.const_set(:DEBUG, 1)
@@ -66,9 +67,7 @@ module BoxGrinder
       formatter = Logger::Formatter.new
 
       if type.include?(:file)
-        unless File.directory?(File.dirname(location))
-          FileUtils.mkdir_p(File.dirname(location))
-        end
+        FileUtils.mkdir_p(File.dirname(location))
 
         @file_log             = Logger.new(location, 10, 1024000)
         @file_log.level       = Logger::TRACE
