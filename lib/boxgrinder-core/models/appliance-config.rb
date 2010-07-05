@@ -24,17 +24,15 @@ require 'rbconfig'
 
 module BoxGrinder
   class ApplianceConfig
-    def initialize #( definition )
-      #@definition = definition
-
-      @name     = nil #@definition['name']
-      @summary  = nil #@definition['summary']
+    def initialize
+      @name     = nil
+      @summary  = nil
 
       @os = OpenStruct.new
 
-      @os.name      = nil #APPLIANCE_DEFAULTS[:os][:name]
-      @os.version   = nil #APPLIANCE_DEFAULTS[:os][:version]
-      @os.password  = nil #APPLIANCE_DEFAULTS[:os][:password]
+      @os.name      = nil
+      @os.version   = nil
+      @os.password  = nil
 
       @hardware = OpenStruct.new
 
@@ -55,14 +53,8 @@ module BoxGrinder
       @release      = 0
     end
 
-    #attr_reader :definition
-    #attr_reader :name
-    #attr_reader :summary
-    #attr_reader :appliances
     attr_reader :os
     attr_reader :hardware
-    #attr_reader :repos
-    #attr_reader :packages
     attr_reader :path
     attr_reader :file
     attr_reader :post
