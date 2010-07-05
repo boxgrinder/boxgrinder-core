@@ -49,7 +49,7 @@ module BoxGrinder
       unless @options[:os_plugins].nil?
         os_plugin = @options[:os_plugins][@appliance_config.os.name.to_sym]
 
-        raise ApplianceValidationError, "Not supported operating system selected: #{@appliance_config.os.name}. Supported OSes are: #{@options[:os_plugins].keys.join(", ")}" if os_plugin.nil?
+        raise ApplianceValidationError, "Not supported operating system selected: #{@appliance_config.os.name}. Supported OSes are: #{@options[:os_plugins].join(", ")}" if os_plugin.nil?
         raise ApplianceValidationError, "Not supported operating system version selected: #{@appliance_config.os.version}. Supported versions are: #{os_plugin.info[:versions].join(", ")}" unless @appliance_config.os.version.nil? or os_plugin.info[:versions].include?( @appliance_config.os.version )
       end
     end
