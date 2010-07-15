@@ -19,7 +19,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'boxgrinder-core/defaults'
-require 'ostruct'
+require 'openhash/openhash'
 require 'rbconfig'
 
 module BoxGrinder
@@ -28,13 +28,13 @@ module BoxGrinder
       @name     = nil
       @summary  = nil
 
-      @os = OpenStruct.new
+      @os = OpenHash.new
 
       @os.name      = nil
       @os.version   = nil
       @os.password  = nil
 
-      @hardware = OpenStruct.new
+      @hardware = OpenHash.new
 
       @hardware.cpus      = APPLIANCE_DEFAULTS[:hardware][:cpus]
       @hardware.memory    = APPLIANCE_DEFAULTS[:hardware][:memory]
@@ -42,7 +42,7 @@ module BoxGrinder
 
       @post = {}
 
-      @packages = OpenStruct.new
+      @packages = OpenHash.new
       @packages.includes = []
       @packages.excludes = []
 
@@ -79,84 +79,19 @@ module BoxGrinder
     end
 
     def initialize_paths
-      @path = OpenStruct.new
+      @path = OpenHash.new
 
-      @path.dir = OpenStruct.new
-      @path.dir.raw = OpenStruct.new
-      @path.dir.ec2 = OpenStruct.new
-      @path.dir.vmware = OpenStruct.new
+      @path.os        = "#{@os.name}/#{@os.version}"
+      @path.main      = "#{@hardware.arch}/#{@path.os}"
+      @path.appliance = "appliances/#{@path.main}/#{@name}"
+      @path.build     = "build/#{@path.appliance}"
 
-      @path.file = OpenStruct.new
-      @path.file.raw = OpenStruct.new
-      @path.file.ec2 = OpenStruct.new
-      @path.file.vmware = OpenStruct.new
-      @path.file.vmware.personal = OpenStruct.new
-      @path.file.vmware.enterprise = OpenStruct.new
-
-      @path.dir.packages = "build/#{appliance_path}/packages"
-
-      @path.dir.build = "build/#{appliance_path}"
-
-      @path.dir.raw.build = "build/#{appliance_path}/raw"
-      @path.dir.raw.build_full = "build/#{appliance_path}/raw/#{@name}"
-
-      @path.dir.ec2.build = "build/#{appliance_path}/ec2"
-      @path.dir.ec2.bundle = "#{@path.dir.ec2.build}/bundle"
-
-      @path.dir.vmware.build = "build/#{appliance_path}/vmware"
-      @path.dir.vmware.personal = "#{@path.dir.vmware.build}/personal"
-      @path.dir.vmware.enterprise = "#{@path.dir.vmware.build}/enterprise"
-
-      @path.file.raw.kickstart = "#{@path.dir.raw.build}/#{@name}.ks"
-      @path.file.raw.config = "#{@path.dir.raw.build}/#{@name}.cfg"
-      @path.file.raw.yum = "#{@path.dir.raw.build}/#{@name}.yum.conf"
-      @path.file.raw.disk = "#{@path.dir.raw.build_full}/#{@name}-sda.raw"
-      @path.file.raw.xml = "#{@path.dir.raw.build_full}/#{@name}.xml"
-
-      @path.file.ec2.disk = "#{@path.dir.ec2.build}/#{@name}.ec2"
-      @path.file.ec2.manifest = "#{@path.dir.ec2.bundle}/#{@name}-sda.raw.manifest.xml"
-
-      @path.file.vmware.disk = "#{@path.dir.vmware.build}/#{@name}.raw"
-      @path.file.vmware.personal.vmx = "#{@path.dir.vmware.personal}/#{@name}.vmx"
-      @path.file.vmware.personal.vmdk = "#{@path.dir.vmware.personal}/#{@name}.vmdk"
-      @path.file.vmware.personal.disk = "#{@path.dir.vmware.personal}/#{@name}.raw"
-      @path.file.vmware.enterprise.vmx = "#{@path.dir.vmware.enterprise}/#{@name}.vmx"
-      @path.file.vmware.enterprise.vmdk = "#{@path.dir.vmware.enterprise}/#{@name}.vmdk"
-      @path.file.vmware.enterprise.disk = "#{@path.dir.vmware.enterprise}/#{@name}.raw"
-
-      @path.file.package = {
-              :raw => {
-                      :tgz => "#{@path.dir.packages}/#{@name}-#{@version}.#{@release}-#{@hardware.arch}-raw.tgz",
-                      :zip => "#{@path.dir.packages}/#{@name}-#{@version}.#{@release}-#{@hardware.arch}-raw.zip"
-              },
-              :vmware => {
-                      :tgz => "#{@path.dir.packages}/#{@name}-#{@version}.#{@release}-#{@hardware.arch}-VMware.tgz",
-                      :zip => "#{@path.dir.packages}/#{@name}-#{@version}.#{@release}-#{@hardware.arch}-VMware.zip"
-              }
-      }
       self
     end
 
     # used to checking if configuration differs from previous in appliance-kickstart
     def hash
       "#{@name}-#{@summary}-#{@version}-#{@release}-#{@os.name}-#{@os.version}-#{@os.password}-#{@hardware.cpus}-#{@hardware.memory}-#{@hardware.partitions}-#{@appliances}".hash
-    end
-
-    # TODO remove this, leave only :name
-    def simple_name
-      @name
-    end
-
-    def os_path
-      "#{@os.name}/#{@os.version}"
-    end
-
-    def main_path
-      "#{@hardware.arch}/#{os_path}"
-    end
-
-    def appliance_path
-      "appliances/#{main_path}/#{@name}"
     end
 
     def eql?(other)
@@ -169,11 +104,6 @@ module BoxGrinder
 
     def clone
       Marshal::load(Marshal.dump(self))
-    end
-
-    def os_family
-      return :linux if [ 'fedora' ].include?( @os.name )
-      return :unknown
     end
   end
 end
