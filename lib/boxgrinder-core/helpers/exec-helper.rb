@@ -19,6 +19,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'logger'
+require 'open3'
 
 module BoxGrinder
   class ExecHelper
@@ -29,18 +30,30 @@ module BoxGrinder
     def execute( command )
       @log.debug "Executing command: '#{command}'"
 
-      out = `#{command} 2>&1`
+      output = ""
 
-      formatted_output = "Command return:\r\n+++++\r\n#{out}+++++"
+      Open3.popen3( command ) do |stdin, stdout, stderr|
+        threads = []
 
-      if $?.to_i != 0
-        @log.error formatted_output
-        raise "An error occurred executing command: '#{command}'"
-      else
-        @log.debug formatted_output unless out.strip.length == 0
-        @log.debug "Command '#{command}' executed successfully"
-        return out
+        threads << Thread.new(stdout) do |input_str|
+          input_str.each do |l|
+            output << l
+            @log.debug l.chomp.strip
+          end
+        end
+        
+        threads << Thread.new(stderr) do |input_str|
+          input_str.each do |l|
+            output << l
+            @log.debug l.chomp.strip
+          end
+        end
+        threads.each{|t|t.join}
       end
+
+      raise "An error occurred executing command: '#{command}'" if $?.to_i != 0
+
+      output
     end
   end
 end

@@ -70,15 +70,20 @@ module BoxGrinder
         FileUtils.mkdir_p(File.dirname(location))
 
         @file_log             = Logger.new(location, 10, 1024000)
-        @file_log.level       = Logger::TRACE
+        @file_log.level       = threshold == Logger::TRACE ? Logger::TRACE : Logger::DEBUG
         @file_log.formatter   = formatter
       end
 
       if type.include?(:stdout)
-        @stdout_log           = Logger.new(STDOUT)
+        @stdout_log           = Logger.new(STDOUT.dup)
         @stdout_log.level     = threshold || Logger::INFO
         @stdout_log.formatter = formatter
       end
+    end
+
+    def write( msg )
+      @stdout_log.trace( msg.chomp.strip ) unless @stdout_log.nil?
+      @file_log.trace( msg.chomp.strip ) unless @file_log.nil?
     end
 
     def method_missing(method_name, *args)
@@ -86,4 +91,8 @@ module BoxGrinder
       @file_log.send(method_name, *args) unless @file_log.nil?
     end
   end
+
+  attr_accessor :file_log
+  attr_accessor :stdout_log
+
 end
