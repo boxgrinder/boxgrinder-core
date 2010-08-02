@@ -1,4 +1,8 @@
 
+v0.0.21
+
+* Return nil if key is not found in OpenHash
+
 v0.0.20
 
 * Cleanup in ApplianceConfig

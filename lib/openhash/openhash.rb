@@ -85,7 +85,7 @@ class OpenHash < Hash
         if key?(key)
           self[key]
         else
-          super(s, *a, &b)
+          nil # super(s, *a, &b)
         end
     end
   end
