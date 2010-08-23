@@ -31,7 +31,11 @@ module BoxGrinder
     end
 
     it "should execute the command and return output" do
-      @helper.execute("ls rspec/ls | wc -l").should == ["2"]
+      @helper.execute("ls rspec/ls | wc -l").should == "2"
+    end
+
+    it "should execute the command and return multi line output" do
+      @helper.execute("ls -1 rspec/ls").should == "one\ntwo"
     end
   end
 end

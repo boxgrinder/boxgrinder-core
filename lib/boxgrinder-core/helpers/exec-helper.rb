@@ -31,7 +31,7 @@ module BoxGrinder
     def execute( command )
       @log.debug "Executing command: '#{command}'"
 
-      output = []
+      output = ""
 
       begin
         status = Open4::popen4( command ) do |pid, stdin, stdout, stderr|
@@ -42,7 +42,7 @@ module BoxGrinder
               l.chomp!
               l.strip!
 
-              output << l
+              output << "\n#{l}"
               @log.debug l
             end
           end
@@ -52,7 +52,7 @@ module BoxGrinder
               l.chomp!
               l.strip!
 
-              output << l
+              output << "\n#{l}"
               @log.debug l
             end
           end
@@ -61,7 +61,7 @@ module BoxGrinder
 
         raise "process exited with wrong exit status: #{status.exitstatus}" if status.exitstatus != 0
 
-        return output
+        return output.strip
       rescue => e
         @log.error e.backtrace.join($/)
         @log.error "An error occurred while executing command: '#{command}', #{e.message}"
