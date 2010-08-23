@@ -19,7 +19,8 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'logger'
-require 'open3'
+require 'rubygems'
+require 'open4'
 
 module BoxGrinder
   class ExecHelper
@@ -30,30 +31,30 @@ module BoxGrinder
     def execute( command )
       @log.debug "Executing command: '#{command}'"
 
-      output = ""
+      begin
+        status = Open4::popen4( command ) do |pid, stdin, stdout, stderr|
+          threads = []
 
-      Open3.popen3( command ) do |stdin, stdout, stderr|
-        threads = []
+          threads << Thread.new(stdout) do |input_str|
+            input_str.each do |l|
+              @log.debug l.chomp.strip
+            end
+          end
 
-        threads << Thread.new(stdout) do |input_str|
-          input_str.each do |l|
-            output << l
-            @log.debug l.chomp.strip
+          threads << Thread.new(stderr) do |input_str|
+            input_str.each do |l|
+              @log.debug l.chomp.strip
+            end
           end
+          threads.each{|t|t.join}
         end
-        
-        threads << Thread.new(stderr) do |input_str|
-          input_str.each do |l|
-            output << l
-            @log.debug l.chomp.strip
-          end
-        end
-        threads.each{|t|t.join}
+
+        raise "process exited with wrong exit status: #{status.exitstatus}" if status.exitstatus != 0
+      rescue => e
+        @log.error e.backtrace.join($/)
+        @log.error "An error occurred while executing command: '#{command}', #{e.message}"
+        raise "An error occurred while executing command: '#{command}', #{e.message}"
       end
-
-      raise "An error occurred executing command: '#{command}'" if $?.to_i != 0
-
-      output
     end
   end
 end
