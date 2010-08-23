@@ -3,7 +3,8 @@ require 'spec/rake/spectask'
 
 desc "Run all examples"
 Spec::Rake::SpecTask.new('examples') do |t|
-  t.spec_files = FileList['../**/spec/**/*-spec.rb']
+  t.spec_files = FileList['**/*-spec.rb']
   t.rcov = true
+  t.spec_opts = ['--colour', '--format', 'nested']
   t.rcov_opts = ['--exclude', 'spec']
 end
