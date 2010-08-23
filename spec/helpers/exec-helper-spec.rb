@@ -29,5 +29,9 @@ module BoxGrinder
 
       proc { @helper.execute("abc") }.should_not raise_error
     end
+
+    it "should execute the command and return output" do
+      @helper.execute("ls rspec/ls | wc -l").should == ["2"]
+    end
   end
 end

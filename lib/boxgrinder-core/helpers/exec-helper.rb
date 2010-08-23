@@ -31,25 +31,37 @@ module BoxGrinder
     def execute( command )
       @log.debug "Executing command: '#{command}'"
 
+      output = []
+
       begin
         status = Open4::popen4( command ) do |pid, stdin, stdout, stderr|
           threads = []
 
           threads << Thread.new(stdout) do |input_str|
             input_str.each do |l|
-              @log.debug l.chomp.strip
+              l.chomp!
+              l.strip!
+
+              output << l
+              @log.debug l
             end
           end
 
           threads << Thread.new(stderr) do |input_str|
             input_str.each do |l|
-              @log.debug l.chomp.strip
+              l.chomp!
+              l.strip!
+
+              output << l
+              @log.debug l
             end
           end
           threads.each{|t|t.join}
         end
 
         raise "process exited with wrong exit status: #{status.exitstatus}" if status.exitstatus != 0
+
+        return output
       rescue => e
         @log.error e.backtrace.join($/)
         @log.error "An error occurred while executing command: '#{command}', #{e.message}"
