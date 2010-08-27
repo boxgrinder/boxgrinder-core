@@ -20,7 +20,6 @@
 
 require 'boxgrinder-core/defaults'
 require 'ostruct'
-require 'rbconfig'
 
 module BoxGrinder
   class Config
