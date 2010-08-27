@@ -1,4 +1,8 @@
 
+v0.0.23
+
+* [BGBUILD-46] Allow building 32 bit images on 64 bit arch
+
 v0.0.22
 
 * [BGBUILD-44] ExecHelper should raise exception if execution fails
