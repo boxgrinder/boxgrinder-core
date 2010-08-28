@@ -74,7 +74,7 @@ module BoxGrinder
 
     def init_arch
       @hardware.arch = `uname -m`.chomp.strip
-      @hardware.base_arch = is64bit? ? "x86_84" : "i386"
+      @hardware.base_arch = is64bit? ? "x86_64" : "i386"
       self
     end
 
