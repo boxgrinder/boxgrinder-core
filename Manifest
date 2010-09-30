@@ -22,6 +22,8 @@ spec/helpers/appliance-helper-spec.rb
 spec/helpers/exec-helper-spec.rb
 spec/helpers/log-helper-spec.rb
 spec/helpers/queue-helper-spec.rb
+spec/rspec/ls/one
+spec/rspec/ls/two
 spec/rspec/rspec-config-helper.rb
 spec/rspec/src/appliances/ephemeral-repo.appl
 spec/rspec/src/appliances/full.appl
