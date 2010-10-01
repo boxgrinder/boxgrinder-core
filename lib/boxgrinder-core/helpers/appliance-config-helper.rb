@@ -41,8 +41,6 @@ module BoxGrinder
       @appliance_config
     end
 
-    protected
-
     def merge_hardware
       merge_cpus
       merge_partitions
@@ -128,8 +126,9 @@ module BoxGrinder
     def merge_post_operations
       @appliance_config.post.each_value {|cmds| cmds.clear}
 
-      @appliance_configs.each do |appliance_config|
+      @appliance_configs.reverse.each do |appliance_config|
         appliance_config.post.each do |platform, cmds|
+          @appliance_config.post[platform] = [] if @appliance_config.post[platform].nil?
           cmds.each { |cmd| @appliance_config.post[platform] << cmd }
         end
       end
