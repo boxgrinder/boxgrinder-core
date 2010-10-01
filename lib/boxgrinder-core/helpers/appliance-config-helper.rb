@@ -23,8 +23,8 @@ require 'boxgrinder-core/validators/errors'
 module BoxGrinder
   class ApplianceConfigHelper
 
-    def initialize(appliance_configs)
-      @appliance_configs  = appliance_configs.values.reverse
+    def initialize( appliance_configs )
+      @appliance_configs  = appliance_configs.reverse
     end
 
     def merge(appliance_config)
@@ -126,7 +126,7 @@ module BoxGrinder
     def merge_post_operations
       @appliance_config.post.each_value {|cmds| cmds.clear}
 
-      @appliance_configs.reverse.each do |appliance_config|
+      @appliance_configs.each do |appliance_config|
         appliance_config.post.each do |platform, cmds|
           @appliance_config.post[platform] = [] if @appliance_config.post[platform].nil?
           cmds.each { |cmd| @appliance_config.post[platform] << cmd }

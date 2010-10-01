@@ -30,11 +30,11 @@ module BoxGrinder
       @log.debug "Reading definition from '#{definition_file}' file..."
 
       definition_file_extension = File.extname(definition_file)
-      configs = {}
+      configs = []
 
       appliance_config =
               case definition_file_extension
-                when '.appl', '.yml'
+                when '.appl', '.yml', '.yaml'
                   read_yaml(definition_file)
                 when '.xml'
                   read_xml(definition_file)
@@ -51,13 +51,13 @@ module BoxGrinder
                   end
               end
 
-      configs[appliance_config.name] = appliance_config
+      configs << appliance_config
 
       appliance_config.appliances.each do |appliance_name|
-        configs.merge!(read_definitions("#{File.dirname(definition_file)}/#{appliance_name}#{definition_file_extension}").first)
+        configs << read_definitions("#{File.dirname(definition_file)}/#{appliance_name}#{definition_file_extension}").first
       end unless appliance_config.appliances.nil? or !appliance_config.appliances.is_a?(Array)
 
-      [ configs, appliance_config ]
+      [ configs.flatten, appliance_config ]
     end
 
     def read_yaml(file)
