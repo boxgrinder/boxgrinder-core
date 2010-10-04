@@ -51,6 +51,8 @@ module BoxGrinder
       if File.exists?( @config_file )
         @data = YAML.load_file( @config_file )
         @data['gpg_password'].gsub!(/\$/, "\\$") unless @data['gpg_password'].nil? or @data['gpg_password'].length == 0
+        @dir.rpms_cache = @data['rpms_cache'] || @dir.rpms_cache
+        @dir.src_cache  = @data['src_cache']  || @dir.src_cache
       end
     end
 
