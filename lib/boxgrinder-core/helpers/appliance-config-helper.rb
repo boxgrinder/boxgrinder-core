@@ -105,7 +105,7 @@ module BoxGrinder
 
     def substitute_repo_parameters(str)
       return if str.nil?
-      str.gsub(/#OS_NAME#/, @appliance_config.os.name).gsub(/#OS_VERSION#/, @appliance_config.os.version).gsub(/#ARCH#/, @appliance_config.hardware.arch)
+      str.gsub(/#OS_NAME#/, @appliance_config.os.name).gsub(/#OS_VERSION#/, @appliance_config.os.version).gsub(/#ARCH#/, @appliance_config.hardware.arch).gsub(/#BASE_ARCH#/, @appliance_config.hardware.base_arch)
     end
 
     def merge_packages
