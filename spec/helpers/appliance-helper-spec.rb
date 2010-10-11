@@ -50,12 +50,12 @@ module BoxGrinder
       appliance_c2.name = 'c2'
 
       @helper.should_receive(:read_yaml).ordered.with('a.appl').and_return( appliance_a )
-      @helper.should_receive(:read_yaml).ordered.with('./b1.appl').and_return( appliance_b1 )
-      @helper.should_receive(:read_yaml).ordered.with('./c1.appl').and_return( appliance_c1 )
       @helper.should_receive(:read_yaml).ordered.with('./b2.appl').and_return( appliance_b2 )
       @helper.should_receive(:read_yaml).ordered.with('./c2.appl').and_return( appliance_c2 )
+      @helper.should_receive(:read_yaml).ordered.with('./b1.appl').and_return( appliance_b1 )
+      @helper.should_receive(:read_yaml).ordered.with('./c1.appl').and_return( appliance_c1 )
 
-      @helper.read_definitions( "a.appl" ).should == [ [ appliance_a, appliance_b1, appliance_c1, appliance_b2, appliance_c2 ], appliance_a ]
+      @helper.read_definitions( "a.appl" ).should == [ [ appliance_a, appliance_b2, appliance_c2, appliance_b1, appliance_c1 ], appliance_a ]
     end
 
   end

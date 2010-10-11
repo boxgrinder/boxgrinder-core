@@ -116,5 +116,85 @@ module BoxGrinder
       config.post['ec2'].size.should == 2
       config.post['ec2'].should == ['2_1', '2_2']
     end
+
+    it "should merge partitions" do
+      config_a = ApplianceConfig.new
+      config_a.name = 'a'
+      config_a.appliances << 'b'
+      config_a.hardware.partitions = { "/" => { 'size' => '2' } }
+
+      config_b = ApplianceConfig.new
+      config_b.name = 'b'
+      config_b.hardware.partitions = { "/" => { 'size' => '4' }, "/home" => { 'size' => '2' } }
+
+      prepare_helper( [ config_a, config_b ] )
+      @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+      @helper.merge_partitions
+
+      config = @helper.instance_variable_get(:@appliance_config)
+      config.hardware.partitions.size.should == 2
+      config.hardware.partitions.should == { "/" => { 'size' => '4' }, "/home" => { 'size' => '2' } }
+    end
+
+    it "should merge partitions with different filesystem types" do
+      config_a = ApplianceConfig.new
+      config_a.name = 'a'
+      config_a.appliances << 'b'
+      config_a.hardware.partitions = { "/" => { 'size' => '2', 'type' => 'ext4' } }
+
+      config_b = ApplianceConfig.new
+      config_b.name = 'b'
+      config_b.hardware.partitions = { "/" => { 'size' => '4', 'type' => 'ext3' }, "/home" => { 'size' => '2' } }
+
+      prepare_helper( [ config_a, config_b ] )
+      @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+      @helper.merge_partitions
+
+      config = @helper.instance_variable_get(:@appliance_config)
+      config.hardware.partitions.size.should == 2
+      config.hardware.partitions.should == { "/" => { 'size' => '4', 'type' => 'ext4' }, "/home" => { 'size' => '2' } }
+    end
+
+    it "should merge partitions with different options" do
+      config_a = ApplianceConfig.new
+      config_a.name = 'a'
+      config_a.appliances << 'b'
+      config_a.hardware.partitions = { "/" => { 'size' => '2', 'type' => 'ext4', 'options' => 'barrier=0,nodelalloc,nobh,noatime' } }
+
+      config_b = ApplianceConfig.new
+      config_b.name = 'b'
+      config_b.hardware.partitions = { "/" => { 'size' => '4', 'type' => 'ext3', 'options' => 'shouldnt appear' }, "/home" => { 'size' => '2' } }
+
+      prepare_helper( [ config_a, config_b ] )
+      @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+      @helper.merge_partitions
+
+      config = @helper.instance_variable_get(:@appliance_config)
+      config.hardware.partitions.size.should == 2
+      config.hardware.partitions.should == { "/" => { 'size' => '4', 'type' => 'ext4', 'options' => 'barrier=0,nodelalloc,nobh,noatime' }, "/home" => { 'size' => '2' } }
+    end
+
+    it "should merge partitions with different options, another case where type is changing - options should be vanished" do
+      config_a = ApplianceConfig.new
+      config_a.name = 'a'
+      config_a.appliances << 'b'
+      config_a.hardware.partitions = { "/" => { 'size' => '2', 'type' => 'ext4' } }
+
+      config_b = ApplianceConfig.new
+      config_b.name = 'b'
+      config_b.hardware.partitions = { "/" => { 'size' => '4', 'type' => 'ext3', 'options' => 'shouldnt appear' }, "/home" => { 'size' => '2' } }
+
+      prepare_helper( [ config_a, config_b ] )
+      @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+      @helper.merge_partitions
+
+      config = @helper.instance_variable_get(:@appliance_config)
+      config.hardware.partitions.size.should == 2
+      config.hardware.partitions.should == { "/" => { 'size' => '4', 'type' => 'ext4' }, "/home" => { 'size' => '2' } }
+    end
   end
 end

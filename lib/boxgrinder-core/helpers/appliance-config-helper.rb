@@ -59,6 +59,12 @@ module BoxGrinder
         parts.each do |root, partition|
           if partitions.keys.include?(root)
             partitions[root]['size'] = partition['size'] if partitions[root]['size'] < partition['size']
+
+            unless partition['type'].nil?
+              partitions[root].delete('options') if partitions[root]['type'] != partition['type']
+              partitions[root]['type'] = partition['type']
+            end
+            partitions[root]['options'] = partition['options'] unless partition['options'].nil? and partitions[root]['type'] == partition['type']
           else
             partitions[root] = partition
           end

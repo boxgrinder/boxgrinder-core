@@ -53,7 +53,7 @@ module BoxGrinder
 
       configs << appliance_config
 
-      appliance_config.appliances.each do |appliance_name|
+      appliance_config.appliances.reverse.each do |appliance_name|
         configs << read_definitions("#{File.dirname(definition_file)}/#{appliance_name}#{definition_file_extension}").first
       end unless appliance_config.appliances.nil? or !appliance_config.appliances.is_a?(Array)
 
