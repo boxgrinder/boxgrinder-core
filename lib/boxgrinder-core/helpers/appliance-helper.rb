@@ -74,6 +74,9 @@ module BoxGrinder
 
       appliance_config.name         = definition['name'] unless definition['name'].nil?
       appliance_config.summary      = definition['summary'] unless definition['summary'].nil?
+
+      definition['variables'].each { |key, value| appliance_config.variables[key] = value } unless definition['variables'].nil?
+
       appliance_config.appliances   = definition['appliances'] unless definition['appliances'].nil?
       appliance_config.repos        = definition['repos'] unless definition['repos'].nil?
 

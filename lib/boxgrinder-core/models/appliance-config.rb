@@ -27,6 +27,8 @@ module BoxGrinder
       @name     = nil
       @summary  = nil
 
+      @variables = {}
+
       @os = OpenHash.new
 
       @os.name      = nil
@@ -52,6 +54,7 @@ module BoxGrinder
       @release      = 0
     end
 
+    attr_reader :variables
     attr_reader :os
     attr_reader :hardware
     attr_reader :path

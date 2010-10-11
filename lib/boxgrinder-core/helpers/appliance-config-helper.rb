@@ -33,12 +33,46 @@ module BoxGrinder
       prepare_os
       prepare_appliances
 
+      merge_variables
       merge_hardware
       merge_repos
       merge_packages
       merge_post_operations
 
       @appliance_config
+    end
+
+    def merge_variables
+      @appliance_config.variables = {} if @appliance_config.variables.nil?
+      @appliance_configs.each do |appliance_config|
+        appliance_config.variables.each do |var, val|
+          @appliance_config.variables[var] = val
+        end
+      end
+      @appliance_config.variables["OS_NAME"] = @appliance_config.os.name
+      @appliance_config.variables["OS_VERSION"] = @appliance_config.os.version
+      @appliance_config.variables["ARCH"] = @appliance_config.hardware.arch
+      resolve()
+    end
+
+    def resolve(resolve_stack = nil, resolved_set = Set.new())
+      if resolve_stack.nil?
+        @appliance_config.variables.keys.each { |var| resolve([var], resolved_set) }
+      else
+        var = resolve_stack.last
+        refs = @appliance_config.variables.keys.delete_if { |k|
+          @appliance_config.variables[k].nil? ||
+          @appliance_config.variables[k].index("##{k}#").nil? ||
+          resolve_stack.index(k).nil?
+        }
+        refs.each do |ref|
+          resolve(Arrays.new(resolve_stack).push(ref), resolved_set) unless resolved_set.include?(ref)
+          while @appliance_config.variables[var].include? "##{ref}#" do
+            @appliance_config.variables[var].gsub!("##{ref}#", @appliance_config.variables[ref])
+          end
+        end
+        resolved_set << var
+      end
     end
 
     def merge_hardware
@@ -99,9 +133,9 @@ module BoxGrinder
 
       @appliance_configs.each do |appliance_config|
         for repo in appliance_config.repos
-          repo['name'] = substitute_repo_parameters(repo['name'])
+          repo['name'] = substitute_vars(repo['name'])
           ['baseurl', 'mirrorlist'].each do |type|
-            repo[type] = substitute_repo_parameters(repo[type]) unless repo[type].nil?
+            repo[type] = substitute_vars(repo[type]) unless repo[type].nil?
           end
 
           @appliance_config.repos << repo
@@ -109,9 +143,12 @@ module BoxGrinder
       end
     end
 
-    def substitute_repo_parameters(str)
+    def substitute_vars(str)
       return if str.nil?
-      str.gsub(/#OS_NAME#/, @appliance_config.os.name).gsub(/#OS_VERSION#/, @appliance_config.os.version).gsub(/#ARCH#/, @appliance_config.hardware.arch).gsub(/#BASE_ARCH#/, @appliance_config.hardware.base_arch)
+      @appliance_config.variables.keys.each do |var|
+        str = str.gsub("##{var}#", @appliance_config.variables[var])
+      end
+      str
     end
 
     def merge_packages
@@ -135,7 +172,7 @@ module BoxGrinder
       @appliance_configs.each do |appliance_config|
         appliance_config.post.each do |platform, cmds|
           @appliance_config.post[platform] = [] if @appliance_config.post[platform].nil?
-          cmds.each { |cmd| @appliance_config.post[platform] << cmd }
+          cmds.each { |cmd| @appliance_config.post[platform] << substitute_vars(cmd) }
         end
       end
     end
