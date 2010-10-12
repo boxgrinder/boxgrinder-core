@@ -19,6 +19,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'boxgrinder-core/validators/errors'
+require 'set'
 
 module BoxGrinder
   class ApplianceConfigHelper
@@ -49,10 +50,13 @@ module BoxGrinder
           @appliance_config.variables[var] = val
         end
       end
+
       @appliance_config.variables["OS_NAME"] = @appliance_config.os.name
       @appliance_config.variables["OS_VERSION"] = @appliance_config.os.version
       @appliance_config.variables["ARCH"] = @appliance_config.hardware.arch
-      resolve()
+      @appliance_config.variables["BASE_ARCH"] = @appliance_config.hardware.base_arch
+
+      resolve
     end
 
     def resolve(resolve_stack = nil, resolved_set = Set.new())

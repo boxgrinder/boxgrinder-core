@@ -5,6 +5,11 @@ module BoxGrinder
   describe ApplianceConfigHelper do
     include RSpecConfigHelper
 
+    before(:all) do
+      @arch = `uname -m`.chomp.strip
+      @base_arch = @arch.eql?("x86_64") ? "x86_64" : "i386"
+    end
+
     def prepare_helper( configs )
       @helper = ApplianceConfigHelper.new( configs )
     end
@@ -196,5 +201,67 @@ module BoxGrinder
       config.hardware.partitions.size.should == 2
       config.hardware.partitions.should == { "/" => { 'size' => '4', 'type' => 'ext4' }, "/home" => { 'size' => '2' } }
     end
+
+    it "should substitute variables in repos" do
+      config_a = ApplianceConfig.new
+      config_a.name = 'a'
+      config_a.os.name = 'fedora'
+      config_a.os.version = '12'
+      config_a.repos << { 'name' => '#ARCH#', 'baseurl' => '#BASE_ARCH#', 'mirrorlist' => '#OS_NAME#-#OS_VERSION#' }
+      config_a.init_arch
+
+      prepare_helper( [ config_a ] )
+      @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+      @helper.merge_variables
+      @helper.merge_repos
+
+      config = @helper.instance_variable_get(:@appliance_config)
+      config.repos.size.should == 1
+      config.repos.first.should == { 'name' => "#{@arch}", 'baseurl' => "#{@base_arch}", 'mirrorlist' => 'fedora-12' }
+    end
+
+    it "should substitute variables in post section" do
+      config_a = ApplianceConfig.new
+      config_a.name = 'a'
+      config_a.os.name = 'fedora'
+      config_a.os.version = '12'
+      config_a.post['base'] = ['#ARCH#', '#BASE_ARCH#', '#OS_VERSION#', '#OS_NAME#']
+      config_a.post['ec2'] = ['#ARCH#', '#BASE_ARCH#', '#OS_VERSION#', '#OS_NAME#']
+      config_a.init_arch
+
+      prepare_helper( [ config_a ] )
+      @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+      @helper.merge_variables
+      @helper.merge_post_operations
+
+      config = @helper.instance_variable_get(:@appliance_config)
+      config.post.size.should == 2
+      config.post['base'].should == [@arch, @base_arch, '12', 'fedora']
+      config.post['ec2'].should == [@arch, @base_arch, '12', 'fedora']
+    end
+
+    it "should substitute custom variables" do
+      config_a = ApplianceConfig.new
+      config_a.name = 'a'
+      config_a.os.name = 'fedora'
+      config_a.os.version = '12'
+      config_a.variables['CUSTOM_A'] = "AAA"
+      config_a.variables['CUSTOM_B'] = "BBB"
+      config_a.post['base'] = ['#ARCH#', '#BASE_ARCH#', '#OS_VERSION#', '#OS_NAME#', '#CUSTOM_A#', '#CUSTOM_B#']
+      config_a.init_arch
+
+      prepare_helper( [ config_a ] )
+      @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+      @helper.merge_variables
+      @helper.merge_post_operations
+
+      config = @helper.instance_variable_get(:@appliance_config)
+      config.post.size.should == 1
+      config.post['base'].should == [@arch, @base_arch, '12', 'fedora', 'AAA', 'BBB']
+    end
+
   end
 end
