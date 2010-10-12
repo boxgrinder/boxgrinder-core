@@ -1,6 +1,7 @@
 
 v0.1.0
 
+* [BGBUILD-58] Add ability to substitute custom variables in appliance definition file
 * [BGBUILD-52] Wrong post section inheritance
 * [BGBUILD-48] Hint about missing plugins
 * [BGBUILD-46] Allow building 32 bit images on 64 bit arch
