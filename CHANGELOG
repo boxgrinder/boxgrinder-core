@@ -1,4 +1,8 @@
 
+v0.1.1
+
+* Rebuild for RPM
+
 v0.1.0
 
 * [BGBUILD-58] Add ability to substitute custom variables in appliance definition file
