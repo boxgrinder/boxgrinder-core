@@ -44,6 +44,7 @@ rm -rf %{buildroot}
 %{geminstdir}/lib
 %doc %{gemdir}/doc/%{gemname}-%{version}
 %doc %{geminstdir}/%{gemname}.gemspec
+%doc %{geminstdir}/rubygem-%{gemname}.spec
 %doc %{geminstdir}/CHANGELOG
 %doc %{geminstdir}/LICENSE
 %doc %{geminstdir}/README
