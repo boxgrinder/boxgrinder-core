@@ -66,6 +66,7 @@ module BoxGrinder
     attr_accessor :name
     attr_accessor :version
     attr_accessor :release
+    attr_accessor :default_repos
 
     def init
       init_arch

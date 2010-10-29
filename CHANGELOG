@@ -1,7 +1,7 @@
 
 v0.1.1
 
-* Rebuild for RPM
+* [BGBUILD-65] Allow to specify own repos overriding default repos provided for selected OS
 
 v0.1.0
 

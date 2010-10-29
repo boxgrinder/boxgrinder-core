@@ -22,7 +22,7 @@ require 'set'
 module BoxGrinder
   class ApplianceConfigHelper
 
-    def initialize( appliance_configs )
+    def initialize(appliance_configs)
       @appliance_configs  = appliance_configs.reverse
     end
 
@@ -35,10 +35,22 @@ module BoxGrinder
       merge_variables
       merge_hardware
       merge_repos
+      merge_default_repos
       merge_packages
       merge_post_operations
 
       @appliance_config
+    end
+
+    def merge_default_repos
+      @appliance_config.default_repos = true
+
+      @appliance_configs.each do |appliance_config|
+        if appliance_config.default_repos == false
+          @appliance_config.default_repos = false
+          break
+        end
+      end
     end
 
     def merge_variables
@@ -64,8 +76,8 @@ module BoxGrinder
         var = resolve_stack.last
         refs = @appliance_config.variables.keys.delete_if { |k|
           @appliance_config.variables[k].nil? ||
-          @appliance_config.variables[k].index("##{k}#").nil? ||
-          resolve_stack.index(k).nil?
+                  @appliance_config.variables[k].index("##{k}#").nil? ||
+                  resolve_stack.index(k).nil?
         }
         refs.each do |ref|
           resolve(Arrays.new(resolve_stack).push(ref), resolved_set) unless resolved_set.include?(ref)
@@ -169,7 +181,7 @@ module BoxGrinder
     end
 
     def merge_post_operations
-      @appliance_config.post.each_value {|cmds| cmds.clear}
+      @appliance_config.post.each_value { |cmds| cmds.clear }
 
       @appliance_configs.each do |appliance_config|
         appliance_config.post.each do |platform, cmds|
