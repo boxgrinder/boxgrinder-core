@@ -61,3 +61,8 @@ desc "Create RPM"
 task 'rpm' => ['gem:copy'] do
   Dir["**/rubygem-*.spec"].each { |spec| puts `rpmbuild --define '_topdir #{topdir}' -ba #{spec}` }
 end
+
+desc "Install RPM"
+task 'rpm:install' => ['rpm'] do
+  puts `yum localinstall #{topdir}/RPMS/noarch/*.rpm`
+end
