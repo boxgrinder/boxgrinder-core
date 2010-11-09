@@ -17,6 +17,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'rubygems'
+require 'spec/rake/spectask'
 require 'echoe'
 
 Echoe.new("boxgrinder-core") do |p|
@@ -33,14 +34,16 @@ Spec::Rake::SpecTask.new('spec') do |t|
   t.rcov = false
   t.spec_files = FileList["spec/**/*-spec.rb"]
   t.spec_opts = ['--colour', '--format', 'specdoc', '-b']
+  t.verbose = true
 end
 
 desc "Run all tests and generate code coverage report"
 Spec::Rake::SpecTask.new('spec:coverage') do |t|
   t.spec_files = FileList["spec/**/*-spec.rb"]
-  t.spec_opts = ['--colour', '--format', 'specdoc', '-b']
+  t.spec_opts = ['--colour', '--format', 'html:pkg/rspec_report.html', '-b']
   t.rcov = true
   t.rcov_opts = ['--exclude', 'spec,teamcity/*,/usr/lib/ruby/,.gem/ruby,/boxgrinder-build/,/gems/']
+  t.verbose = true
 end
 
 topdir = "#{Dir.pwd}/pkg/rpmbuild"
