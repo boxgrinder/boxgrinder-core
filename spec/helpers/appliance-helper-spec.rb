@@ -17,11 +17,9 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'boxgrinder-core/helpers/appliance-helper'
-require 'rspec/rspec-config-helper'
 
 module BoxGrinder
   describe ApplianceHelper do
-    include RSpecConfigHelper
 
     before(:each) do
       @helper = ApplianceHelper.new( :log => Logger.new('/dev/null') )

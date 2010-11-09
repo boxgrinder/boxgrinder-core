@@ -17,12 +17,9 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'boxgrinder-core/helpers/appliance-config-helper'
-require 'rspec/rspec-config-helper'
 
 module BoxGrinder
   describe ApplianceConfigHelper do
-    include RSpecConfigHelper
-
     before(:all) do
       @arch = `uname -m`.chomp.strip
       @base_arch = @arch.eql?("x86_64") ? "x86_64" : "i386"

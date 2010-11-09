@@ -16,6 +16,7 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'rubygems'
 require 'echoe'
 
 Echoe.new("boxgrinder-core") do |p|
@@ -25,4 +26,35 @@ Echoe.new("boxgrinder-core") do |p|
   p.url         = "http://www.jboss.org/boxgrinder"
   p.email       = "info@boxgrinder.org"
   p.runtime_dependencies = ['open4 >=1.0.0']
+end
+
+desc "Run all tests"
+Spec::Rake::SpecTask.new('spec') do |t|
+  t.rcov = false
+  t.spec_files = FileList["spec/**/*-spec.rb"]
+  t.spec_opts = ['--colour', '--format', 'specdoc', '-b']
+end
+
+desc "Run all tests and generate code coverage report"
+Spec::Rake::SpecTask.new('spec:coverage') do |t|
+  t.spec_files = FileList["spec/**/*-spec.rb"]
+  t.spec_opts = ['--colour', '--format', 'specdoc', '-b']
+  t.rcov = true
+  t.rcov_opts = ['--exclude', 'spec,teamcity/*,/usr/lib/ruby/,.gem/ruby,/boxgrinder-core/,/boxgrinder-build/']
+end
+
+topdir = "#{Dir.pwd}/pkg/rpmbuild"
+directory "#{topdir}/SOURCES"
+
+task 'gem:copy' => [:gem, 'rpm:topdir'] do
+  Dir["**/pkg/*.gem"].each { |gem| FileUtils.cp(gem, "#{topdir}/SOURCES", :verbose => true) }
+end
+
+task 'rpm:topdir' do
+  FileUtils.mkdir_p(["#{topdir}/SOURCES", "#{topdir}/RPMS", "#{topdir}/BUILD", "#{topdir}/SPECS", "#{topdir}/SRPMS"], :verbose => true)
+end
+
+desc "Create RPM"
+task 'rpm' => ['gem:copy'] do
+  Dir["**/rubygem-*.spec"].each { |spec| puts `rpmbuild --define '_topdir #{topdir}' -ba #{spec}` }
 end
