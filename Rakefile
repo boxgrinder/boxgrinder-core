@@ -59,10 +59,19 @@ end
 
 desc "Create RPM"
 task 'rpm' => ['gem:copy'] do
-  Dir["**/rubygem-*.spec"].each { |spec| puts `rpmbuild --define '_topdir #{topdir}' -ba #{spec}` }
+  Dir["**/rubygem-*.spec"].each do |spec|
+    system "rpmbuild --define '_topdir #{topdir}' -ba #{spec}"
+    exit 1 unless $? == 0
+  end
 end
 
 desc "Install RPM"
 task 'rpm:install' => ['rpm'] do
-  puts `yum localinstall #{topdir}/RPMS/noarch/*.rpm`
+  puts "sudo yum -y remove rubygem-boxgrinder-core"
+  system "sudo yum -y remove rubygem-boxgrinder-core"
+  exit 1 unless $? == 0
+
+  puts "sudo yum -y --nogpgcheck localinstall #{topdir}/RPMS/noarch/*.rpm"
+  system "sudo yum -y --nogpgcheck localinstall #{topdir}/RPMS/noarch/*.rpm"
+  exit 1 unless $? == 0
 end
