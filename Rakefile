@@ -40,7 +40,7 @@ Spec::Rake::SpecTask.new('spec:coverage') do |t|
   t.spec_files = FileList["spec/**/*-spec.rb"]
   t.spec_opts = ['--colour', '--format', 'specdoc', '-b']
   t.rcov = true
-  t.rcov_opts = ['--exclude', 'spec,teamcity/*,/usr/lib/ruby/,.gem/ruby,/boxgrinder-core/,/boxgrinder-build/']
+  t.rcov_opts = ['--exclude', 'spec,teamcity/*,/usr/lib/ruby/,.gem/ruby,/boxgrinder-build/,/gems/']
 end
 
 topdir = "#{Dir.pwd}/pkg/rpmbuild"
