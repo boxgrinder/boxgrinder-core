@@ -74,6 +74,7 @@ rm -rf %{buildroot}
 
 %changelog
 * Tue Nov 09 2010  <mgoldman@redhat.com> - 0.1.2-1
+- [BGBUILD-87] Set default filesystem to ext4 for Fedora 13+
 - [BGBUILD-65] Allow to specify own repos overriding default repos provided for selected OS
 
 * Tue Nov 09 2010  <mgoldman@redhat.com> - 0.1.1-2

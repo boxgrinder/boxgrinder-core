@@ -1,6 +1,7 @@
 
 v0.1.2
 
+* [BGBUILD-87] Set default filesystem to ext4 for Fedora 13+
 * [BGBUILD-65] Allow to specify own repos overriding default repos provided for selected OS
 
 v0.1.1

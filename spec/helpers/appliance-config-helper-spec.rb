@@ -100,11 +100,11 @@ module BoxGrinder
       config_c2.post['base'] = ["5_1", "5_2"]
 
       prepare_helper([
-                             config_a,
-                             config_b1,
-                             config_c1,
-                             config_b2,
-                             config_c2
+                         config_a,
+                         config_b1,
+                         config_c1,
+                         config_b2,
+                         config_c2
                      ])
       @helper.instance_variable_set(:@appliance_config, config_a.clone)
 
@@ -137,15 +137,19 @@ module BoxGrinder
       config.post['ec2'].should == ['2_1', '2_2']
     end
 
-    it "should merge partitions" do
+    it "should merge partitions for default fs_types without options for Fedora 13 (ext4)" do
       config_a = ApplianceConfig.new
       config_a.name = 'a'
       config_a.appliances << 'b'
       config_a.hardware.partitions = {"/" => {'size' => '2'}}
+      config_a.os.name = 'fedora'
+      config_a.os.version = '13'
 
       config_b = ApplianceConfig.new
       config_b.name = 'b'
       config_b.hardware.partitions = {"/" => {'size' => '4'}, "/home" => {'size' => '2'}}
+      config_b.os.name = 'fedora'
+      config_b.os.version = '13'
 
       prepare_helper([config_a, config_b])
       @helper.instance_variable_set(:@appliance_config, config_a.clone)
@@ -154,7 +158,55 @@ module BoxGrinder
 
       config = @helper.instance_variable_get(:@appliance_config)
       config.hardware.partitions.size.should == 2
-      config.hardware.partitions.should == {"/" => {'size' => '4'}, "/home" => {'size' => '2'}}
+      config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4'}, "/home" => {'size' => '2', 'type' => 'ext4'}}
+    end
+
+    it "should merge partitions for default fs_types without options for Fedora 13 (ext4) and specified options" do
+      config_a = ApplianceConfig.new
+      config_a.name = 'a'
+      config_a.appliances << 'b'
+      config_a.hardware.partitions = {"/" => {'size' => '2'}}
+      config_a.os.name = 'fedora'
+      config_a.os.version = '13'
+
+      config_b = ApplianceConfig.new
+      config_b.name = 'b'
+      config_b.hardware.partitions = {"/" => {'size' => '4', 'options' => 'barrier=0,nodelalloc,nobh,noatime'}, "/home" => {'size' => '2'}}
+      config_b.os.name = 'fedora'
+      config_b.os.version = '13'
+
+      prepare_helper([config_a, config_b])
+      @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+      @helper.merge_partitions
+
+      config = @helper.instance_variable_get(:@appliance_config)
+      config.hardware.partitions.size.should == 2
+      config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4', "options"=>"barrier=0,nodelalloc,nobh,noatime"}, "/home" => {'size' => '2', 'type' => 'ext4'}}
+    end
+
+    it "should merge partitions for default fs_types without options for Fedora 11 (ext3)" do
+      config_a = ApplianceConfig.new
+      config_a.name = 'a'
+      config_a.appliances << 'b'
+      config_a.hardware.partitions = {"/" => {'size' => '2'}}
+      config_a.os.name = 'fedora'
+      config_a.os.version = '11'
+
+      config_b = ApplianceConfig.new
+      config_b.name = 'b'
+      config_b.hardware.partitions = {"/" => {'size' => '4'}, "/home" => {'size' => '2'}}
+      config_b.os.name = 'fedora'
+      config_b.os.version = '11'
+
+      prepare_helper([config_a, config_b])
+      @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+      @helper.merge_partitions
+
+      config = @helper.instance_variable_get(:@appliance_config)
+      config.hardware.partitions.size.should == 2
+      config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext3'}, "/home" => {'size' => '2', 'type' => 'ext3'}}
     end
 
     it "should merge partitions with different filesystem types" do
@@ -162,10 +214,14 @@ module BoxGrinder
       config_a.name = 'a'
       config_a.appliances << 'b'
       config_a.hardware.partitions = {"/" => {'size' => '2', 'type' => 'ext4'}}
+      config_a.os.name = 'fedora'
+      config_a.os.version = '12'
 
       config_b = ApplianceConfig.new
       config_b.name = 'b'
       config_b.hardware.partitions = {"/" => {'size' => '4', 'type' => 'ext3'}, "/home" => {'size' => '2'}}
+      config_b.os.name = 'fedora'
+      config_b.os.version = '11'
 
       prepare_helper([config_a, config_b])
       @helper.instance_variable_set(:@appliance_config, config_a.clone)
@@ -174,7 +230,7 @@ module BoxGrinder
 
       config = @helper.instance_variable_get(:@appliance_config)
       config.hardware.partitions.size.should == 2
-      config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4'}, "/home" => {'size' => '2'}}
+      config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4'}, "/home" => {'size' => '2', 'type' => 'ext3'}}
     end
 
     it "should merge partitions with different options" do
@@ -182,10 +238,14 @@ module BoxGrinder
       config_a.name = 'a'
       config_a.appliances << 'b'
       config_a.hardware.partitions = {"/" => {'size' => '2', 'type' => 'ext4', 'options' => 'barrier=0,nodelalloc,nobh,noatime'}}
+      config_a.os.name = 'fedora'
+      config_a.os.version = '13'
 
       config_b = ApplianceConfig.new
       config_b.name = 'b'
       config_b.hardware.partitions = {"/" => {'size' => '4', 'type' => 'ext3', 'options' => 'shouldnt appear'}, "/home" => {'size' => '2'}}
+      config_b.os.name = 'fedora'
+      config_b.os.version = '13'
 
       prepare_helper([config_a, config_b])
       @helper.instance_variable_set(:@appliance_config, config_a.clone)
@@ -194,7 +254,7 @@ module BoxGrinder
 
       config = @helper.instance_variable_get(:@appliance_config)
       config.hardware.partitions.size.should == 2
-      config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4', 'options' => 'barrier=0,nodelalloc,nobh,noatime'}, "/home" => {'size' => '2'}}
+      config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4', 'options' => 'barrier=0,nodelalloc,nobh,noatime'}, "/home" => {'size' => '2', 'type' => 'ext4'}}
     end
 
     it "should merge partitions with different options, another case where type is changing - options should be vanished" do
@@ -202,10 +262,14 @@ module BoxGrinder
       config_a.name = 'a'
       config_a.appliances << 'b'
       config_a.hardware.partitions = {"/" => {'size' => '2', 'type' => 'ext4'}}
+      config_a.os.name = 'fedora'
+      config_a.os.version = '13'
 
       config_b = ApplianceConfig.new
       config_b.name = 'b'
       config_b.hardware.partitions = {"/" => {'size' => '4', 'type' => 'ext3', 'options' => 'shouldnt appear'}, "/home" => {'size' => '2'}}
+      config_b.os.name = 'fedora'
+      config_b.os.version = '13'
 
       prepare_helper([config_a, config_b])
       @helper.instance_variable_set(:@appliance_config, config_a.clone)
@@ -214,7 +278,7 @@ module BoxGrinder
 
       config = @helper.instance_variable_get(:@appliance_config)
       config.hardware.partitions.size.should == 2
-      config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4'}, "/home" => {'size' => '2'}}
+      config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4'}, "/home" => {'size' => '2', 'type' => 'ext4'}}
     end
 
     it "should substitute variables in repos" do

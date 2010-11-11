@@ -76,8 +76,8 @@ module BoxGrinder
         var = resolve_stack.last
         refs = @appliance_config.variables.keys.delete_if { |k|
           @appliance_config.variables[k].nil? ||
-                  @appliance_config.variables[k].index("##{k}#").nil? ||
-                  resolve_stack.index(k).nil?
+              @appliance_config.variables[k].index("##{k}#").nil? ||
+              resolve_stack.index(k).nil?
         }
         refs.each do |ref|
           resolve(Arrays.new(resolve_stack).push(ref), resolved_set) unless resolved_set.include?(ref)
@@ -111,15 +111,40 @@ module BoxGrinder
             unless partition['type'].nil?
               partitions[root].delete('options') if partitions[root]['type'] != partition['type']
               partitions[root]['type'] = partition['type']
+            else
+              partitions[root]['type'] = default_filesystem_type
             end
-            partitions[root]['options'] = partition['options'] unless partition['options'].nil? and partitions[root]['type'] == partition['type']
           else
-            partitions[root] = partition
+            partitions[root] = {}
+            partitions[root]['size'] = partition['size']
+
+            unless partition['type'].nil?
+              partitions[root]['type'] = partition['type']
+            else
+              partitions[root]['type'] = default_filesystem_type
+            end
           end
+
+          partitions[root]['options'] = partition['options'] unless partition['options'].nil?
         end
       end
 
       @appliance_config.hardware.partitions = partitions
+    end
+
+    def default_filesystem_type
+      fs = 'ext3'
+
+      case @appliance_config.os.name
+        when 'fedora'
+
+          case @appliance_config.os.version
+            when '13', '14'
+              fs = 'ext4'
+          end
+      end
+
+      fs
     end
 
     def merge_memory
