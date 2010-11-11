@@ -5,8 +5,8 @@
 
 Summary: Core library for BoxGrinder
 Name: rubygem-%{gemname}
-Version: 0.1.1
-Release: 2%{?dist}
+Version: 0.1.2
+Release: 1%{?dist}
 Group: Development/Languages
 License: LGPLv3+
 URL: http://www.jboss.org/boxgrinder
@@ -73,6 +73,9 @@ rm -rf %{buildroot}
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
+* Tue Nov 09 2010  <mgoldman@redhat.com> - 0.1.2-1
+- [BGBUILD-65] Allow to specify own repos overriding default repos provided for selected OS
+
 * Tue Nov 09 2010  <mgoldman@redhat.com> - 0.1.1-2
 - [BGBUILD-85] Adjust BoxGrinder spec files for review
 - Added 'check' section that executes tests

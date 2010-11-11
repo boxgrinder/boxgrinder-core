@@ -49,7 +49,7 @@ end
 topdir = "#{Dir.pwd}/pkg/rpmbuild"
 directory "#{topdir}/SOURCES"
 
-task 'gem:copy' => [:gem, 'rpm:topdir'] do
+task 'gem:copy' => [:clean, :manifest, :gem, 'rpm:topdir'] do
   Dir["**/pkg/*.gem"].each { |gem| FileUtils.cp(gem, "#{topdir}/SOURCES", :verbose => true) }
 end
 

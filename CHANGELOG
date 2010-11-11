@@ -1,4 +1,8 @@
 
+v0.1.2
+
+* [BGBUILD-65] Allow to specify own repos overriding default repos provided for selected OS
+
 v0.1.1
 
 * [BGBUILD-65] Allow to specify own repos overriding default repos provided for selected OS
