@@ -85,6 +85,11 @@ module BoxGrinder
         @helper.read_yaml('default_repos_true.appl').default_repos.should == true
       end
 
+      it "should read default_repos but not set it" do
+        YAML.should_receive(:load_file).with('default_repos_empty.appl').and_return({})
+        @helper.read_yaml('default_repos_empty.appl').default_repos.should == nil
+      end
+
       it "should read default_repos and raise" do
         YAML.should_receive(:load_file).with('default_repos_bad.appl').and_return({'default_repos'=>'something'})
 

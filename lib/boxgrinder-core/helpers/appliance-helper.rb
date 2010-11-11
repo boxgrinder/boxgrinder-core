@@ -81,9 +81,11 @@ module BoxGrinder
 
       appliance_config.version       = definition['version'].to_s unless definition['version'].nil?
       appliance_config.release       = definition['release'].to_s unless definition['release'].nil?
-      appliance_config.default_repos = definition['default_repos'] unless definition['default_repos'].nil?
 
-      raise "#{File.basename(file)}: default_repos should be set to true or false" unless appliance_config.default_repos.is_a?(TrueClass) or appliance_config.default_repos.is_a?(FalseClass) 
+      unless definition['default_repos'].nil?
+        appliance_config.default_repos = definition['default_repos']
+        raise "#{File.basename(file)}: default_repos should be set to true or false" unless appliance_config.default_repos.is_a?(TrueClass) or appliance_config.default_repos.is_a?(FalseClass)
+      end
 
       unless definition['packages'].nil?
         appliance_config.packages.includes     = definition['packages']['includes'] unless definition['packages']['includes'].nil?
