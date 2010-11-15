@@ -6,14 +6,13 @@
 Summary: Core library for BoxGrinder
 Name: rubygem-%{gemname}
 Version: 0.1.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Group: Development/Languages
 License: LGPLv3+
 URL: http://www.jboss.org/boxgrinder
 Source0: http://rubygems.org/gems/%{gemname}-%{version}.gem
 
 Requires: ruby(abi) = %{rubyabi}
-Requires: rubygems
 Requires: rubygem(open4)
 Requires: rubygem(hashery)
 
@@ -75,6 +74,9 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
+* Mon Nov 15 2010  <mgoldman@redhat.com> - 0.1.3-2
+- Removing unecessary Requires: rubygems
+
 * Mon Nov 15 2010  <mgoldman@redhat.com> - 0.1.3-1
 - Removed BuildRoot tag
 - Adjusted Requires and BuildRequires
