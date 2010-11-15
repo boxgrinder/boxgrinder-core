@@ -16,8 +16,9 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'rubygems'
 require 'boxgrinder-core/defaults'
-require 'openhash/openhash'
+require 'hashery/opencascade'
 
 module BoxGrinder
   class ApplianceConfig
@@ -27,13 +28,13 @@ module BoxGrinder
 
       @variables = {}
 
-      @os = OpenHash.new
+      @os = OpenCascade.new
 
       @os.name      = nil
       @os.version   = nil
       @os.password  = nil
 
-      @hardware = OpenHash.new
+      @hardware = OpenCascade.new
 
       @hardware.cpus      = APPLIANCE_DEFAULTS[:hardware][:cpus]
       @hardware.memory    = APPLIANCE_DEFAULTS[:hardware][:memory]
@@ -41,7 +42,7 @@ module BoxGrinder
 
       @post = {}
 
-      @packages = OpenHash.new
+      @packages = OpenCascade.new
       @packages.includes = []
       @packages.excludes = []
 
@@ -81,7 +82,7 @@ module BoxGrinder
     end
 
     def initialize_paths
-      @path = OpenHash.new
+      @path = OpenCascade.new
 
       @path.os        = "#{@os.name}/#{@os.version}"
       @path.main      = "#{@hardware.arch}/#{@path.os}"

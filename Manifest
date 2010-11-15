@@ -16,7 +16,6 @@ lib/boxgrinder-core/models/config.rb
 lib/boxgrinder-core/models/task.rb
 lib/boxgrinder-core/validators/appliance-config-validator.rb
 lib/boxgrinder-core/validators/errors.rb
-lib/openhash/openhash.rb
 rubygem-boxgrinder-core.spec
 spec/helpers/appliance-config-helper-spec.rb
 spec/helpers/appliance-helper-spec.rb
