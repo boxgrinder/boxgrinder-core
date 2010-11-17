@@ -26,7 +26,7 @@ Echoe.new("boxgrinder-core") do |p|
   p.summary     = "Core library for BoxGrinder"
   p.url         = "http://www.jboss.org/boxgrinder"
   p.email       = "info@boxgrinder.org"
-  p.runtime_dependencies = ['open4 >=1.0.0']
+  p.runtime_dependencies = ['open4 >=1.0.0', 'hashery >=1.3.0']
 end
 
 desc "Run all tests"

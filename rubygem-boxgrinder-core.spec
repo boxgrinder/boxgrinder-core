@@ -6,7 +6,7 @@
 Summary: Core library for BoxGrinder
 Name: rubygem-%{gemname}
 Version: 0.1.3
-Release: 2%{?dist}
+Release: 3%{?dist}
 Group: Development/Languages
 License: LGPLv3+
 URL: http://www.jboss.org/boxgrinder
@@ -20,6 +20,7 @@ BuildRequires: rubygem(rake)
 BuildRequires: rubygem(rspec)
 BuildRequires: rubygem(open4)
 BuildRequires: rubygem(hashery)
+BuildRequires: rubygem(echoe)
 
 BuildArch: noarch
 Provides: rubygem(%{gemname}) = %{version}
@@ -36,21 +37,19 @@ Requires:%{name} = %{version}-%{release}
 Documentation for %{name}
 
 %prep
+%setup -q -c -T
+mkdir -p .%{gemdir}
+gem install --local --install-dir .%{gemdir} \
+            --force --rdoc %{SOURCE0}
 
 %build
 
 %install
-rm -rf %{buildroot}
-rm -rf %{_builddir}%{gemdir}
-
-mkdir -p %{_builddir}%{gemdir}
-gem install --local --install-dir %{_builddir}%{gemdir} \
-            --force --rdoc %{SOURCE0}
-mkdir -p %{buildroot}/%{gemdir}
-cp -r %{_builddir}%{gemdir}/* %{buildroot}/%{gemdir}
+mkdir -p %{buildroot}%{gemdir}
+cp -a .%{gemdir}/* %{buildroot}%{gemdir}/
 
 %check
-pushd %{_builddir}/%{geminstdir}
+pushd .%{geminstdir}
 rake spec
 popd
 
@@ -74,6 +73,10 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
+* Wed Nov 17 2010  <mgoldman@redhat.com> - 0.1.3-3
+- Added: BuildRequires: rubygem(echoe)
+- Changed the way Gem is installed and tests are exeuted
+
 * Mon Nov 15 2010  <mgoldman@redhat.com> - 0.1.3-2
 - Removing unecessary Requires: rubygems
 
