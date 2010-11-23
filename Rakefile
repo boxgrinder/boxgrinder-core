@@ -19,6 +19,7 @@
 require 'rubygems'
 require 'spec/rake/spectask'
 require 'echoe'
+require 'rbconfig'
 
 Echoe.new("boxgrinder-core") do |p|
   p.project     = "BoxGrinder"
@@ -47,11 +48,15 @@ Spec::Rake::SpecTask.new('spec:coverage') do |t|
 end
 
 desc "Create RPM"
-task 'rpm' => ['gem'] do
+task :rpm, :target, :version, :arch, :needs => ['gem'] do |t, args|
+  target  = args[:target]   || 'fedora'
+  version = args[:version]  || 'rawhide'
+  arch    = args[:arch]     || RbConfig::CONFIG['host_cpu']
+
   Dir["**/rubygem-*.spec"].each do |spec|
-    `mock -v -r fedora-rawhide-x86_64 --buildsrpm --sources pkg/*.gem --spec #{spec} --resultdir pkg/`
+    `mock -v -r #{target}-#{version}-#{arch} --buildsrpm --sources pkg/*.gem --spec #{spec} --resultdir pkg/`
     exit 1 unless $? == 0
-    `mock -v -r fedora-rawhide-x86_64 --rebuild pkg/*.rpm --resultdir pkg/`
+    `mock -v -r #{target}-#{version}-#{arch} --rebuild pkg/*.rpm --resultdir pkg/`
     exit 1 unless $? == 0
   end
 end
