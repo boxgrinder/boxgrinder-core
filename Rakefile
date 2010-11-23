@@ -46,32 +46,12 @@ Spec::Rake::SpecTask.new('spec:coverage') do |t|
   t.verbose = true
 end
 
-topdir = "#{Dir.pwd}/pkg/rpmbuild"
-directory "#{topdir}/SOURCES"
-
-task 'gem:copy' => [:clean, :manifest, :gem, 'rpm:topdir'] do
-  Dir["**/pkg/*.gem"].each { |gem| FileUtils.cp(gem, "#{topdir}/SOURCES", :verbose => true) }
-end
-
-task 'rpm:topdir' do
-  FileUtils.mkdir_p(["#{topdir}/SOURCES", "#{topdir}/RPMS", "#{topdir}/BUILD", "#{topdir}/SPECS", "#{topdir}/SRPMS"], :verbose => true)
-end
-
 desc "Create RPM"
-task 'rpm' => ['gem:copy'] do
+task 'rpm' => ['gem'] do
   Dir["**/rubygem-*.spec"].each do |spec|
-    `rpmbuild --define '_topdir #{topdir}' -ba #{spec}`
+    `mock -v -r fedora-rawhide-x86_64 --buildsrpm --sources pkg/*.gem --spec #{spec} --resultdir pkg/`
+    exit 1 unless $? == 0
+    `mock -v -r fedora-rawhide-x86_64 --rebuild pkg/*.rpm --resultdir pkg/`
     exit 1 unless $? == 0
   end
-end
-
-desc "Install RPM"
-task 'rpm:install' => ['rpm'] do
-  puts "sudo yum -y remove rubygem-boxgrinder-core"
-  system "sudo yum -y remove rubygem-boxgrinder-core"
-  exit 1 unless $? == 0
-
-  puts "sudo yum -y --nogpgcheck localinstall #{topdir}/RPMS/noarch/*.rpm"
-  system "sudo yum -y --nogpgcheck localinstall #{topdir}/RPMS/noarch/*.rpm"
-  exit 1 unless $? == 0
 end
