@@ -21,22 +21,23 @@ require 'boxgrinder-core/defaults'
 
 module BoxGrinder
   class ApplianceConfigValidator
-    def initialize( appliance_config, options = {} )
+    def initialize(appliance_config, options = {})
       @appliance_config = appliance_config
-      @options          = options
+      @options = options
     end
 
     def validate
-      check_for_missing_field( 'name' )
-      check_for_missing_field( 'summary' )
+      check_for_missing_field('name')
+      check_for_missing_field('summary')
 
+      validate_os
       validate_hardware
       validate_repos
     end
 
     protected
 
-    def check_for_missing_field( name )
+    def check_for_missing_field(name)
       raise ApplianceValidationError, "Missing field: appliance definition file should have field '#{name}'" if eval("@appliance_config.#{name}").nil?
     end
 
@@ -46,6 +47,10 @@ module BoxGrinder
       raise ApplianceValidationError, "Not valid memory amount: '#{@appliance_config.hardware.memory}' is not allowed here. Memory should be multiplicity of 64. Please correct your appliance definition file" if (@appliance_config.hardware.memory.to_i % 64 > 0)
 
       raise ApplianceValidationError, "No partitions found. Please correct your appliance definition file" if @appliance_config.hardware.partitions.size == 0
+    end
+
+    def validate_os
+      raise ApplianceValidationError, "No operating system selected" if @appliance_config.os.name.nil?
     end
 
     def validate_repos
