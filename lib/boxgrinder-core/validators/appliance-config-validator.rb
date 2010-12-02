@@ -30,7 +30,6 @@ module BoxGrinder
       check_for_missing_field( 'name' )
       check_for_missing_field( 'summary' )
 
-      validate_os
       validate_hardware
       validate_repos
     end
@@ -39,16 +38,6 @@ module BoxGrinder
 
     def check_for_missing_field( name )
       raise ApplianceValidationError, "Missing field: appliance definition file should have field '#{name}'" if eval("@appliance_config.#{name}").nil?
-    end
-
-    def validate_os
-      raise "No operating system plugins installed. Install one or more operating system plugin. See http://community.jboss.org/docs/DOC-15081 and http://community.jboss.org/docs/DOC-15214 for more info" if PluginManager.instance.plugins[:os].empty?
-
-      os_plugin = PluginManager.instance.plugins[:os][@appliance_config.os.name.to_sym]
-
-      raise ApplianceValidationError, "No operating system selected" if @appliance_config.os.name.nil?
-      raise ApplianceValidationError, "Not supported operating system selected: #{@appliance_config.os.name}. Make sure you have installed right operating system plugin, see http://community.jboss.org/docs/DOC-15214. Supported OSes are: #{PluginManager.instance.plugins[:os].keys.join(", ")}" if os_plugin.nil?
-      raise ApplianceValidationError, "Not supported operating system version selected: #{@appliance_config.os.version}. Supported versions are: #{os_plugin[:versions].join(", ")}" unless @appliance_config.os.version.nil? or os_plugin[:versions].include?( @appliance_config.os.version )
     end
 
     def validate_hardware

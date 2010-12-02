@@ -32,23 +32,23 @@ module BoxGrinder
       configs = []
 
       appliance_config =
-              case definition_file_extension
-                when '.appl', '.yml', '.yaml'
-                  read_yaml(definition_file)
-                when '.xml'
-                  read_xml(definition_file)
-                else
-                  unless content_type.nil?
-                    case content_type
-                      when 'application/x-yaml', 'text/yaml'
-                        read_yaml(definition_file)
-                      when 'application/xml', 'text/xml', 'application/x-xml'
-                        read_xml(definition_file)
-                    end
-                  else
-                    raise 'Unsupported file format for appliance definition file'
-                  end
+          case definition_file_extension
+            when '.appl', '.yml', '.yaml'
+              read_yaml(definition_file)
+            when '.xml'
+              read_xml(definition_file)
+            else
+              unless content_type.nil?
+                case content_type
+                  when 'application/x-yaml', 'text/yaml'
+                    read_yaml(definition_file)
+                  when 'application/xml', 'text/xml', 'application/x-xml'
+                    read_xml(definition_file)
+                end
               end
+          end
+
+      raise 'Unsupported file format for appliance definition file' if appliance_config.nil?
 
       configs << appliance_config
 
@@ -56,7 +56,7 @@ module BoxGrinder
         configs << read_definitions("#{File.dirname(definition_file)}/#{appliance_name}#{definition_file_extension}").first
       end unless appliance_config.appliances.nil? or !appliance_config.appliances.is_a?(Array)
 
-      [ configs.flatten, appliance_config ]
+      [configs.flatten, appliance_config]
     end
 
     def read_yaml(file)
@@ -71,16 +71,16 @@ module BoxGrinder
 
       appliance_config = ApplianceConfig.new
 
-      appliance_config.name         = definition['name'] unless definition['name'].nil?
-      appliance_config.summary      = definition['summary'] unless definition['summary'].nil?
+      appliance_config.name = definition['name'] unless definition['name'].nil?
+      appliance_config.summary = definition['summary'] unless definition['summary'].nil?
 
       definition['variables'].each { |key, value| appliance_config.variables[key] = value } unless definition['variables'].nil?
 
-      appliance_config.appliances   = definition['appliances'] unless definition['appliances'].nil?
-      appliance_config.repos        = definition['repos'] unless definition['repos'].nil?
+      appliance_config.appliances = definition['appliances'] unless definition['appliances'].nil?
+      appliance_config.repos = definition['repos'] unless definition['repos'].nil?
 
-      appliance_config.version       = definition['version'].to_s unless definition['version'].nil?
-      appliance_config.release       = definition['release'].to_s unless definition['release'].nil?
+      appliance_config.version = definition['version'].to_s unless definition['version'].nil?
+      appliance_config.release = definition['release'].to_s unless definition['release'].nil?
 
       unless definition['default_repos'].nil?
         appliance_config.default_repos = definition['default_repos']
@@ -88,22 +88,22 @@ module BoxGrinder
       end
 
       unless definition['packages'].nil?
-        appliance_config.packages.includes     = definition['packages']['includes'] unless definition['packages']['includes'].nil?
-        appliance_config.packages.excludes     = definition['packages']['excludes'] unless definition['packages']['excludes'].nil?
+        appliance_config.packages.includes = definition['packages']['includes'] unless definition['packages']['includes'].nil?
+        appliance_config.packages.excludes = definition['packages']['excludes'] unless definition['packages']['excludes'].nil?
       end
 
       unless definition['os'].nil?
-        appliance_config.os.name      = definition['os']['name'].to_s unless definition['os']['name'].nil?
-        appliance_config.os.version   = definition['os']['version'].to_s unless definition['os']['version'].nil?
-        appliance_config.os.password  = definition['os']['password'].to_s unless definition['os']['password'].nil?
+        appliance_config.os.name = definition['os']['name'].to_s unless definition['os']['name'].nil?
+        appliance_config.os.version = definition['os']['version'].to_s unless definition['os']['version'].nil?
+        appliance_config.os.password = definition['os']['password'].to_s unless definition['os']['password'].nil?
       end
 
       unless definition['hardware'].nil?
-        appliance_config.hardware.arch        = definition['hardware']['arch'] unless definition['hardware']['arch'].nil?
-        appliance_config.hardware.cpus        = definition['hardware']['cpus'] unless definition['hardware']['cpus'].nil?
-        appliance_config.hardware.memory      = definition['hardware']['memory'] unless definition['hardware']['memory'].nil?
-        appliance_config.hardware.network     = definition['hardware']['network'] unless definition['hardware']['network'].nil?
-        appliance_config.hardware.partitions  = definition['hardware']['partitions'] unless definition['hardware']['partitions'].nil?
+        appliance_config.hardware.arch = definition['hardware']['arch'] unless definition['hardware']['arch'].nil?
+        appliance_config.hardware.cpus = definition['hardware']['cpus'] unless definition['hardware']['cpus'].nil?
+        appliance_config.hardware.memory = definition['hardware']['memory'] unless definition['hardware']['memory'].nil?
+        appliance_config.hardware.network = definition['hardware']['network'] unless definition['hardware']['network'].nil?
+        appliance_config.hardware.partitions = definition['hardware']['partitions'] unless definition['hardware']['partitions'].nil?
       end
 
       definition['post'].each { |key, value| appliance_config.post[key] = value } unless definition['post'].nil?
