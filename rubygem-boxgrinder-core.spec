@@ -5,8 +5,8 @@
 
 Summary: Core library for BoxGrinder
 Name: rubygem-%{gemname}
-Version: 0.1.3
-Release: 3%{?dist}
+Version: 0.1.4
+Release: 1%{?dist}
 Group: Development/Languages
 License: LGPLv3+
 URL: http://www.jboss.org/boxgrinder
@@ -73,6 +73,9 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
+* Thu Dec 02 2010  <mgoldman@redhat.com> - 0.1.4-1
+- Updated to new upstream release: 0.1.4
+
 * Wed Nov 17 2010  <mgoldman@redhat.com> - 0.1.3-3
 - Added: BuildRequires: rubygem(echoe)
 - Changed the way Gem is installed and tests are exeuted
