@@ -10,7 +10,6 @@ lib/boxgrinder-core/helpers/appliance-config-helper.rb
 lib/boxgrinder-core/helpers/appliance-helper.rb
 lib/boxgrinder-core/helpers/exec-helper.rb
 lib/boxgrinder-core/helpers/log-helper.rb
-lib/boxgrinder-core/helpers/queue-helper.rb
 lib/boxgrinder-core/models/appliance-config.rb
 lib/boxgrinder-core/models/config.rb
 lib/boxgrinder-core/models/task.rb
@@ -21,7 +20,6 @@ spec/helpers/appliance-config-helper-spec.rb
 spec/helpers/appliance-helper-spec.rb
 spec/helpers/exec-helper-spec.rb
 spec/helpers/log-helper-spec.rb
-spec/helpers/queue-helper-spec.rb
 spec/rspec/ls/one
 spec/rspec/ls/two
 spec/rspec/rspec-config-helper.rb
