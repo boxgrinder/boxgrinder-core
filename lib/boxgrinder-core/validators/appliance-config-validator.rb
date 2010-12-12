@@ -28,7 +28,7 @@ module BoxGrinder
 
     def validate
       check_for_missing_field('name')
-      check_for_missing_field('summary')
+#      check_for_missing_field('summary')
 
       validate_os
       validate_hardware

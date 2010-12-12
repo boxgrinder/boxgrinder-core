@@ -1,4 +1,8 @@
 
+v0.1.5
+
+* [BGBUILD-73] Add support for kickstart files
+
 v0.1.4
 
 * Removed QueueHelper class

@@ -5,7 +5,7 @@
 
 Summary: Core library for BoxGrinder
 Name: rubygem-%{gemname}
-Version: 0.1.4
+Version: 0.1.5
 Release: 1%{?dist}
 Group: Development/Languages
 License: LGPLv3+
@@ -73,6 +73,10 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
+* Sun Dec 12 2010  <mgoldman@redhat.com> - 0.1.5-1
+- Updated to upstream version: 0.1.5
+- [BGBUILD-73] Add support for kickstart files
+
 * Thu Dec 02 2010  <mgoldman@redhat.com> - 0.1.4-1
 - Updated to new upstream release: 0.1.4
 

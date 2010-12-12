@@ -18,41 +18,41 @@
 
 module BoxGrinder
   # here are global variables
-  SUPPORTED_ARCHES = [ "i386", "x86_64" ]
+  SUPPORTED_ARCHES        = ["i386", "x86_64"]
 
-  APPLIANCE_DEFAULTS = {
-          :os => {
-                  :password => "boxgrinder"
-          },
-          :hardware => {
-                  :partition => 1,
-                  :memory => 256,
-                  :network => "NAT",
-                  :cpus => 1
-          }
+  APPLIANCE_DEFAULTS      = {
+      :os       => {
+          :password => "boxgrinder"
+      },
+      :hardware => {
+          :partitions => {"/" => { 'size' => 1 }},
+          :memory     => 256,
+          :network    => "NAT",
+          :cpus       => 1
+      }
   }
 
-  SUPPORTED_DESKTOP_TYPES = [ "gnome" ]
+  SUPPORTED_DESKTOP_TYPES = ["gnome"]
 
-  DEFAULT_LOCATION = {
-          :log => 'log/boxgrinder.log'
+  DEFAULT_LOCATION        = {
+      :log => 'log/boxgrinder.log'
   }
 
-  DEFAULT_HELP_TEXT = {
-          :general => "See documentation: http://community.jboss.org/docs/DOC-14358."
+  DEFAULT_HELP_TEXT       = {
+      :general => "See documentation: http://community.jboss.org/docs/DOC-14358."
   }
 
-  DEFAULT_PROJECT_CONFIG = {
-          :name           => 'BoxGrinder',
-          :version        => '1.0.0',
-          :release        => 'SNAPSHOT',
-          :dir_build      => 'build',
-          #:topdir            => "#{self.} build/topdir",
-          :dir_src_cache  => '/var/cache/boxgrinder/sources-cache',
-          :dir_rpms_cache => '/var/cache/boxgrinder/rpms-cache',
-          :dir_specs      => 'specs',
-          :dir_appliances => 'appliances',
-          :dir_src        => 'src',
-          :dir_kickstarts => 'kickstarts'
+  DEFAULT_PROJECT_CONFIG  = {
+      :name           => 'BoxGrinder',
+      :version        => '1.0.0',
+      :release        => 'SNAPSHOT',
+      :dir_build      => 'build',
+      #:topdir            => "#{self.} build/topdir",
+      :dir_src_cache  => '/var/cache/boxgrinder/sources-cache',
+      :dir_rpms_cache => '/var/cache/boxgrinder/rpms-cache',
+      :dir_specs      => 'specs',
+      :dir_appliances => 'appliances',
+      :dir_src        => 'src',
+      :dir_kickstarts => 'kickstarts'
   }
 end

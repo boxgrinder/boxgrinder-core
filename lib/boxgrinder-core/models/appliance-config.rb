@@ -23,34 +23,35 @@ require 'hashery/opencascade'
 module BoxGrinder
   class ApplianceConfig
     def initialize
-      @name     = nil
-      @summary  = nil
+      @name                = nil
+      @summary             = nil
 
-      @variables = {}
+      @variables           = {}
 
-      @os = OpenCascade.new
+      @os                  = OpenCascade.new
 
-      @os.name      = nil
-      @os.version   = nil
-      @os.password  = nil
+      @os.name             = nil
+      @os.version          = nil
+      @os.password         = nil
 
-      @hardware = OpenCascade.new
+      @hardware            = OpenCascade.new
 
-      @hardware.cpus      = APPLIANCE_DEFAULTS[:hardware][:cpus]
-      @hardware.memory    = APPLIANCE_DEFAULTS[:hardware][:memory]
-      @hardware.network   = APPLIANCE_DEFAULTS[:hardware][:network]
+      @hardware.cpus       = APPLIANCE_DEFAULTS[:hardware][:cpus]
+      @hardware.memory     = APPLIANCE_DEFAULTS[:hardware][:memory]
+      @hardware.network    = APPLIANCE_DEFAULTS[:hardware][:network]
+      @hardware.partitions = APPLIANCE_DEFAULTS[:hardware][:partitions]
 
-      @post = {}
+      @post                = {}
 
-      @packages = OpenCascade.new
-      @packages.includes = []
-      @packages.excludes = []
+      @packages            = OpenCascade.new
+      @packages.includes   = []
+      @packages.excludes   = []
 
-      @appliances   = []
-      @repos        = []
+      @appliances          = []
+      @repos               = []
 
-      @version      = 1
-      @release      = 0
+      @version             = 1
+      @release             = 0
     end
 
     attr_reader :variables
@@ -76,13 +77,13 @@ module BoxGrinder
     end
 
     def init_arch
-      @hardware.arch = `uname -m`.chomp.strip
+      @hardware.arch      = `uname -m`.chomp.strip
       @hardware.base_arch = is64bit? ? "x86_64" : "i386"
       self
     end
 
     def initialize_paths
-      @path = OpenCascade.new
+      @path           = OpenCascade.new
 
       @path.os        = "#{@os.name}/#{@os.version}"
       @path.main      = "#{@hardware.arch}/#{@path.os}"
