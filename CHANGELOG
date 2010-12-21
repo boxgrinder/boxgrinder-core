@@ -1,3 +1,6 @@
+v0.1.6
+
+* [BGBUILD-100] Enable boxgrinder_build to create a Fedora image with encrypted partition(s)
 
 v0.1.5
 

@@ -23,7 +23,7 @@ module BoxGrinder
   class ApplianceConfigHelper
 
     def initialize(appliance_configs)
-      @appliance_configs  = appliance_configs.reverse
+      @appliance_configs = appliance_configs.reverse
     end
 
     def merge(appliance_config)
@@ -123,6 +123,12 @@ module BoxGrinder
             else
               partitions[root]['type'] = default_filesystem_type
             end
+          end
+
+          unless partition['encrypted'].nil?
+            partitions[root]['encrypted'] = partition['encrypted']
+          else
+            partitions[root]['encrypted'] = false
           end
 
           partitions[root]['options'] = partition['options'] unless partition['options'].nil?
