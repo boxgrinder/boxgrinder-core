@@ -125,12 +125,7 @@ module BoxGrinder
             end
           end
 
-          unless partition['encrypted'].nil?
-            partitions[root]['encrypted'] = partition['encrypted']
-          else
-            partitions[root]['encrypted'] = false
-          end
-
+          partitions[root]['passphrase'] = partition['passphrase'] unless partition['passphrase'].nil?
           partitions[root]['options'] = partition['options'] unless partition['options'].nil?
         end
       end

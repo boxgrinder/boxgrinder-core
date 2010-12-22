@@ -159,7 +159,7 @@ module BoxGrinder
 
         config = @helper.instance_variable_get(:@appliance_config)
         config.hardware.partitions.size.should == 2
-        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4', "encrypted"=>false}, "/home" => {'size' => '2', 'type' => 'ext4', "encrypted"=>false}}
+        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4'}, "/home" => {'size' => '2', 'type' => 'ext4'}}
       end
 
       it "should merge partitions for default fs_types without options for Fedora 13 (ext4) and specified options" do
@@ -183,7 +183,7 @@ module BoxGrinder
 
         config = @helper.instance_variable_get(:@appliance_config)
         config.hardware.partitions.size.should == 2
-        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4', "options"=>"barrier=0,nodelalloc,nobh,noatime", "encrypted"=>false}, "/home" => {'size' => '2', 'type' => 'ext4', "encrypted"=>false}}
+        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4', "options"=>"barrier=0,nodelalloc,nobh,noatime"}, "/home" => {'size' => '2', 'type' => 'ext4'}}
       end
 
       it "should merge partitions for default fs_types without options for Fedora 11 (ext3)" do
@@ -207,7 +207,7 @@ module BoxGrinder
 
         config = @helper.instance_variable_get(:@appliance_config)
         config.hardware.partitions.size.should == 2
-        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext3', "encrypted"=>false}, "/home" => {'size' => '2', 'type' => 'ext3', "encrypted"=>false}}
+        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext3'}, "/home" => {'size' => '2', 'type' => 'ext3'}}
       end
 
       it "should merge partitions with different filesystem types" do
@@ -231,7 +231,7 @@ module BoxGrinder
 
         config = @helper.instance_variable_get(:@appliance_config)
         config.hardware.partitions.size.should == 2
-        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4', "encrypted"=>false}, "/home" => {'size' => '2', 'type' => 'ext3', "encrypted"=>false}}
+        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4'}, "/home" => {'size' => '2', 'type' => 'ext3'}}
       end
 
       it "should merge partitions with different options" do
@@ -255,7 +255,7 @@ module BoxGrinder
 
         config = @helper.instance_variable_get(:@appliance_config)
         config.hardware.partitions.size.should == 2
-        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4', 'options' => 'barrier=0,nodelalloc,nobh,noatime', "encrypted"=>false}, "/home" => {'size' => '2', 'type' => 'ext4', "encrypted"=>false}}
+        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4', 'options' => 'barrier=0,nodelalloc,nobh,noatime'}, "/home" => {'size' => '2', 'type' => 'ext4'}}
       end
 
       it "should merge partitions with different options, another case where type is changing - options should be vanished" do
@@ -279,10 +279,10 @@ module BoxGrinder
 
         config = @helper.instance_variable_get(:@appliance_config)
         config.hardware.partitions.size.should == 2
-        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4', "encrypted"=>false}, "/home" => {'size' => '2', 'type' => 'ext4', "encrypted"=>false}}
+        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4'}, "/home" => {'size' => '2', 'type' => 'ext4'}}
       end
 
-      it "should set default value for partition encryption while merging the partition" do
+      it "should encrypt the partition while merging the partition" do
         config_a = ApplianceConfig.new
         config_a.name = 'a'
         config_a.appliances << 'b'
@@ -303,14 +303,14 @@ module BoxGrinder
 
         config = @helper.instance_variable_get(:@appliance_config)
         config.hardware.partitions.size.should == 1
-        config.hardware.partitions['/']['encrypted'].should == false
+        config.hardware.partitions['/']['passphrase'].should == nil
       end
 
       it "should use encrypted partitions while merging the partition" do
         config_a = ApplianceConfig.new
         config_a.name = 'a'
         config_a.appliances << 'b'
-        config_a.hardware.partitions = {"/" => {'size' => '2', 'encrypted' => true}}
+        config_a.hardware.partitions = {"/" => {'size' => '2', 'passphrase' => 'marek'}}
         config_a.os.name = 'fedora'
         config_a.os.version = '13'
 
@@ -327,7 +327,7 @@ module BoxGrinder
 
         config = @helper.instance_variable_get(:@appliance_config)
         config.hardware.partitions.size.should == 1
-        config.hardware.partitions['/']['encrypted'].should == true
+        config.hardware.partitions['/']['passphrase'].should == 'marek'
       end
     end
 
