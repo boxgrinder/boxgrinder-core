@@ -5,7 +5,7 @@
 
 Summary: Core library for BoxGrinder
 Name: rubygem-%{gemname}
-Version: 0.1.6
+Version: 0.1.7
 Release: 1%{?dist}
 Group: Development/Languages
 License: LGPLv3+
@@ -73,6 +73,10 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
+* Tue Jan 04 2011  <mgoldman@redhat.com> - 0.1.7-1
+- Upstream release: 0.1.7
+- [BGBUILD-79] Allow to use BoxGrinder Build as a library
+
 * Tue Dec 21 2010  <mgoldman@redhat.com> - 0.1.6-1
 - Updated to upstream version: 0.1.6
 - [BGBUILD-100] Enable boxgrinder_build to create a Fedora image with encrypted partition(s)

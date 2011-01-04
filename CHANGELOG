@@ -1,3 +1,7 @@
+v0.1.7
+
+* [BGBUILD-79] Allow to use BoxGrinder Build as a library
+
 v0.1.6
 
 * [BGBUILD-100] Enable boxgrinder_build to create a Fedora image with encrypted partition(s)

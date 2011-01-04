@@ -39,9 +39,7 @@ module BoxGrinder
 
       @config_file  = ENV['BG_CONFIG_FILE'] || "#{ENV['HOME']}/.boxgrinder/config"
 
-      @version = OpenStruct.new
-      @version.version = DEFAULT_PROJECT_CONFIG[:version]
-      @version.release = DEFAULT_PROJECT_CONFIG[:release]
+      @version = nil
 
       @files = OpenStruct.new
       @data = {}
@@ -55,7 +53,7 @@ module BoxGrinder
     end
 
     def version_with_release
-      @version.version + ((@version.release.nil? or @version.release.empty?) ? "" : "-" + @version.release)
+      @version.version # + ((@version.release.nil? or @version.release.empty?) ? "" : "-" + @version.release)
     end
 
     attr_accessor :name
