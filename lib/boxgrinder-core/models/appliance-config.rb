@@ -58,7 +58,6 @@ module BoxGrinder
     attr_reader :os
     attr_reader :hardware
     attr_reader :path
-    attr_reader :file
     attr_reader :post
 
     attr_accessor :packages

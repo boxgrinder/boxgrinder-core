@@ -25,49 +25,77 @@ module BoxGrinder
       @log = options[:log] || Logger.new(STDOUT)
     end
 
-    def read_definitions(definition_file, content_type = nil)
-      @log.debug "Reading definition from '#{definition_file}' file..."
-
-      definition_file_extension = File.extname(definition_file)
+    # Reads definition provided as string. This string can be a YAML document. In this case
+    # definition is parsed and an ApplianceConfig object is returned. In other cases it tries to search
+    # for a file with provided name.
+    def read_definitions(definition, content_type = nil)
       configs = []
 
-      appliance_config =
-          case definition_file_extension
-            when '.appl', '.yml', '.yaml'
-              read_yaml(definition_file)
-            when '.xml'
-              read_xml(definition_file)
-            else
-              unless content_type.nil?
-                case content_type
-                  when 'application/x-yaml', 'text/yaml'
-                    read_yaml(definition_file)
-                  when 'application/xml', 'text/xml', 'application/x-xml'
-                    read_xml(definition_file)
+      if File.exists?(definition)
+        @log.debug "Reading definition from '#{definition}' file..."
+
+        definition_file_extension = File.extname(definition)
+
+        appliance_config =
+            case definition_file_extension
+              when '.appl', '.yml', '.yaml'
+                read_yaml_file(definition)
+              when '.xml'
+                read_xml_file(definition)
+              else
+                unless content_type.nil?
+                  case content_type
+                    when 'application/x-yaml', 'text/yaml'
+                      read_yaml_file(definition)
+                    when 'application/xml', 'text/xml', 'application/x-xml'
+                      read_xml_file(definition)
+                  end
                 end
-              end
-          end
+            end
 
-      raise 'Unsupported file format for appliance definition file' if appliance_config.nil?
+        raise 'Unsupported file format for appliance definition file.' if appliance_config.nil?
 
-      configs << appliance_config
+        configs << appliance_config
 
-      appliance_config.appliances.reverse.each do |appliance_name|
-        configs << read_definitions("#{File.dirname(definition_file)}/#{appliance_name}#{definition_file_extension}").first
-      end unless appliance_config.appliances.nil? or !appliance_config.appliances.is_a?(Array)
+        appliance_config.appliances.reverse.each do |appliance_name|
+          configs << read_definitions("#{File.dirname(definition)}/#{appliance_name}#{definition_file_extension}").first
+        end unless appliance_config.appliances.nil? or !appliance_config.appliances.is_a?(Array)
+      else
+        @log.debug "Reading definition..."
+
+        appliance_config = read_yaml(definition)
+        configs << appliance_config
+      end
 
       [configs.flatten, appliance_config]
     end
 
-    def read_yaml(file)
+    def read_yaml(content)
+      begin
+        definition = YAML.load(content)
+        raise "Not a valid YAML content." if definition.nil? or definition == false
+      rescue
+        raise "Provided definition could not be read."
+      end
+
+      parse_yaml(definition)
+    end
+
+    def read_yaml_file(file)
       begin
         definition = YAML.load_file(file)
-        raise if definition.nil? or definition == false
+        raise "Not a valid YAML file." if definition.nil? or definition == false
       rescue
         raise "File '#{file}' could not be read."
       end
 
+      parse_yaml(definition)
+    end
+
+    # TODO this needs to be rewritten
+    def parse_yaml(definition)
       return definition if definition.is_a?(ApplianceConfig)
+      raise "Provided definition is not a Hash." unless definition.is_a?(Hash)
 
       appliance_config = ApplianceConfig.new
 
@@ -84,7 +112,7 @@ module BoxGrinder
 
       unless definition['default_repos'].nil?
         appliance_config.default_repos = definition['default_repos']
-        raise "#{File.basename(file)}: default_repos should be set to true or false" unless appliance_config.default_repos.is_a?(TrueClass) or appliance_config.default_repos.is_a?(FalseClass)
+        raise "default_repos should be set to true or false" unless appliance_config.default_repos.is_a?(TrueClass) or appliance_config.default_repos.is_a?(FalseClass)
       end
 
       unless definition['packages'].nil?
@@ -111,8 +139,8 @@ module BoxGrinder
       appliance_config
     end
 
-    def read_xml(file)
-      raise "Reading XML files is not supported right now. File '#{file}' could not be read"
+    def read_xml_file(file)
+      raise "Reading XML files is not supported right now. File '#{file}' could not be read."
     end
   end
 end
