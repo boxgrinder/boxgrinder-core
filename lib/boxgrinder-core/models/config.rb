@@ -16,53 +16,41 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'boxgrinder-core/defaults'
-require 'ostruct'
+
+require 'hashery/opencascade'
+require 'yaml'
 
 module BoxGrinder
-  class Config
+  class Config < OpenCascade
     def initialize
+      super
 
-      @name = DEFAULT_PROJECT_CONFIG[:name]
+      merge!(
+          :name => 'BoxGrinder Build',
+          :platform => :none,
+          :delivery => :none,
+          :force => false,
+          :log_level => :info,
+          :dir => {
+              :root => Dir.pwd,
+              :build => 'build',
+              :rpms_cache => '/var/cache/boxgrinder/rpms-cache' # required for appliance-creator
+          }
+      )
 
-      @dir = OpenStruct.new
-      @dir.root        = `pwd`.strip
-      @dir.base        = "#{File.dirname( __FILE__ )}/../../"
-      @dir.build       =  DEFAULT_PROJECT_CONFIG[:dir_build]
-      @dir.top         = "#{@dir.build}/topdir"
-      @dir.src_cache   =  DEFAULT_PROJECT_CONFIG[:dir_src_cache]
-      @dir.rpms_cache  =  DEFAULT_PROJECT_CONFIG[:dir_rpms_cache]
-      @dir.specs       =  DEFAULT_PROJECT_CONFIG[:dir_specs]
-      @dir.appliances  =  DEFAULT_PROJECT_CONFIG[:dir_appliances]
-      @dir.src         =  DEFAULT_PROJECT_CONFIG[:dir_src]
-      @dir.kickstarts  =  DEFAULT_PROJECT_CONFIG[:dir_kickstarts]
+      config_file = ENV['BG_CONFIG_FILE'] || "#{ENV['HOME']}/.boxgrinder/config"
 
-      @config_file  = ENV['BG_CONFIG_FILE'] || "#{ENV['HOME']}/.boxgrinder/config"
-
-      @version = nil
-
-      @files = OpenStruct.new
-      @data = {}
-
-      if File.exists?( @config_file )
-        @data = YAML.load_file( @config_file )
-        @data['gpg_password'].gsub!(/\$/, "\\$") unless @data['gpg_password'].nil? or @data['gpg_password'].length == 0
-        @dir.rpms_cache = @data['rpms_cache'] || @dir.rpms_cache
-        @dir.src_cache  = @data['src_cache']  || @dir.src_cache
-      end
+      deep_merge(self, YAML.load_file(config_file)) if File.exists?(config_file)
     end
 
-    def version_with_release
-      @version.version # + ((@version.release.nil? or @version.release.empty?) ? "" : "-" + @version.release)
+    def deep_merge(first, second)
+      second.each_key do |k|
+        if first[k.to_sym].is_a?(Hash) and second[k].is_a?(Hash)
+          deep_merge(first[k.to_sym], second[k])
+        else
+          first[k.to_sym] = second[k]
+        end
+      end if second
     end
-
-    attr_accessor :name
-    attr_accessor :version
-    attr_accessor :release
-    attr_accessor :config_file
-    attr_reader :files
-
-    attr_reader :data
-    attr_reader :dir
   end
 end

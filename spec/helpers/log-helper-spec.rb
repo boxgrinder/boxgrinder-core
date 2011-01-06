@@ -50,7 +50,7 @@ module BoxGrinder
     it "should change log level" do
       FileUtils.should_receive(:mkdir_p).once.with("log")
 
-      @helper = LogHelper.new( :threshold => "debug" )
+      @helper = LogHelper.new( :level => "debug" )
 
       stdout_log  = @helper.instance_variable_get(:@stdout_log)
       file_log    = @helper.instance_variable_get(:@file_log)
@@ -62,7 +62,7 @@ module BoxGrinder
     it "should change log level" do
       FileUtils.should_receive(:mkdir_p).once.with("log")
 
-      @helper = LogHelper.new( :thrshold => "doesntexists" )
+      @helper = LogHelper.new( :level => "doesntexists" )
 
       stdout_log  = @helper.instance_variable_get(:@stdout_log)
       file_log    = @helper.instance_variable_get(:@file_log)

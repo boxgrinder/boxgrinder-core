@@ -4,7 +4,6 @@ Manifest
 README
 Rakefile
 lib/boxgrinder-core.rb
-lib/boxgrinder-core/defaults.rb
 lib/boxgrinder-core/helpers/appliance-config-helper.rb
 lib/boxgrinder-core/helpers/appliance-helper.rb
 lib/boxgrinder-core/helpers/exec-helper.rb
@@ -19,6 +18,7 @@ spec/helpers/appliance-config-helper-spec.rb
 spec/helpers/appliance-helper-spec.rb
 spec/helpers/exec-helper-spec.rb
 spec/helpers/log-helper-spec.rb
+spec/models/config-spec.rb
 spec/rspec/ls/one
 spec/rspec/ls/two
 spec/rspec/rspec-config-helper.rb
@@ -26,4 +26,6 @@ spec/rspec/src/appliances/ephemeral-repo.appl
 spec/rspec/src/appliances/full.appl
 spec/rspec/src/appliances/invalid_yaml.appl
 spec/rspec/src/appliances/repo.appl
+spec/rspec/src/config/empty
+spec/rspec/src/config/valid
 spec/validators/appliance-config-validator-spec.rb

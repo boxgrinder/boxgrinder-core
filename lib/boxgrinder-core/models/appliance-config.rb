@@ -17,7 +17,6 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'rubygems'
-require 'boxgrinder-core/defaults'
 require 'hashery/opencascade'
 
 module BoxGrinder
@@ -32,14 +31,14 @@ module BoxGrinder
 
       @os.name             = nil
       @os.version          = nil
-      @os.password         = nil
+      @os.password         = 'boxgrinder'
 
       @hardware            = OpenCascade.new
 
-      @hardware.cpus       = APPLIANCE_DEFAULTS[:hardware][:cpus]
-      @hardware.memory     = APPLIANCE_DEFAULTS[:hardware][:memory]
-      @hardware.network    = APPLIANCE_DEFAULTS[:hardware][:network]
-      @hardware.partitions = APPLIANCE_DEFAULTS[:hardware][:partitions]
+      @hardware.cpus       = 1
+      @hardware.memory     = 256
+      @hardware.network    = 'NAT'
+      @hardware.partitions = {"/" => { 'size' => 1 }}
 
       @post                = {}
 

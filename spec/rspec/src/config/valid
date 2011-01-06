@@ -1,0 +1,4 @@
+force: true
+log_level: trace
+dir:
+  root: root/dir

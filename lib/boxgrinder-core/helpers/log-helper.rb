@@ -17,7 +17,6 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'logger'
-require 'boxgrinder-core/defaults'
 require 'fileutils'
 
 Logger.const_set(:TRACE, 0)
@@ -53,8 +52,8 @@ module BoxGrinder
     }
 
     def initialize(options = {})
-      location      = options[:location] || DEFAULT_LOCATION[:log]
-      threshold     = options[:threshold] || :info
+      location      = options[:location] || 'log/boxgrinder.log'
+      threshold     = options[:level].nil? ? :info : options[:level].to_sym
       type          = options[:type] || [:stdout, :file]
 
       unless type.is_a?(Array)
