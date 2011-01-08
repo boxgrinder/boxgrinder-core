@@ -47,5 +47,14 @@ module BoxGrinder
       config.dir.build.should == 'build'
       config.dir.root.should == 'root/dir'
     end
+
+    it "should merge platform" do
+      ENV['BG_CONFIG_FILE'] = "doesntexists"
+
+      config = Config.new.merge(:platform => :ec2)
+
+      config.size.should == 6
+      config.platform.should == :ec2
+    end
   end
 end
