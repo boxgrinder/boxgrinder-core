@@ -134,14 +134,13 @@ module BoxGrinder
     end
 
     def default_filesystem_type
-      fs = 'ext3'
+      fs = 'ext4'
 
       case @appliance_config.os.name
-        when 'fedora'
-
+        when 'rhel', 'centos'
           case @appliance_config.os.version
-            when '13', '14'
-              fs = 'ext4'
+            when '5'
+              fs = 'ext3'
           end
       end
 

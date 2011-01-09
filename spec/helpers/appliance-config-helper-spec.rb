@@ -186,19 +186,19 @@ module BoxGrinder
         config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4', "options"=>"barrier=0,nodelalloc,nobh,noatime"}, "/home" => {'size' => '2', 'type' => 'ext4'}}
       end
 
-      it "should merge partitions for default fs_types without options for Fedora 11 (ext3)" do
+      it "should merge partitions for default fs_types without options for RHEL 5 (ext3)" do
         config_a = ApplianceConfig.new
         config_a.name = 'a'
         config_a.appliances << 'b'
         config_a.hardware.partitions = {"/" => {'size' => '2'}}
-        config_a.os.name = 'fedora'
-        config_a.os.version = '11'
+        config_a.os.name = 'rhel'
+        config_a.os.version = '5'
 
         config_b = ApplianceConfig.new
         config_b.name = 'b'
         config_b.hardware.partitions = {"/" => {'size' => '4'}, "/home" => {'size' => '2'}}
-        config_b.os.name = 'fedora'
-        config_b.os.version = '11'
+        config_b.os.name = 'rhel'
+        config_b.os.version = '5'
 
         prepare_helper([config_a, config_b])
         @helper.instance_variable_set(:@appliance_config, config_a.clone)
@@ -216,13 +216,13 @@ module BoxGrinder
         config_a.appliances << 'b'
         config_a.hardware.partitions = {"/" => {'size' => '2', 'type' => 'ext4'}}
         config_a.os.name = 'fedora'
-        config_a.os.version = '12'
+        config_a.os.version = '13'
 
         config_b = ApplianceConfig.new
         config_b.name = 'b'
         config_b.hardware.partitions = {"/" => {'size' => '4', 'type' => 'ext3'}, "/home" => {'size' => '2'}}
-        config_b.os.name = 'fedora'
-        config_b.os.version = '11'
+        config_b.os.name = 'rhel'
+        config_b.os.version = '5'
 
         prepare_helper([config_a, config_b])
         @helper.instance_variable_set(:@appliance_config, config_a.clone)
@@ -231,7 +231,9 @@ module BoxGrinder
 
         config = @helper.instance_variable_get(:@appliance_config)
         config.hardware.partitions.size.should == 2
-        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4'}, "/home" => {'size' => '2', 'type' => 'ext3'}}
+        config.os.name.should == 'fedora'
+        config.os.version.should == '13'
+        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4'}, "/home" => {'size' => '2', 'type' => 'ext4'}}
       end
 
       it "should merge partitions with different options" do

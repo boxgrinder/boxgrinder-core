@@ -78,6 +78,7 @@ popd
 - [BGBUILD-79] Allow to use BoxGrinder Build as a library
 - [BGBUILD-127] Use appliance definition object instead of a file when using BG as a library
 - [BGBUILD-68] Global .boxgrinder/config or rc style file for config
+- [BGBUILD-93] Add Red Hat Enterprise Linux 6 support
 
 * Tue Dec 21 2010  <mgoldman@redhat.com> - 0.1.6-1
 - Updated to upstream version: 0.1.6

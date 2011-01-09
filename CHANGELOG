@@ -3,6 +3,7 @@ v0.1.7
 * [BGBUILD-68] Global .boxgrinder/config or rc style file for config
 * [BGBUILD-127] Use appliance definition object instead of a file when using BG as a library
 * [BGBUILD-79] Allow to use BoxGrinder Build as a library
+* [BGBUILD-93] Add Red Hat Enterprise Linux 6 support
 
 v0.1.6
 
