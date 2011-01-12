@@ -5,7 +5,7 @@
 
 Summary: Core library for BoxGrinder
 Name: rubygem-%{gemname}
-Version: 0.1.7
+Version: 0.2.0
 Release: 1%{?dist}
 Group: Development/Languages
 License: LGPLv3+
@@ -73,8 +73,8 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
-* Tue Jan 04 2011  <mgoldman@redhat.com> - 0.1.7-1
-- Upstream release: 0.1.7
+* Tue Jan 04 2011  <mgoldman@redhat.com> - 0.2.0-1
+- Upstream release: 0.2.0
 - [BGBUILD-79] Allow to use BoxGrinder Build as a library
 - [BGBUILD-127] Use appliance definition object instead of a file when using BG as a library
 - [BGBUILD-68] Global .boxgrinder/config or rc style file for config

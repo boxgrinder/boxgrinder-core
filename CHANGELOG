@@ -1,4 +1,4 @@
-v0.1.7
+v0.2.0
 
 * [BGBUILD-68] Global .boxgrinder/config or rc style file for config
 * [BGBUILD-127] Use appliance definition object instead of a file when using BG as a library
