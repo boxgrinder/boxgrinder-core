@@ -24,7 +24,7 @@ module BoxGrinder
       ENV['BG_CONFIG_FILE'] = "doesntexists"
 
       config = Config.new
-      config.size.should == 6
+      config.size.should == 9
       config.force.should == false
     end
 
@@ -32,7 +32,7 @@ module BoxGrinder
       ENV['BG_CONFIG_FILE'] = "#{File.dirname(__FILE__)}/../rspec/src/config/empty"
 
       config = Config.new
-      config.size.should == 6
+      config.size.should == 9
       config.force.should == false
       config.log_level.should == :info
     end
@@ -41,7 +41,7 @@ module BoxGrinder
       ENV['BG_CONFIG_FILE'] = "#{File.dirname(__FILE__)}/../rspec/src/config/valid"
 
       config = Config.new
-      config.size.should == 6
+      config.size.should == 9
       config.force.should == true
       config.log_level.should == 'trace'
       config.dir.build.should == 'build'
@@ -53,7 +53,7 @@ module BoxGrinder
 
       config = Config.new.merge(:platform => :ec2)
 
-      config.size.should == 6
+      config.size.should == 9
       config.platform.should == :ec2
     end
   end

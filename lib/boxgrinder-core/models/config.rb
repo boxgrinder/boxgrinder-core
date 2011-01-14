@@ -22,8 +22,8 @@ require 'yaml'
 
 module BoxGrinder
   class Config < OpenCascade
-    def initialize
-      super
+    def initialize(values = {})
+      super({})
 
       merge!(
           :name => 'BoxGrinder Build',
@@ -35,8 +35,13 @@ module BoxGrinder
               :root => Dir.pwd,
               :build => 'build',
               :rpms_cache => '/var/cache/boxgrinder/rpms-cache' # required for appliance-creator
-          }
+          },
+          :os_config => {},
+          :platform_config => {},
+          :delivery_config => {}
       )
+
+      merge!(values.inject({}) { |memo, (k, v)| memo[k.to_sym] = v; memo })
 
       config_file = ENV['BG_CONFIG_FILE'] || "#{ENV['HOME']}/.boxgrinder/config"
 
