@@ -26,6 +26,7 @@ module BoxGrinder
       super({})
 
       merge!(
+          :file => ENV['BG_CONFIG_FILE'] || "#{ENV['HOME']}/.boxgrinder/config",
           :name => 'BoxGrinder Build',
           :platform => :none,
           :delivery => :none,
@@ -43,9 +44,7 @@ module BoxGrinder
 
       merge!(values.inject({}) { |memo, (k, v)| memo[k.to_sym] = v; memo })
 
-      config_file = ENV['BG_CONFIG_FILE'] || "#{ENV['HOME']}/.boxgrinder/config"
-
-      deep_merge(self, YAML.load_file(config_file)) if File.exists?(config_file)
+      deep_merge(self, YAML.load_file(self.file)) if File.exists?(self.file)
     end
 
     def deep_merge(first, second)
