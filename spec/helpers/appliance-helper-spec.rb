@@ -109,7 +109,7 @@ module BoxGrinder
       end
 
       it "should read a YAML content instead of a loading a file" do
-        yaml = "name: abc\nos:\n  name: fedora\n  version: 13\npackages:\n  includes:\n    - @core\nhardware:\n  partitions:\n    \"/\":\n      size: 6"
+        yaml = "name: abc\nos:\n  name: fedora\n  version: 13\npackages:\n  - @core\nhardware:\n  partitions:\n    \"/\":\n      size: 6"
         appliance = @helper.read_definitions(yaml).last
 
         appliance.name.should == 'abc'

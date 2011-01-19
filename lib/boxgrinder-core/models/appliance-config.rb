@@ -42,10 +42,7 @@ module BoxGrinder
 
       @post                = {}
 
-      @packages            = OpenCascade.new
-      @packages.includes   = []
-      @packages.excludes   = []
-
+      @packages            = []
       @appliances          = []
       @repos               = []
 

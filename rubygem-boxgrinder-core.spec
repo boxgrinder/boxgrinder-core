@@ -80,6 +80,7 @@ popd
 - [BGBUILD-68] Global .boxgrinder/config or rc style file for config
 - [BGBUILD-93] Add Red Hat Enterprise Linux 6 support
 - [BGBUILD-133] Support a consolidated configuration file
+- [BGBUILD-101] Don't use 'includes' subsection when specifying packages
 
 * Tue Dec 21 2010  <mgoldman@redhat.com> - 0.1.6-1
 - Updated to upstream version: 0.1.6

@@ -5,6 +5,7 @@ v0.2.0
 * [BGBUILD-127] Use appliance definition object instead of a file when using BG as a library
 * [BGBUILD-79] Allow to use BoxGrinder Build as a library
 * [BGBUILD-93] Add Red Hat Enterprise Linux 6 support
+* [BGBUILD-101] Don't use 'includes' subsection when specifying packages
 
 v0.1.6
 

@@ -104,6 +104,7 @@ module BoxGrinder
 
       definition['variables'].each { |key, value| appliance_config.variables[key] = value } unless definition['variables'].nil?
 
+      appliance_config.packages = definition['packages'] unless definition['packages'].nil?
       appliance_config.appliances = definition['appliances'] unless definition['appliances'].nil?
       appliance_config.repos = definition['repos'] unless definition['repos'].nil?
 
@@ -113,11 +114,6 @@ module BoxGrinder
       unless definition['default_repos'].nil?
         appliance_config.default_repos = definition['default_repos']
         raise "default_repos should be set to true or false" unless appliance_config.default_repos.is_a?(TrueClass) or appliance_config.default_repos.is_a?(FalseClass)
-      end
-
-      unless definition['packages'].nil?
-        appliance_config.packages.includes = definition['packages']['includes'] unless definition['packages']['includes'].nil?
-        appliance_config.packages.excludes = definition['packages']['excludes'] unless definition['packages']['excludes'].nil?
       end
 
       unless definition['os'].nil?

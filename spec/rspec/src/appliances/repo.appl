@@ -9,9 +9,8 @@ hardware:
     "/":
       size: 1
 packages:
-  includes:
-    - gcc-c++
-    - wget
+  - gcc-c++
+  - wget
 repos:
   - name: "cirras"
     baseurl: "http://repo.boxgrinder.org/packages/#OS_NAME#/#OS_VERSION#/RPMS/#ARCH#"

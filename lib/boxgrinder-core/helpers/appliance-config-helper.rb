@@ -189,16 +189,11 @@ module BoxGrinder
     end
 
     def merge_packages
-      @appliance_config.packages.includes.clear
-      @appliance_config.packages.excludes.clear
+      @appliance_config.packages.clear
 
       @appliance_configs.each do |appliance_config|
-        appliance_config.packages.includes.each do |package|
-          @appliance_config.packages.includes << package
-        end
-
-        appliance_config.packages.excludes.each do |package|
-          @appliance_config.packages.excludes << package
+        appliance_config.packages.each do |package|
+          @appliance_config.packages << package
         end
       end
     end
