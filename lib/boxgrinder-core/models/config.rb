@@ -39,7 +39,8 @@ module BoxGrinder
           },
           :os_config => {},
           :platform_config => {},
-          :delivery_config => {}
+          :delivery_config => {},
+          :additional_plugins => []
       )
 
       merge!(values.inject({}) { |memo, (k, v)| memo[k.to_sym] = v; memo })
