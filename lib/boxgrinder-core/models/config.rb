@@ -35,7 +35,7 @@ module BoxGrinder
           :dir => {
               :root => Dir.pwd,
               :build => 'build',
-              :rpms_cache => '/var/cache/boxgrinder/rpms-cache' # required for appliance-creator
+              :cache => '/var/cache/boxgrinder' # required for appliance-creator
           },
           :os_config => {},
           :platform_config => {},
