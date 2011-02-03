@@ -74,6 +74,38 @@ module BoxGrinder
       config.post['base'].should == ['3_1', '3_2', '2_1', '2_2', '1_1', '1_2']
     end
 
+    # https://issues.jboss.org/browse/BGBUILD-60
+    it "should merge post sections in right order for appliances depending on same base appliance" do
+      config_a = ApplianceConfig.new
+      config_a.name = 'a'
+      config_a.post['base'] = ["1_1", "1_2"]
+      config_a.appliances << 'b1'
+      config_a.appliances << 'b2'
+
+      config_b1 = ApplianceConfig.new
+      config_b1.name = 'b1'
+      config_b1.post['base'] = ["2_1", "2_2"]
+      config_b1.appliances << 'c'
+
+      config_b2 = ApplianceConfig.new
+      config_b2.name = 'b2'
+      config_b2.post['base'] = ["3_1", "3_2"]
+      config_b2.appliances << 'c'
+
+      config_c = ApplianceConfig.new
+      config_c.name = 'c'
+      config_c.post['base'] = ["4_1", "4_2"]
+
+      prepare_helper([config_a, config_b1, config_c, config_b2, config_c])
+      @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+      @helper.merge_post_operations
+
+      config = @helper.instance_variable_get(:@appliance_config)
+      config.post['base'].size.should == 8
+      config.post['base'].should == ['4_1', '4_2', '3_1', '3_2', '2_1', '2_2', '1_1', '1_2']
+    end
+
     it "should merge post sections in right order with even more and more complicated inheritance" do
       config_a = ApplianceConfig.new
       config_a.name = 'a'

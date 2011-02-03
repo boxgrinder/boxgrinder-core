@@ -83,6 +83,7 @@ popd
 - [BGBUILD-93] Add Red Hat Enterprise Linux 6 support
 - [BGBUILD-133] Support a consolidated configuration file
 - [BGBUILD-101] Don't use 'includes' subsection when specifying packages
+- [BGBUILD-60] Post section merging pattern for appliances depending on the same appliance
 
 * Tue Dec 21 2010  <mgoldman@redhat.com> - 0.1.6-1
 - Updated to upstream version: 0.1.6

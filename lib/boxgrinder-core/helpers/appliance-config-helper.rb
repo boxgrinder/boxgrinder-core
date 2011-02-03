@@ -201,11 +201,15 @@ module BoxGrinder
     def merge_post_operations
       @appliance_config.post.each_value { |cmds| cmds.clear }
 
+      included = []
+
       @appliance_configs.each do |appliance_config|
+        next if included.include?(appliance_config)
         appliance_config.post.each do |platform, cmds|
           @appliance_config.post[platform] = [] if @appliance_config.post[platform].nil?
           cmds.each { |cmd| @appliance_config.post[platform] << substitute_vars(cmd) }
         end
+        included << appliance_config
       end
     end
 

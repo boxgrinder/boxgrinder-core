@@ -6,6 +6,7 @@ v0.2.0
 * [BGBUILD-79] Allow to use BoxGrinder Build as a library
 * [BGBUILD-93] Add Red Hat Enterprise Linux 6 support
 * [BGBUILD-101] Don't use 'includes' subsection when specifying packages
+* [BGBUILD-60] Post section merging pattern for appliances depending on the same appliance
 
 v0.1.6
 

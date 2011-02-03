@@ -108,6 +108,39 @@ module BoxGrinder
         @helper.read_definitions("a.appl").should == [[appliance_a, appliance_b2, appliance_c2, appliance_b1, appliance_c1], appliance_a]
       end
 
+      # https://issues.jboss.org/browse/BGBUILD-60
+      it "should read definitions from a tree file structure based on same appliance" do
+        appliance_a = ApplianceConfig.new
+        appliance_a.name = 'a'
+        appliance_a.appliances << "b1"
+        appliance_a.appliances << "b2"
+
+        appliance_b1 = ApplianceConfig.new
+        appliance_b1.name = 'b1'
+        appliance_b1.appliances << "c"
+
+        appliance_b2 = ApplianceConfig.new
+        appliance_b2.name = 'b2'
+        appliance_b2.appliances << "c"
+
+        appliance_c = ApplianceConfig.new
+        appliance_c.name = 'c'
+
+        File.should_receive(:exists?).ordered.with('a.appl').and_return(true)
+        File.should_receive(:exists?).ordered.with('./b2.appl').and_return(true)
+        File.should_receive(:exists?).ordered.with('./c.appl').and_return(true)
+        File.should_receive(:exists?).ordered.with('./b1.appl').and_return(true)
+        File.should_receive(:exists?).ordered.with('./c.appl').and_return(true)
+
+        @helper.should_receive(:read_yaml_file).ordered.with('a.appl').and_return(appliance_a)
+        @helper.should_receive(:read_yaml_file).ordered.with('./b2.appl').and_return(appliance_b2)
+        @helper.should_receive(:read_yaml_file).ordered.with('./c.appl').and_return(appliance_c)
+        @helper.should_receive(:read_yaml_file).ordered.with('./b1.appl').and_return(appliance_b1)
+        @helper.should_receive(:read_yaml_file).ordered.with('./c.appl').and_return(appliance_c)
+
+        @helper.read_definitions("a.appl").should == [[appliance_a, appliance_b2, appliance_c, appliance_b1, appliance_c], appliance_a]
+      end
+
       it "should read a YAML content instead of a loading a file" do
         yaml = "name: abc\nos:\n  name: fedora\n  version: 13\npackages:\n  - @core\nhardware:\n  partitions:\n    \"/\":\n      size: 6"
         appliance = @helper.read_definitions(yaml).last
