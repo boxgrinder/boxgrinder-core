@@ -127,7 +127,12 @@ module BoxGrinder
         appliance_config.hardware.cpus = definition['hardware']['cpus'] unless definition['hardware']['cpus'].nil?
         appliance_config.hardware.memory = definition['hardware']['memory'] unless definition['hardware']['memory'].nil?
         appliance_config.hardware.network = definition['hardware']['network'] unless definition['hardware']['network'].nil?
-        appliance_config.hardware.partitions = definition['hardware']['partitions'] unless definition['hardware']['partitions'].nil?
+
+        unless definition['hardware']['partitions'].nil?
+          definition['hardware']['partitions'].each do |key, part|
+            appliance_config.hardware.partitions[key] = part
+          end if definition['hardware']['partitions'].is_a?(Hash)
+        end
       end
 
       definition['post'].each { |key, value| appliance_config.post[key] = value } unless definition['post'].nil?
