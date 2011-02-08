@@ -31,6 +31,9 @@ module BoxGrinder
 
       output = ""
 
+      # dirty workaround for ruby segfaults related to logger.rb
+      STDOUT.flush
+
       begin
         status = Open4::popen4( command ) do |pid, stdin, stdout, stderr|
           threads = []
