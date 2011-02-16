@@ -104,7 +104,9 @@ module BoxGrinder
 
       definition['variables'].each { |key, value| appliance_config.variables[key] = value } unless definition['variables'].nil?
 
-      appliance_config.packages = definition['packages'] unless definition['packages'].nil?
+      raise "packages section should be an Array" if !definition['packages'].nil? and !definition['packages'].is_a?(Array)
+
+      appliance_config.packages = definition['packages'] if definition['packages'].is_a?(Array)
       appliance_config.appliances = definition['appliances'] unless definition['appliances'].nil?
       appliance_config.repos = definition['repos'] unless definition['repos'].nil?
 
