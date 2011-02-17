@@ -32,6 +32,7 @@ module BoxGrinder
           :delivery => :none,
           :force => false,
           :log_level => :info,
+          :backtrace => false,
           :dir => {
               :root => Dir.pwd,
               :build => 'build',
