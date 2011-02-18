@@ -1,5 +1,7 @@
 v0.2.1
 
+* [BGBUILD-142] Backtraces make output unreadable - add option to enable them, and disable by default
+
 v0.2.0
 
 * [BGBUILD-133] Support a consolidated configuration file

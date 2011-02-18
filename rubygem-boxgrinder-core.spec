@@ -76,6 +76,7 @@ popd
 %changelog
 * Tue Feb 16 2011  <mgoldman@redhat.com> - 0.2.1-1
 - Upstream release: 0.2.1
+- [BGBUILD-142] Backtraces make output unreadable - add option to enable them, and disable by default
 
 * Tue Jan 04 2011  <mgoldman@redhat.com> - 0.2.0-1
 - Upstream release: 0.2.0
