@@ -31,6 +31,12 @@ module BoxGrinder
           :platform => :none,
           :delivery => :none,
           :force => false,
+          :os => {
+              :name => 'unknown',
+              :description => 'unknown',
+              :version => 'unknown',
+              :codename => 'unknown'
+          },
           :log_level => :info,
           :backtrace => false,
           :dir => {
@@ -44,9 +50,38 @@ module BoxGrinder
           :additional_plugins => []
       )
 
+      read_os_info
+
       merge!(values.inject({}) { |memo, (k, v)| memo[k.to_sym] = v; memo })
 
       deep_merge(self, YAML.load_file(self.file)) if File.exists?(self.file)
+    end
+
+    # Reads host operating system info. Currently works with:
+    # - Fedora
+    # - RHEL
+    # - CentOS
+    #
+    def read_os_info
+      if File.exists?('/etc/redhat-release')
+        if File.read('/etc/redhat-release').chomp.strip =~ /^(.*) release (.*) \((.*)\)/
+          name = $1
+          description = $1
+          version = $2
+          codename = $3
+
+          name = 'rhel' if name =~ /^Red Hat Enterprise Linux/
+
+          merge!(
+              :os => {
+                  :name => name.downcase,
+                  :description => description,
+                  :version => version.to_i.to_s,
+                  :codename => codename
+              }
+          )
+        end
+      end
     end
 
     def deep_merge(first, second)

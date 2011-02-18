@@ -1,6 +1,7 @@
 v0.2.1
 
 * [BGBUILD-142] Backtraces make output unreadable - add option to enable them, and disable by default
+* [BGBUILD-148] Add support for building CentOS/RHEL images on Fedora
 
 v0.2.0
 
