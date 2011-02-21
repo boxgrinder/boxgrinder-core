@@ -6,7 +6,7 @@ Rakefile
 boxgrinder-core.gemspec
 lib/boxgrinder-core.rb
 lib/boxgrinder-core/helpers/appliance-config-helper.rb
-lib/boxgrinder-core/helpers/appliance-helper.rb
+lib/boxgrinder-core/helpers/appliance-definition-helper.rb
 lib/boxgrinder-core/helpers/exec-helper.rb
 lib/boxgrinder-core/helpers/log-helper.rb
 lib/boxgrinder-core/models/appliance-config.rb
@@ -16,13 +16,12 @@ lib/boxgrinder-core/validators/appliance-config-validator.rb
 lib/boxgrinder-core/validators/errors.rb
 rubygem-boxgrinder-core.spec
 spec/helpers/appliance-config-helper-spec.rb
-spec/helpers/appliance-helper-spec.rb
+spec/helpers/appliance-definition-helper-spec.rb
 spec/helpers/exec-helper-spec.rb
 spec/helpers/log-helper-spec.rb
 spec/models/config-spec.rb
 spec/rspec/ls/one
 spec/rspec/ls/two
-spec/rspec/rspec-config-helper.rb
 spec/rspec/src/appliances/ephemeral-repo.appl
 spec/rspec/src/appliances/full.appl
 spec/rspec/src/appliances/invalid_yaml.appl

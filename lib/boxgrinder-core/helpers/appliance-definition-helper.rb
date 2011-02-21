@@ -20,17 +20,18 @@ require 'boxgrinder-core/models/appliance-config'
 require 'yaml'
 
 module BoxGrinder
-  class ApplianceHelper
+  class ApplianceDefinitionHelper
     def initialize(options = {})
       @log = options[:log] || Logger.new(STDOUT)
+      @appliance_configs = []
     end
+
+    attr_reader :appliance_configs
 
     # Reads definition provided as string. This string can be a YAML document. In this case
     # definition is parsed and an ApplianceConfig object is returned. In other cases it tries to search
     # for a file with provided name.
     def read_definitions(definition, content_type = nil)
-      configs = []
-
       if File.exists?(definition)
         @log.debug "Reading definition from '#{definition}' file..."
 
@@ -55,19 +56,19 @@ module BoxGrinder
 
         raise 'Unsupported file format for appliance definition file.' if appliance_config.nil?
 
-        configs << appliance_config
+        @appliance_configs << appliance_config
+        appliances = []
+
+        @appliance_configs.each { |config| appliances << config.name }
 
         appliance_config.appliances.reverse.each do |appliance_name|
-          configs << read_definitions("#{File.dirname(definition)}/#{appliance_name}#{definition_file_extension}").first
+          read_definitions("#{File.dirname(definition)}/#{appliance_name}#{definition_file_extension}") unless appliances.include?(appliance_name)
         end unless appliance_config.appliances.nil? or !appliance_config.appliances.is_a?(Array)
       else
         @log.debug "Reading definition..."
 
-        appliance_config = read_yaml(definition)
-        configs << appliance_config
+        @appliance_configs << read_yaml(definition)
       end
-
-      [configs.flatten, appliance_config]
     end
 
     def read_yaml(content)

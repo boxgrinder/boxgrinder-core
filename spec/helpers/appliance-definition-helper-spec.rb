@@ -16,13 +16,13 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'boxgrinder-core/helpers/appliance-helper'
+require 'boxgrinder-core/helpers/appliance-definition-helper'
 
 module BoxGrinder
-  describe ApplianceHelper do
+  describe ApplianceDefinitionHelper do
 
     before(:each) do
-      @helper = ApplianceHelper.new(:log => Logger.new('/dev/null'))
+      @helper = ApplianceDefinitionHelper.new(:log => Logger.new('/dev/null'))
     end
 
     describe ".read_definitions" do
@@ -30,9 +30,13 @@ module BoxGrinder
         appliance_config = ApplianceConfig.new
 
         ['appl', 'yml', 'yaml'].each do |ext|
+          @helper = ApplianceDefinitionHelper.new(:log => Logger.new('/dev/null'))
           File.should_receive(:exists?).with("file.#{ext}").and_return(true)
           @helper.should_receive(:read_yaml_file).with("file.#{ext}").and_return(appliance_config)
-          @helper.read_definitions("file.#{ext}").should == [[appliance_config], appliance_config]
+          @helper.read_definitions("file.#{ext}")
+
+          configs = @helper.appliance_configs
+          configs.should == [appliance_config]
         end
       end
 
@@ -40,9 +44,14 @@ module BoxGrinder
         appliance_config = ApplianceConfig.new
 
         ['application/x-yaml', 'text/yaml'].each do |type|
+          @helper = ApplianceDefinitionHelper.new(:log => Logger.new('/dev/null'))
           File.should_receive(:exists?).with("file").and_return(true)
           @helper.should_receive(:read_yaml_file).with("file").and_return(appliance_config)
-          @helper.read_definitions("file", type).should == [[appliance_config], appliance_config]
+          @helper.read_definitions("file", type)
+
+          configs = @helper.appliance_configs
+          configs.should == [appliance_config]
+          configs.first.should == appliance_config
         end
       end
 
@@ -50,9 +59,14 @@ module BoxGrinder
         appliance_config = ApplianceConfig.new
 
         ['application/xml', 'text/xml', 'application/x-xml'].each do |type|
+          @helper = ApplianceDefinitionHelper.new(:log => Logger.new('/dev/null'))
           File.should_receive(:exists?).with("file").and_return(true)
           @helper.should_receive(:read_xml_file).with("file").and_return(appliance_config)
-          @helper.read_definitions("file", type).should == [[appliance_config], appliance_config]
+          @helper.read_definitions("file", type)
+
+          configs = @helper.appliance_configs
+          configs.should == [appliance_config]
+          configs.first.should == appliance_config
         end
       end
 
@@ -70,7 +84,11 @@ module BoxGrinder
         @helper.should_receive(:read_yaml_file).ordered.with('a.appl').and_return(appliance_a)
         @helper.should_receive(:read_yaml_file).ordered.with('./b.appl').and_return(appliance_b)
 
-        @helper.read_definitions("a.appl").should == [[appliance_a, appliance_b], appliance_a]
+        @helper.read_definitions("a.appl")
+
+        configs = @helper.appliance_configs
+        configs.should == [appliance_a, appliance_b]
+        configs.first.should == appliance_a
       end
 
       it "should read definitions from a tree file structure" do
@@ -105,7 +123,11 @@ module BoxGrinder
         @helper.should_receive(:read_yaml_file).ordered.with('./b1.appl').and_return(appliance_b1)
         @helper.should_receive(:read_yaml_file).ordered.with('./c1.appl').and_return(appliance_c1)
 
-        @helper.read_definitions("a.appl").should == [[appliance_a, appliance_b2, appliance_c2, appliance_b1, appliance_c1], appliance_a]
+        @helper.read_definitions("a.appl")
+
+        configs = @helper.appliance_configs
+        configs.should == [appliance_a, appliance_b2, appliance_c2, appliance_b1, appliance_c1]
+        configs.first.should == appliance_a
       end
 
       # https://issues.jboss.org/browse/BGBUILD-60
@@ -130,15 +152,18 @@ module BoxGrinder
         File.should_receive(:exists?).ordered.with('./b2.appl').and_return(true)
         File.should_receive(:exists?).ordered.with('./c.appl').and_return(true)
         File.should_receive(:exists?).ordered.with('./b1.appl').and_return(true)
-        File.should_receive(:exists?).ordered.with('./c.appl').and_return(true)
 
         @helper.should_receive(:read_yaml_file).ordered.with('a.appl').and_return(appliance_a)
         @helper.should_receive(:read_yaml_file).ordered.with('./b2.appl').and_return(appliance_b2)
         @helper.should_receive(:read_yaml_file).ordered.with('./c.appl').and_return(appliance_c)
         @helper.should_receive(:read_yaml_file).ordered.with('./b1.appl').and_return(appliance_b1)
-        @helper.should_receive(:read_yaml_file).ordered.with('./c.appl').and_return(appliance_c)
+        @helper.should_not_receive(:read_yaml_file).ordered.with('./c.appl').and_return(appliance_c)
 
-        @helper.read_definitions("a.appl").should == [[appliance_a, appliance_b2, appliance_c, appliance_b1, appliance_c], appliance_a]
+        @helper.read_definitions("a.appl")
+
+        configs = @helper.appliance_configs
+        configs.should == [appliance_a, appliance_b2, appliance_c, appliance_b1]
+        configs.first.should == appliance_a
       end
 
       it "should read a YAML content instead of a loading a file" do
@@ -170,6 +195,30 @@ module BoxGrinder
       it "should raise because of unsupported file format" do
         File.should_receive(:exists?).with("file.xmdfl").and_return(true)
         lambda { @helper.read_definitions("file.xmdfl") }.should raise_error(RuntimeError, "Unsupported file format for appliance definition file.")
+      end
+
+      # https://issues.jboss.org/browse/BGBUILD-150
+      context "cyclical dependency" do
+        it "should stop reading appliances when appliance was already read" do
+          appliance_a = ApplianceConfig.new
+          appliance_a.name = 'a'
+          appliance_a.appliances << "b"
+
+          appliance_b = ApplianceConfig.new
+          appliance_b.name = 'b'
+          appliance_b.appliances << "a"
+
+
+          File.should_receive(:exists?).with('a.appl').and_return(true)
+          File.should_receive(:exists?).with('./b.appl').and_return(true)
+          File.should_not_receive(:exists?).ordered.with('./a.appl')
+
+          @helper.should_receive(:read_yaml_file).ordered.with('a.appl').and_return(appliance_a)
+          @helper.should_receive(:read_yaml_file).ordered.with('./b.appl').and_return(appliance_b)
+          @helper.should_not_receive(:read_yaml_file).ordered.with('./a.appl')
+
+          @helper.read_definitions("a.appl")
+        end
       end
     end
 
