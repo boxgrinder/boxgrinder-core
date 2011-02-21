@@ -1,6 +1,7 @@
 v0.2.1
 
 * [BGBUILD-142] Backtraces make output unreadable - add option to enable them, and disable by default
+* [BGBUILD-150] Cyclical inclusion dependencies in appliance definition files are not detected/handled
 
 v0.2.0
 
