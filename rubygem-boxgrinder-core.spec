@@ -9,7 +9,7 @@ Version: 0.2.1
 Release: 1%{?dist}
 Group: Development/Languages
 License: LGPLv3+
-URL: http://www.jboss.org/boxgrinder
+URL: http://boxgrinder.org/
 Source0: http://rubygems.org/gems/%{gemname}-%{version}.gem
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
