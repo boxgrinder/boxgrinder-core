@@ -1,3 +1,7 @@
+v0.3.0
+
+* [BGBUILD-178] Remove sensitive data from logs
+
 v0.2.1
 
 * [BGBUILD-142] Backtraces make output unreadable - add option to enable them, and disable by default

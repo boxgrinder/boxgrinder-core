@@ -26,8 +26,13 @@ module BoxGrinder
       @log = options[:log] || Logger.new(STDOUT)
     end
 
-    def execute( command )
-      @log.debug "Executing command: '#{command}'"
+    def execute( command, options = {} )
+      redacted = options[:redacted] || []
+
+      redacted_command = command
+      redacted.each { |word| redacted_command = redacted_command.gsub(word, '<REDACTED>') }
+
+      @log.debug "Executing command: '#{redacted_command}'"
 
       output = ""
 
@@ -65,9 +70,8 @@ module BoxGrinder
 
         return output.strip
       rescue => e
-        @log.error e.backtrace.join($/)
-        @log.error "An error occurred while executing command: '#{command}', #{e.message}"
-        raise "An error occurred while executing command: '#{command}', #{e.message}"
+        @log.error e.backtrace
+        raise "An error occurred while executing command: '#{redacted_command}', #{e.message}"
       end
     end
   end
