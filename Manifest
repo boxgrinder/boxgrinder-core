@@ -3,7 +3,6 @@ LICENSE
 Manifest
 README
 Rakefile
-boxgrinder-core.gemspec
 lib/boxgrinder-core.rb
 lib/boxgrinder-core/helpers/appliance-config-helper.rb
 lib/boxgrinder-core/helpers/appliance-definition-helper.rb
@@ -24,7 +23,8 @@ spec/rspec/ls/one
 spec/rspec/ls/two
 spec/rspec/src/appliances/ephemeral-repo.appl
 spec/rspec/src/appliances/full.appl
-spec/rspec/src/appliances/invalid_yaml.appl
+spec/rspec/src/appliances/invalid-yaml.appl
+spec/rspec/src/appliances/legacy.appl
 spec/rspec/src/appliances/repo.appl
 spec/rspec/src/config/empty
 spec/rspec/src/config/valid

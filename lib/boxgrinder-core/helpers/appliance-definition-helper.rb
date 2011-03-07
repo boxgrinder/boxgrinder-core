@@ -105,9 +105,20 @@ module BoxGrinder
 
       definition['variables'].each { |key, value| appliance_config.variables[key] = value } unless definition['variables'].nil?
 
-      raise "packages section should be an Array" if !definition['packages'].nil? and !definition['packages'].is_a?(Array)
+      unless definition['packages'].nil?
+        current_fmt =  path_check(definition,'packages',Array)
+        deprecated_fmt = path_check(definition,'packages/includes',Array)
+        raise "Packages must be in an array" unless current_fmt or deprecated_fmt
 
-      appliance_config.packages = definition['packages'] if definition['packages'].is_a?(Array)
+        appliance_config.packages=definition['packages'] if current_fmt
+
+        if deprecated_fmt
+          appliance_config.packages=definition['packages']['includes']
+          @log.warn "BoxGrinder Build no longer supports package exclusion, the following packages will not be explicitly excluded:"\
+          "#{definition['packages']['excludes'].join(", ")}" if path_check(definition,'packages/excludes',Array)
+        end
+      end
+
       appliance_config.appliances = definition['appliances'] unless definition['appliances'].nil?
       appliance_config.repos = definition['repos'] unless definition['repos'].nil?
 
@@ -146,5 +157,42 @@ module BoxGrinder
     def read_xml_file(file)
       raise "Reading XML files is not supported right now. File '#{file}' could not be read."
     end
+
+    private
+
+    def is_int?(var)
+      begin
+        Integer(var)
+      rescue
+        return false
+      end
+      true
+    end
+
+    def path_check(data,path,expected_type)
+      path_array = path.split("/")
+      target_elem = path_array.pop
+
+      get_key = lambda do |ds,key|
+        if ds.is_a?(Array)
+          return key.to_i if is_int?(key)
+          return nil #invalid path
+        end
+        key
+      end
+
+      path_array.each do |i|
+        key = get_key.call(data,i)
+        return false unless data.respond_to?("[]") and !key.nil?
+        return false if data.is_a?(Array) and key.is_a?(Integer)
+        data=data[key]
+      end
+
+      target_key = get_key.call(data,target_elem)
+      return false if target_key.nil?
+      return true if data[target_key].is_a?(expected_type)
+      false
+    end
+
   end
 end

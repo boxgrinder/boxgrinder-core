@@ -1,0 +1,8 @@
+name: legacy test
+summary: testing legacy format support
+packages:
+  includes:
+    - squid
+    - boxgrinder-rest
+  excludes:
+    - useless

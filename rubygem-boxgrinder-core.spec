@@ -5,7 +5,7 @@
 
 Summary: Core library for BoxGrinder
 Name: rubygem-%{gemname}
-Version: 0.2.1
+Version: 0.3.0
 Release: 1%{?dist}
 Group: Development/Languages
 License: LGPLv3+
@@ -74,6 +74,10 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
+* Mon Mar 7 2011 <msavy@redhat.com> - 0.3.0-1
+- Upstream release: 0.3.0
+- [BGBUILD-168] Support deprecated package inclusion format in appliance definitions
+
 * Tue Feb 16 2011  <mgoldman@redhat.com> - 0.2.1-1
 - Upstream release: 0.2.1
 - [BGBUILD-142] Backtraces make output unreadable - add option to enable them, and disable by default

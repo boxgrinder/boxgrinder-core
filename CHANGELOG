@@ -1,3 +1,6 @@
+v0.3.0
+* [BGBUILD-168] Support deprecated package inclusion format in appliance definitions
+
 v0.2.1
 
 * [BGBUILD-142] Backtraces make output unreadable - add option to enable them, and disable by default

@@ -166,7 +166,7 @@ module BoxGrinder
         configs.first.should == appliance_a
       end
 
-      it "should read a YAML content instead of a loading a file" do
+      it "should read YAML content instead of loading a file" do
         yaml = "name: abc\nos:\n  name: fedora\n  version: 13\npackages:\n  - @core\nhardware:\n  partitions:\n    \"/\":\n      size: 6"
         appliance = @helper.read_definitions(yaml).last
 
@@ -184,7 +184,7 @@ module BoxGrinder
       end
 
       it "should catch exception if YAML file parsing raises it" do
-        lambda { @helper.read_definitions("#{File.dirname(__FILE__)}/../rspec/src/appliances/invalid_yaml.appl") }.should raise_error(RuntimeError, /File '(.*)' could not be read./)
+        lambda { @helper.read_definitions("#{File.dirname(__FILE__)}/../rspec/src/appliances/invalid-yaml.appl") }.should raise_error(RuntimeError, /File '(.*)' could not be read./)
       end
 
       it "should raise because xml files aren't supported yet" do
@@ -263,6 +263,12 @@ module BoxGrinder
           appliance_config.hardware.partitions['/'].should == {'size' => 1}
           appliance_config.hardware.partitions['/home'].should == {'size' => 1}
         end
+
+        it "should allow legacy package inclusion style" do
+          appliance = @helper.read_yaml_file("#{File.dirname(__FILE__)}/../rspec/src/appliances/legacy.appl")
+          appliance.packages.should == ['squid','boxgrinder-rest']
+        end
+
       end
     end
   end
