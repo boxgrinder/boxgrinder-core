@@ -22,7 +22,7 @@ module BoxGrinder
   describe ApplianceDefinitionHelper do
 
     before(:each) do
-      @helper = ApplianceDefinitionHelper.new(:log => Logger.new('/dev/null'))
+      @helper = ApplianceDefinitionHelper.new(:log => LogHelper.new(:level => :trace, :type => :stdout))
     end
 
     describe ".read_definitions" do
