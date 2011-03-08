@@ -70,7 +70,7 @@ module BoxGrinder
 
         return output.strip
       rescue => e
-        @log.error e.backtrace
+        @log.error e.backtrace.join($/)
         raise "An error occurred while executing command: '#{redacted_command}', #{e.message}"
       end
     end
