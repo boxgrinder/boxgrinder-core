@@ -74,8 +74,9 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
-* Mon Mar 7 2011 <msavy@redhat.com> - 0.3.0-1
+* Sat Mar 05 2011  <mgoldman@redhat.com> - 0.3.0-1
 - Upstream release: 0.3.0
+- [BGBUILD-178] Remove sensitive data from logs
 - [BGBUILD-168] Support deprecated package inclusion format in appliance definitions
 
 * Tue Feb 16 2011  <mgoldman@redhat.com> - 0.2.1-1
