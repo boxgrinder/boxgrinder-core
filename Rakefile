@@ -17,19 +17,17 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'rubygems'
-require 'spec/rake/spectask'
 require 'echoe'
 
 Echoe.new("boxgrinder-core") do |p|
   p.project     = "BoxGrinder"
   p.author      = "Marek Goldmann"
   p.summary     = "Core library for BoxGrinder"
-  p.url         = "http://www.jboss.org/boxgrinder"
+  p.url         = "http://boxgrinder.org"
   p.email       = "info@boxgrinder.org"
   p.runtime_dependencies = ['open4 >=1.0.0', 'hashery >=1.3.0']
 end
 
-desc "Run all tests"
 Spec::Rake::SpecTask.new('spec') do |t|
   t.rcov = false
   t.spec_files = FileList["spec/**/*-spec.rb"]
@@ -37,7 +35,6 @@ Spec::Rake::SpecTask.new('spec') do |t|
   t.verbose = true
 end
 
-desc "Run all tests and generate code coverage report"
 Spec::Rake::SpecTask.new('spec:coverage') do |t|
   t.spec_files = FileList["spec/**/*-spec.rb"]
   t.spec_opts = ['--colour', '--format', 'html:pkg/rspec_report.html', '-b']
