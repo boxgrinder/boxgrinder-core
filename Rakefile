@@ -17,6 +17,12 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'rubygems'
+
+begin
+  require 'rake/dsl'
+rescue LoadError
+end
+
 require 'echoe'
 
 Echoe.new("boxgrinder-core") do |p|
