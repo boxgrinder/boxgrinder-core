@@ -5,7 +5,7 @@
 
 Summary: Core library for BoxGrinder
 Name: rubygem-%{gemname}
-Version: 0.3.0
+Version: 0.3.1
 Release: 1%{?dist}
 Group: Development/Languages
 License: LGPLv3+
@@ -74,6 +74,10 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
+* Thu Mar 17 2011 <mgoldman@redhat.com> - 0.3.1-1
+- Upstream release: 0.3.1
+- [BGBUILD-164] Guestfs writes to /tmp/ by default, potentially filling the root filesystem
+
 * Sat Mar 05 2011  <mgoldman@redhat.com> - 0.3.0-1
 - Upstream release: 0.3.0
 - [BGBUILD-178] Remove sensitive data from logs

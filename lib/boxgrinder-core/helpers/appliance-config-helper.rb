@@ -112,7 +112,7 @@ module BoxGrinder
               partitions[root].delete('options') if partitions[root]['type'] != partition['type']
               partitions[root]['type'] = partition['type']
             else
-              partitions[root]['type'] = default_filesystem_type
+              partitions[root]['type'] = @appliance_config.default_filesystem_type
             end
           else
             partitions[root] = {}
@@ -121,7 +121,7 @@ module BoxGrinder
             unless partition['type'].nil?
               partitions[root]['type'] = partition['type']
             else
-              partitions[root]['type'] = default_filesystem_type
+              partitions[root]['type'] = @appliance_config.default_filesystem_type
             end
           end
 
@@ -131,20 +131,6 @@ module BoxGrinder
       end
 
       @appliance_config.hardware.partitions = partitions
-    end
-
-    def default_filesystem_type
-      fs = 'ext4'
-
-      case @appliance_config.os.name
-        when 'rhel', 'centos'
-          case @appliance_config.os.version
-            when '5'
-              fs = 'ext3'
-          end
-      end
-
-      fs
     end
 
     def merge_memory

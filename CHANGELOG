@@ -1,3 +1,7 @@
+v0.3.1
+
+* [BGBUILD-164] Guestfs writes to /tmp/ by default, potentially filling the root filesystem
+
 v0.3.0
 
 * [BGBUILD-178] Remove sensitive data from logs

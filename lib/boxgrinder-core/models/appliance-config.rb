@@ -22,32 +22,32 @@ require 'hashery/opencascade'
 module BoxGrinder
   class ApplianceConfig
     def initialize
-      @name                = nil
-      @summary             = nil
+      @name = nil
+      @summary = nil
 
-      @variables           = {}
+      @variables = {}
 
-      @os                  = OpenCascade.new
+      @os = OpenCascade.new
 
-      @os.name             = nil
-      @os.version          = nil
-      @os.password         = 'boxgrinder'
+      @os.name = nil
+      @os.version = nil
+      @os.password = 'boxgrinder'
 
-      @hardware            = OpenCascade.new
+      @hardware = OpenCascade.new
 
-      @hardware.cpus       = 1
-      @hardware.memory     = 256
-      @hardware.network    = 'NAT'
-      @hardware.partitions = {"/" => { 'size' => 1 }}
+      @hardware.cpus = 1
+      @hardware.memory = 256
+      @hardware.network = 'NAT'
+      @hardware.partitions = {"/" => {'size' => 1}}
 
-      @post                = {}
+      @post = {}
 
-      @packages            = []
-      @appliances          = []
-      @repos               = []
+      @packages = []
+      @appliances = []
+      @repos = []
 
-      @version             = 1
-      @release             = 0
+      @version = 1
+      @release = 0
     end
 
     attr_reader :variables
@@ -72,20 +72,35 @@ module BoxGrinder
     end
 
     def init_arch
-      @hardware.arch      = `uname -m`.chomp.strip
+      @hardware.arch = `uname -m`.chomp.strip
       @hardware.base_arch = is64bit? ? "x86_64" : "i386"
       self
     end
 
     def initialize_paths
-      @path           = OpenCascade.new
+      @path = OpenCascade.new
 
-      @path.os        = "#{@os.name}/#{@os.version}"
-      @path.main      = "#{@hardware.arch}/#{@path.os}"
+      @path.os = "#{@os.name}/#{@os.version}"
+      @path.main = "#{@hardware.arch}/#{@path.os}"
       @path.appliance = "appliances/#{@path.main}/#{@name}"
-      @path.build     = "build/#{@path.appliance}"
+      @path.build = "build/#{@path.appliance}"
 
       self
+    end
+
+    # Returns default filesystem type for current OS
+    def default_filesystem_type
+      fs = 'ext4'
+
+      case @os.name
+        when 'rhel', 'centos'
+          case @os.version
+            when '5'
+              fs = 'ext3'
+          end
+      end
+
+      fs
     end
 
     # used to checking if configuration differs from previous in appliance-kickstart
