@@ -36,7 +36,8 @@ module BoxGrinder
           :dir => {
               :root => Dir.pwd,
               :build => 'build',
-              :cache => '/var/cache/boxgrinder' # required for appliance-creator
+              :cache => '/var/cache/boxgrinder', # required for appliance-creator
+              :tmp => '/tmp'
           },
           :os_config => {},
           :platform_config => {},
