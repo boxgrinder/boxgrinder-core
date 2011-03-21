@@ -77,6 +77,7 @@ popd
 * Thu Mar 17 2011 <mgoldman@redhat.com> - 0.3.1-1
 - Upstream release: 0.3.1
 - [BGBUILD-164] Guestfs writes to /tmp/ by default, potentially filling the root filesystem
+- [BGBUILD-97] some filesystems dont get unmounted on BG interruption
 
 * Sat Mar 05 2011  <mgoldman@redhat.com> - 0.3.0-1
 - Upstream release: 0.3.0

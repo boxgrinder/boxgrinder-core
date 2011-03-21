@@ -21,12 +21,20 @@ require 'rubygems'
 require 'open4'
 
 module BoxGrinder
+  class InterruptionError < Interrupt
+    attr_reader :pid
+
+    def initialize(pid)
+      @pid = pid
+    end
+  end
+
   class ExecHelper
-    def initialize( options = {} )
+    def initialize(options = {})
       @log = options[:log] || Logger.new(STDOUT)
     end
 
-    def execute( command, options = {} )
+    def execute(command, options = {})
       redacted = options[:redacted] || []
 
       redacted_command = command
@@ -41,7 +49,10 @@ module BoxGrinder
       STDERR.sync = true
 
       begin
-        status = Open4::popen4( command ) do |pid, stdin, stdout, stderr|
+        process_pid = nil
+
+        status = Open4::popen4(command) do |pid, stdin, stdout, stderr|
+          process_pid = pid
           threads = []
 
           threads << Thread.new(stdout) do |input_str|
@@ -63,12 +74,14 @@ module BoxGrinder
               @log.debug l
             end
           end
-          threads.each{|t|t.join}
+          threads.each { |t| t.join }
         end
 
         raise "process exited with wrong exit status: #{status.exitstatus}" if status.exitstatus != 0
 
         return output.strip
+      rescue Interrupt
+        raise InterruptionError.new(process_pid), "Program was interrupted."
       rescue => e
         @log.error e.backtrace.join($/)
         raise "An error occurred while executing command: '#{redacted_command}', #{e.message}"

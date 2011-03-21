@@ -1,6 +1,7 @@
 v0.3.1
 
 * [BGBUILD-164] Guestfs writes to /tmp/ by default, potentially filling the root filesystem
+* [BGBUILD-97] some filesystems dont get unmounted on BG interruption
 
 v0.3.0
 
