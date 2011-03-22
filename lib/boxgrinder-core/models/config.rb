@@ -45,9 +45,10 @@ module BoxGrinder
           :additional_plugins => []
       )
 
+      deep_merge(self, YAML.load_file(self.file)) if File.exists?(self.file)
       merge!(values.inject({}) { |memo, (k, v)| memo[k.to_sym] = v; memo })
 
-      deep_merge(self, YAML.load_file(self.file)) if File.exists?(self.file)
+      self.backtrace = true if [:debug, :trace].include?(self.log_level)
     end
 
     def deep_merge(first, second)
