@@ -504,5 +504,42 @@ module BoxGrinder
         config.default_repos.should == false
       end
     end
+
+    describe ".prepare_os" do
+      it "should set default value for pae" do
+        config_a = ApplianceConfig.new
+        config_a.name = 'a'
+        config_a.appliances << 'b'
+
+        config_b = ApplianceConfig.new
+        config_b.name = 'b'
+
+        prepare_helper([config_a, config_b])
+        @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+        @helper.prepare_os
+
+        config = @helper.instance_variable_get(:@appliance_config)
+        config.os.pae.should == true
+      end
+
+      it "should set pae to false if it set so in dependent appliances" do
+        config_a = ApplianceConfig.new
+        config_a.name = 'a'
+        config_a.appliances << 'b'
+
+        config_b = ApplianceConfig.new
+        config_b.name = 'b'
+        config_b.os.pae = false
+
+        prepare_helper([config_a, config_b])
+        @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+        @helper.prepare_os
+
+        config = @helper.instance_variable_get(:@appliance_config)
+        config.os.pae.should == false
+      end
+    end
   end
 end

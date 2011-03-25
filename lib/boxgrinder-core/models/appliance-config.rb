@@ -32,6 +32,7 @@ module BoxGrinder
       @os.name = nil
       @os.version = nil
       @os.password = 'boxgrinder'
+      @os.pae = true
 
       @hardware = OpenCascade.new
 

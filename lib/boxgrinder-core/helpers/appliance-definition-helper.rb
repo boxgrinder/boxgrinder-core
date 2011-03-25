@@ -138,6 +138,7 @@ module BoxGrinder
         appliance_config.os.name = definition['os']['name'].to_s unless definition['os']['name'].nil?
         appliance_config.os.version = definition['os']['version'].to_s unless definition['os']['version'].nil?
         appliance_config.os.password = definition['os']['password'].to_s unless definition['os']['password'].nil?
+        appliance_config.os.pae = definition['os']['pae'] unless definition['os']['pae'].nil?
       end
 
       unless definition['hardware'].nil?
