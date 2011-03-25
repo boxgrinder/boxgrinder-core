@@ -238,8 +238,32 @@ module BoxGrinder
         @helper.merge_partitions
 
         config = @helper.instance_variable_get(:@appliance_config)
+        config.hardware.partitions.size.should == 3
+        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext3'}, "/home" => {'size' => '2', 'type' => 'ext3'}, "/boot" => {'type' => 'ext3', 'size' => 0.1}}
+      end
+
+      it "should merge partitions for default fs_types without options for RHEL 5 (ext3) with /boot partition" do
+        config_a = ApplianceConfig.new
+        config_a.name = 'a'
+        config_a.appliances << 'b'
+        config_a.hardware.partitions = {"/" => {'size' => '2'}}
+        config_a.os.name = 'rhel'
+        config_a.os.version = '5'
+
+        config_b = ApplianceConfig.new
+        config_b.name = 'b'
+        config_b.hardware.partitions = {"/" => {'size' => '4'}, "/boot" => {'size' => '2'}}
+        config_b.os.name = 'rhel'
+        config_b.os.version = '5'
+
+        prepare_helper([config_a, config_b])
+        @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+        @helper.merge_partitions
+
+        config = @helper.instance_variable_get(:@appliance_config)
         config.hardware.partitions.size.should == 2
-        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext3'}, "/home" => {'size' => '2', 'type' => 'ext3'}}
+        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext3'}, "/boot" => {'size' => '2', 'type' => 'ext3'}}
       end
 
       it "should merge partitions with different filesystem types" do

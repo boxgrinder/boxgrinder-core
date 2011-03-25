@@ -78,6 +78,7 @@ popd
 - Upstream release: 0.3.1
 - [BGBUILD-164] Guestfs writes to /tmp/ by default, potentially filling the root filesystem
 - [BGBUILD-97] some filesystems dont get unmounted on BG interruption
+- [BGBUILD-155] Images built on Centos5.x (el5) for VirtualBox kernel panic (/dev/root missing)
 
 * Sat Mar 05 2011  <mgoldman@redhat.com> - 0.3.0-1
 - Upstream release: 0.3.0
