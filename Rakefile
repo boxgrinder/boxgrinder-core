@@ -26,12 +26,13 @@ end
 require 'echoe'
 
 Echoe.new("boxgrinder-core") do |p|
-  p.project     = "BoxGrinder"
-  p.author      = "Marek Goldmann"
-  p.summary     = "Core library for BoxGrinder"
-  p.url         = "http://boxgrinder.org"
-  p.email       = "info@boxgrinder.org"
-  p.runtime_dependencies = ['open4 >=1.0.0', 'hashery >=1.3.0']
+  p.project = "BoxGrinder"
+  p.author = "Marek Goldmann"
+  p.summary = "Core library for BoxGrinder"
+  p.url = "http://boxgrinder.org"
+  p.email = "info@boxgrinder.org"
+  p.runtime_dependencies = ['hashery >=1.3.0']
+  p.runtime_dependencies << ['open4 >=1.0.0'] unless RUBY_PLATFORM =~ /java/
 end
 
 Spec::Rake::SpecTask.new('spec') do |t|

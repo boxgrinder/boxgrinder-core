@@ -22,30 +22,52 @@ module BoxGrinder
   describe ExecHelper do
     before(:each) do
       @helper = ExecHelper.new(:log => Logger.new('/dev/null'))
+      @o4 = (RUBY_PLATFORM =~ /java/ ? IO : Open4)
+
+      @pid = 1234
+      @stdin = mock('STDIN')
+      @stdout = mock('STDOUT')
+      @stderr = mock('STDERR')
     end
 
     it "should fail when command doesn't exists" do
-      Open4.should_receive(:popen4).with('thisdoesntexists').and_raise('abc')
-
+      @o4.should_receive(:send).with(:popen4, 'thisdoesntexists').and_raise('abc')
       proc { @helper.execute("thisdoesntexists") }.should raise_error("An error occurred while executing command: 'thisdoesntexists', abc")
     end
 
-    it "should fail when command exit status != 0" do
-      open4 = mock(Open4)
-      open4.stub!(:exitstatus).and_return(1)
+    if RUBY_PLATFORM =~ /java/
+      it "should fail when command exit status != 0 and is on MRI" do
+        @stdout.should_receive(:each)
+        @stderr.should_receive(:each)
+        Process.should_receive(:getpgid)
+        Process.should_receive(:waitpid2).with(1234).and_return([1234, OpenCascade.new(:exitstatus => 1)])
 
-      Open4.should_receive(:popen4).with('abc').and_return(open4)
+        @o4.should_receive(:send).with(:popen4, 'exitstatus').and_return([@pid, @stdin, @stdout, @stderr])
 
-      proc { @helper.execute("abc") }.should raise_error("An error occurred while executing command: 'abc', process exited with wrong exit status: 1")
+        lambda { @helper.execute("exitstatus") }.should_not raise_error("An error occurred while executing command: 'exitstatus', process exited with wrong exit status: 1")
+      end
+    else
+      it "should fail when command exit status != 0 and is on MRI" do
+        @stdout.should_receive(:each)
+        @stderr.should_receive(:each)
+        Process.should_receive(:getpgid)
+        Process.should_receive(:waitpid2).with(1234).and_return([1234, OpenCascade.new(:exitstatus => 1)])
+
+        @o4.should_receive(:send).with(:popen4, 'exitstatus').and_return([@pid, @stdin, @stdout, @stderr])
+
+        lambda { @helper.execute("exitstatus") }.should raise_error("An error occurred while executing command: 'exitstatus', process exited with wrong exit status: 1")
+      end
     end
 
     it "should execute the command" do
-      open4 = mock(Open4)
-      open4.stub!(:exitstatus).and_return(0)
+      @stdout.should_receive(:each)
+      @stderr.should_receive(:each)
+      Process.should_receive(:getpgid)
+      Process.should_receive(:waitpid2).with(1234).and_return([1234, OpenCascade.new(:exitstatus => 0)])
 
-      Open4.should_receive(:popen4).with('abc').and_return(open4)
+      @o4.should_receive(:send).with(:popen4, 'abc').and_return([@pid, @stdin, @stdout, @stderr])
 
-      proc { @helper.execute("abc") }.should_not raise_error
+      lambda { @helper.execute("abc") }.should_not raise_error
     end
 
     it "should execute the command and return output" do
@@ -60,8 +82,13 @@ module BoxGrinder
       log = mock('Logger')
       log.should_receive(:debug).with("Executing command: 'ala ma <REDACTED> i jest fajnie'")
 
+      @stdout.should_receive(:each)
+      @stderr.should_receive(:each)
+      Process.should_receive(:getpgid)
+      Process.should_receive(:waitpid2).with(1234).and_return([1234, OpenCascade.new(:exitstatus => 0)])
+
       @helper = ExecHelper.new(:log => log)
-      Open4.should_receive(:popen4).and_return(OpenStruct.new(:exitstatus => 0))
+      @o4.should_receive(:send).with(:popen4, "ala ma kota i jest fajnie").and_return([@pid, @stdin, @stdout, @stderr])
 
       @helper.execute("ala ma kota i jest fajnie", :redacted => ['kota'])
     end

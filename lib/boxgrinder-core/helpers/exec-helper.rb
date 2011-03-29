@@ -18,7 +18,7 @@
 
 require 'logger'
 require 'rubygems'
-require 'open4'
+require 'open4' unless RUBY_PLATFORM =~ /java/
 
 module BoxGrinder
   class InterruptionError < Interrupt
@@ -49,42 +49,56 @@ module BoxGrinder
       STDERR.sync = true
 
       begin
-        process_pid = nil
+        pid, stdin, stdout, stderr = (RUBY_PLATFORM =~ /java/ ? IO : Open4).send(:popen4, command)
+        threads = []
 
-        status = Open4::popen4(command) do |pid, stdin, stdout, stderr|
-          process_pid = pid
-          threads = []
+        threads << Thread.new(stdout) do |out|
+          out.each do |l|
+            l.chomp!
+            l.strip!
 
-          threads << Thread.new(stdout) do |input_str|
-            input_str.each do |l|
-              l.chomp!
-              l.strip!
-
-              output << "\n#{l}"
-              @log.debug l
-            end
+            output << "\n#{l}"
+            @log.debug l
           end
-
-          threads << Thread.new(stderr) do |input_str|
-            input_str.each do |l|
-              l.chomp!
-              l.strip!
-
-              output << "\n#{l}"
-              @log.debug l
-            end
-          end
-          threads.each { |t| t.join }
         end
 
-        raise "process exited with wrong exit status: #{status.exitstatus}" if status.exitstatus != 0
+        threads << Thread.new(stderr) do |err|
+          err.each do |l|
+            l.chomp!
+            l.strip!
+
+            output << "\n#{l}"
+            @log.debug l
+          end
+        end
+
+        threads.each { |t| t.join }
+
+        # Assume the process exited cleanly, which can cause some bad behaviour, but I don't see better way
+        # to get reliable status for processes both on MRI and JRuby
+        #
+        # http://jira.codehaus.org/browse/JRUBY-5673
+        status = OpenCascade.new(:exitstatus => 0)
+        
+        fakepid, status = Process.waitpid2(pid) if process_alive?(pid)
+
+        raise "process exited with wrong exit status: #{status.exitstatus}" if !(RUBY_PLATFORM =~ /java/) and status.exitstatus != 0
 
         return output.strip
       rescue Interrupt
-        raise InterruptionError.new(process_pid), "Program was interrupted."
+        raise InterruptionError.new(pid), "Program was interrupted."
       rescue => e
         @log.error e.backtrace.join($/)
         raise "An error occurred while executing command: '#{redacted_command}', #{e.message}"
+      end
+    end
+
+    def process_alive?(pid)
+      begin
+        Process.getpgid(pid)
+        true
+      rescue Errno::ESRCH
+        false
       end
     end
   end

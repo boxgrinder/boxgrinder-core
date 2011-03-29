@@ -3,6 +3,7 @@ LICENSE
 Manifest
 README
 Rakefile
+boxgrinder-core.gemspec
 lib/boxgrinder-core.rb
 lib/boxgrinder-core/helpers/appliance-config-helper.rb
 lib/boxgrinder-core/helpers/appliance-definition-helper.rb

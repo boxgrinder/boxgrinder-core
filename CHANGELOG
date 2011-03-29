@@ -4,6 +4,7 @@ v0.3.1
 * [BGBUILD-97] some filesystems dont get unmounted on BG interruption
 * [BGBUILD-155] Images built on Centos5.x (el5) for VirtualBox kernel panic (/dev/root missing)
 * [BGBUILD-190] Allow to specify kernel variant (PAE or not) for Fedora OS
+* [BGBUILD-192] Use IO.popen4 instead open4 gem on JRuby
 
 v0.3.0
 
