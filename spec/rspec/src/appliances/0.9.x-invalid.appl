@@ -1,0 +1,40 @@
+name: ""
+summary: ""
+version: -1
+release: -2
+hardware:
+  cpus: 0
+  memory: 0
+  partitions:
+    "/":
+      size: 0
+    "/home":
+      size: -1
+      type: ABC123 #no such type 
+appliances:
+  - /cannot/do/this
+  - #wrong
+  - "" #wrong
+  - " "#technically ok
+  - this$is%fine£though
+packages:
+  - this-is-fine
+  - good/bad/u g l y
+  - $%^&*dontlet$$£this%£"$work
+  - #blank is bad
+  - "" #empty string is invalid too
+  - " "#no spaces allowed
+repos:
+  - name: "" # wrong and missing baseurl/mirrorlist
+  - name: " "# no spaces and missing baseurl/mirrorlist
+  - name: "blah" # repo has baseurl AND mirrorlist which is wrong
+    baseurl: sftp://example.com #no sftp support
+    mirrorlist: http:// this is not ok .\/\/ #invalid uri
+post:
+  base:
+    - #wrong
+    - "" #wrong
+    - " " #wrong
+    - "this>is<fine >> << $() || && == ++ --"
+  fred: #ok
+    - "shred" #ok

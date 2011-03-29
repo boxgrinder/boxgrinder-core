@@ -17,6 +17,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'boxgrinder-core/helpers/appliance-definition-helper'
+require 'boxgrinder-core/validators/appliance-parser-validator'
 
 module BoxGrinder
   describe ApplianceDefinitionHelper do
@@ -32,9 +33,8 @@ module BoxGrinder
         ['appl', 'yml', 'yaml'].each do |ext|
           @helper = ApplianceDefinitionHelper.new(:log => Logger.new('/dev/null'))
           File.should_receive(:exists?).with("file.#{ext}").and_return(true)
-          @helper.should_receive(:read_yaml_file).with("file.#{ext}").and_return(appliance_config)
+          @helper.appliance_validator.should_receive(:load_specification_files).with("file.#{ext}").and_return(appliance_config)
           @helper.read_definitions("file.#{ext}")
-
           configs = @helper.appliance_configs
           configs.should == [appliance_config]
         end
@@ -46,9 +46,9 @@ module BoxGrinder
         ['application/x-yaml', 'text/yaml'].each do |type|
           @helper = ApplianceDefinitionHelper.new(:log => Logger.new('/dev/null'))
           File.should_receive(:exists?).with("file").and_return(true)
-          @helper.should_receive(:read_yaml_file).with("file").and_return(appliance_config)
+         # @helper.should_receive(:read_yaml_file).with("file").and_return(appliance_config)
+          @helper.appliance_validator.should_receive(:load_specification_files).with("file").and_return(appliance_config)
           @helper.read_definitions("file", type)
-
           configs = @helper.appliance_configs
           configs.should == [appliance_config]
           configs.first.should == appliance_config
@@ -81,8 +81,9 @@ module BoxGrinder
         File.should_receive(:exists?).ordered.with('a.appl').and_return(true)
         File.should_receive(:exists?).ordered.with('./b.appl').and_return(true)
 
-        @helper.should_receive(:read_yaml_file).ordered.with('a.appl').and_return(appliance_a)
-        @helper.should_receive(:read_yaml_file).ordered.with('./b.appl').and_return(appliance_b)
+
+        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('a.appl').and_return(appliance_a)
+        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./b.appl').and_return(appliance_b)
 
         @helper.read_definitions("a.appl")
 
@@ -117,11 +118,11 @@ module BoxGrinder
         File.should_receive(:exists?).ordered.with('./b1.appl').and_return(true)
         File.should_receive(:exists?).ordered.with('./c1.appl').and_return(true)
 
-        @helper.should_receive(:read_yaml_file).ordered.with('a.appl').and_return(appliance_a)
-        @helper.should_receive(:read_yaml_file).ordered.with('./b2.appl').and_return(appliance_b2)
-        @helper.should_receive(:read_yaml_file).ordered.with('./c2.appl').and_return(appliance_c2)
-        @helper.should_receive(:read_yaml_file).ordered.with('./b1.appl').and_return(appliance_b1)
-        @helper.should_receive(:read_yaml_file).ordered.with('./c1.appl').and_return(appliance_c1)
+        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('a.appl').and_return(appliance_a)
+        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./b2.appl').and_return(appliance_b2)
+        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./c2.appl').and_return(appliance_c2)
+        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./b1.appl').and_return(appliance_b1)
+        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./c1.appl').and_return(appliance_c1)
 
         @helper.read_definitions("a.appl")
 
@@ -153,11 +154,13 @@ module BoxGrinder
         File.should_receive(:exists?).ordered.with('./c.appl').and_return(true)
         File.should_receive(:exists?).ordered.with('./b1.appl').and_return(true)
 
-        @helper.should_receive(:read_yaml_file).ordered.with('a.appl').and_return(appliance_a)
-        @helper.should_receive(:read_yaml_file).ordered.with('./b2.appl').and_return(appliance_b2)
-        @helper.should_receive(:read_yaml_file).ordered.with('./c.appl').and_return(appliance_c)
-        @helper.should_receive(:read_yaml_file).ordered.with('./b1.appl').and_return(appliance_b1)
-        @helper.should_not_receive(:read_yaml_file).ordered.with('./c.appl').and_return(appliance_c)
+        #@helper.appliance_validator.should_receive(:load_specification_files).ordered.with('a.appl').and_return(appliance_a)
+
+        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('a.appl').and_return(appliance_a)
+        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./b2.appl').and_return(appliance_b2)
+        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./c.appl').and_return(appliance_c)
+        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./b1.appl').and_return(appliance_b1)
+        @helper.appliance_validator.should_not_receive(:load_specification_files).ordered.with('./c.appl').and_return(appliance_c)
 
         @helper.read_definitions("a.appl")
 
@@ -167,7 +170,7 @@ module BoxGrinder
       end
 
       it "should read YAML content instead of loading a file" do
-        yaml = "name: abc\nos:\n  name: fedora\n  version: 13\npackages:\n  - @core\nhardware:\n  partitions:\n    \"/\":\n      size: 6"
+        yaml = "name: abc\nos:\n  name: fedora\n  version: '13'\npackages:\n  - @core\nhardware:\n  partitions:\n    \"/\":\n      size: 6"
         appliance = @helper.read_definitions(yaml).last
 
         appliance.name.should == 'abc'
@@ -175,26 +178,32 @@ module BoxGrinder
         appliance.hardware.partitions['/']['size'].should == 6
       end
 
-      it "should read invalid YAML content" do
-        lambda { @helper.read_definitions("@$FEWYERTH") }.should raise_error(RuntimeError, 'Provided definition is not a Hash.')
+      it "should read invalid YAML content" do#ApplianceValidationError: :
+        lambda { @helper.read_definitions("@$FEWYERTH") }.should raise_error(ApplianceValidationError, /The appliance specification "(.*)" was invalid according to schema "(.*)"/)
       end
 
       it "should catch exception if YAML parsing raises it" do
-        lambda { @helper.read_definitions("!!") }.should raise_error(RuntimeError, 'Provided definition could not be read.')
+        lambda { @helper.read_definitions("!!") }.should raise_error(ApplianceValidationError, /'!!': not a mapping/m)
       end
 
       it "should catch exception if YAML file parsing raises it" do
-        lambda { @helper.read_definitions("#{File.dirname(__FILE__)}/../rspec/src/appliances/invalid-yaml.appl") }.should raise_error(RuntimeError, /File '(.*)' could not be read./)
+        lambda { @helper.read_definitions("#{File.dirname(__FILE__)}/../rspec/src/appliances/invalid-yaml.appl") }.should raise_error(ApplianceValidationError, /'!!': not a mapping/m)
       end
 
       it "should raise because xml files aren't supported yet" do
         File.should_receive(:exists?).with("file.xml").and_return(true)
-        lambda { @helper.read_definitions("file.xml") }.should raise_error(RuntimeError, "Reading XML files is not supported right now. File 'file.xml' could not be read.")
+        lambda { @helper.read_definitions("file.xml") }.should raise_error(RuntimeError, "Reading XML files is not supported presently. File 'file.xml' could not be read.")
       end
 
       it "should raise because of unsupported file format" do
         File.should_receive(:exists?).with("file.xmdfl").and_return(true)
         lambda { @helper.read_definitions("file.xmdfl") }.should raise_error(RuntimeError, "Unsupported file format for appliance definition file.")
+      end
+
+       #Do more extensive tests in the parser/validator itself
+      it "should allow legacy package inclusion styles" do#@helper.appliance_validator.should_receive(:load_specification_files).
+        @helper.read_definitions("#{File.dirname(__FILE__)}/../rspec/src/appliances/legacy.appl")
+        @helper.appliance_configs.last.packages.should == ['squid','boxgrinder-rest']
       end
 
       # https://issues.jboss.org/browse/BGBUILD-150
@@ -213,45 +222,44 @@ module BoxGrinder
           File.should_receive(:exists?).with('./b.appl').and_return(true)
           File.should_not_receive(:exists?).ordered.with('./a.appl')
 
-          @helper.should_receive(:read_yaml_file).ordered.with('a.appl').and_return(appliance_a)
-          @helper.should_receive(:read_yaml_file).ordered.with('./b.appl').and_return(appliance_b)
-          @helper.should_not_receive(:read_yaml_file).ordered.with('./a.appl')
+          @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('a.appl').and_return(appliance_a)
+          @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./b.appl').and_return(appliance_b)
+          @helper.appliance_validator.should_not_receive(:load_specification_files).ordered.with('./a.appl')
 
           @helper.read_definitions("a.appl")
         end
       end
     end
-
-    describe "read_yaml_file" do
-      it "should read default_repos and set to false" do
-        YAML.should_receive(:load_file).with('default_repos_false.appl').and_return({'default_repos'=>false})
-        @helper.read_yaml_file('default_repos_false.appl').default_repos.should == false
-      end
-
-      it "should read default_repos and set to true" do
-        YAML.should_receive(:load_file).with('default_repos_true.appl').and_return({'default_repos'=>true})
-        @helper.read_yaml_file('default_repos_true.appl').default_repos.should == true
-      end
-
-      it "should read default_repos but not set it" do
-        YAML.should_receive(:load_file).with('default_repos_empty.appl').and_return({})
-        @helper.read_yaml_file('default_repos_empty.appl').default_repos.should == nil
-      end
-
-      it "should read default_repos and raise" do
-        YAML.should_receive(:load_file).with('default_repos_bad.appl').and_return({'default_repos'=>'something'})
-
-        lambda {
-          @helper.read_yaml_file("default_repos_bad.appl")
-        }.should raise_error(RuntimeError, 'default_repos should be set to true or false')
-      end
-    end
+# These should all be in the parser & validator now
+#    describe "read_yaml_file" do
+#      it "should read default_repos and set to false" do
+#        YAML.should_receive(:load_file).with('default_repos_false.appl').and_return({'default_repos'=>false})
+#        @helper.read_yaml_file('default_repos_false.appl').default_repos.should == false
+#      end
+#
+#      it "should read default_repos and set to true" do
+#        YAML.should_receive(:load_file).with('default_repos_true.appl').and_return({'default_repos'=>true})
+#        @helper.read_yaml_file('default_repos_true.appl').default_repos.should == true
+#      end
+#
+#      it "should read default_repos but not set it" do
+#        YAML.should_receive(:load_file).with('default_repos_empty.appl').and_return({})
+#        @helper.read_yaml_file('default_repos_empty.appl').default_repos.should == nil
+#      end
+#
+#      it "should read default_repos and raise" do
+#        YAML.should_receive(:load_file).with('default_repos_bad.appl').and_return({'default_repos'=>'something'})
+#
+#        lambda {
+#          @helper.read_yaml_file("default_repos_bad.appl")
+#        }.should raise_error(RuntimeError, 'default_repos should be set to true or false')
+#      end
+#    end
 
     describe ".parse_yaml" do
       context "partitions" do
         it "should add default partition when no partitions are specified" do
           appliance_config = @helper.parse_yaml({})
-
           appliance_config.hardware.partitions.size.should == 1
           appliance_config.hardware.partitions['/'].should == {'size' => 1}
         end
@@ -262,11 +270,6 @@ module BoxGrinder
           appliance_config.hardware.partitions.size.should == 2
           appliance_config.hardware.partitions['/'].should == {'size' => 1}
           appliance_config.hardware.partitions['/home'].should == {'size' => 1}
-        end
-
-        it "should allow legacy package inclusion style" do
-          appliance = @helper.read_yaml_file("#{File.dirname(__FILE__)}/../rspec/src/appliances/legacy.appl")
-          appliance.packages.should == ['squid','boxgrinder-rest']
         end
 
       end

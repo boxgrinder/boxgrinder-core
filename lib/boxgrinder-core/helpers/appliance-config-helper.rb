@@ -80,7 +80,7 @@ module BoxGrinder
               resolve_stack.index(k).nil?
         }
         refs.each do |ref|
-          resolve(Arrays.new(resolve_stack).push(ref), resolved_set) unless resolved_set.include?(ref)
+          resolve(Array.new(resolve_stack).push(ref), resolved_set) unless resolved_set.include?(ref)
           while @appliance_config.variables[var].include? "##{ref}#" do
             @appliance_config.variables[var].gsub!("##{ref}#", @appliance_config.variables[ref])
           end

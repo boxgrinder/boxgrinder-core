@@ -16,17 +16,20 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'boxgrinder-core'#TODO hack
 require 'boxgrinder-core/models/appliance-config'
-require 'yaml'
+require 'boxgrinder-core/validators/appliance-parser-validator'
 
 module BoxGrinder
   class ApplianceDefinitionHelper
     def initialize(options = {})
       @log = options[:log] || Logger.new(STDOUT)
       @appliance_configs = []
+      @appliance_validator = ApplianceParserValidator.new(Dir.glob("#{$BOXGRINDER_ROOT}/boxgrinder-core/schemas/{*.yaml,*.yml}"))
     end
 
     attr_reader :appliance_configs
+    attr_reader :appliance_validator
 
     # Reads definition provided as string. This string can be a YAML document. In this case
     # definition is parsed and an ApplianceConfig object is returned. In other cases it tries to search
@@ -40,14 +43,14 @@ module BoxGrinder
         appliance_config =
             case definition_file_extension
               when '.appl', '.yml', '.yaml'
-                read_yaml_file(definition)
+                parse_yaml( @appliance_validator.load_specification_files( definition ) )
               when '.xml'
                 read_xml_file(definition)
               else
                 unless content_type.nil?
                   case content_type
                     when 'application/x-yaml', 'text/yaml'
-                      read_yaml_file(definition)
+                      parse_yaml( @appliance_validator.load_specification_files( definition ) )
                     when 'application/xml', 'text/xml', 'application/x-xml'
                       read_xml_file(definition)
                   end
@@ -67,33 +70,11 @@ module BoxGrinder
       else
         @log.debug "Reading definition..."
 
-        @appliance_configs << read_yaml(definition)
+        @appliance_configs << parse_yaml( @appliance_validator.load_specification( definition ) )
       end
     end
 
-    def read_yaml(content)
-      begin
-        definition = YAML.load(content)
-        raise "Not a valid YAML content." if definition.nil? or definition == false
-      rescue
-        raise "Provided definition could not be read."
-      end
-
-      parse_yaml(definition)
-    end
-
-    def read_yaml_file(file)
-      begin
-        definition = YAML.load_file(file)
-        raise "Not a valid YAML file." if definition.nil? or definition == false
-      rescue
-        raise "File '#{file}' could not be read."
-      end
-
-      parse_yaml(definition)
-    end
-
-    # TODO this needs to be rewritten
+    # TODO this needs to be rewritten - using kwalify it could be possible to instantiate document structure as objects[, or opencascade hash?]
     def parse_yaml(definition)
       return definition if definition.is_a?(ApplianceConfig)
       raise "Provided definition is not a Hash." unless definition.is_a?(Hash)
@@ -107,27 +88,15 @@ module BoxGrinder
 
       @log.debug "Adding packages to appliance..."
 
-      unless definition['packages'].nil?
-        if definition['packages'].is_a?(Array)
-          # new format
-          appliance_config.packages = definition['packages']
-        elsif definition['packages'].is_a?(Hash)
-          # legacy format
-          @log.warn "BoxGrinder Build packages section format has been changed. Support for legacy format will be removed in the future. See http://boxgrinder.org/tutorials/appliance-definition/ for more information about current format."
-          appliance_config.packages = definition['packages']['includes'] if definition['packages']['includes'].is_a?(Array)
-          @log.warn "BoxGrinder Build no longer supports package exclusion, the following packages will not be explicitly excluded: #{definition['packages']['excludes'].join(", ")}." if definition['packages']['excludes'].is_a?(Array)
-        else
-          @log.warn "Unsupported format for packages section."
-        end
-      end
+      appliance_config.packages = definition['packages']
 
-      @log.debug "#{appliance_config.packages.size} package(s) added to appliance."
+      @log.debug "#{appliance_config.packages.size} package(s) added to appliance." if appliance_config.packages
 
       appliance_config.appliances = definition['appliances'] unless definition['appliances'].nil?
       appliance_config.repos = definition['repos'] unless definition['repos'].nil?
 
-      appliance_config.version = definition['version'].to_s unless definition['version'].nil?
-      appliance_config.release = definition['release'].to_s unless definition['release'].nil?
+      appliance_config.version = definition['version'] unless definition['version'].nil?
+      appliance_config.release = definition['release'] unless definition['release'].nil?
 
       unless definition['default_repos'].nil?
         appliance_config.default_repos = definition['default_repos']
@@ -135,9 +104,9 @@ module BoxGrinder
       end
 
       unless definition['os'].nil?
-        appliance_config.os.name = definition['os']['name'].to_s unless definition['os']['name'].nil?
-        appliance_config.os.version = definition['os']['version'].to_s unless definition['os']['version'].nil?
-        appliance_config.os.password = definition['os']['password'].to_s unless definition['os']['password'].nil?
+        appliance_config.os.name = definition['os']['name'] unless definition['os']['name'].nil?
+        appliance_config.os.version = definition['os']['version'] unless definition['os']['version'].nil?
+        appliance_config.os.password = definition['os']['password'] unless definition['os']['password'].nil?
         appliance_config.os.pae = definition['os']['pae'] unless definition['os']['pae'].nil?
       end
 
@@ -160,7 +129,7 @@ module BoxGrinder
     end
 
     def read_xml_file(file)
-      raise "Reading XML files is not supported right now. File '#{file}' could not be read."
+      raise "Reading XML files is not supported presently. File '#{file}' could not be read."
     end
   end
 end

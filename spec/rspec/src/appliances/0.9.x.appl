@@ -1,0 +1,36 @@
+name: 0.9.x test appliance
+summary: appliance to test 0.9.x schema 
+version: 0.1
+release: 0
+os:
+  name: fedora
+  version: 15
+  password: boxgrinder-ftw
+hardware:
+  cpus:  4
+  memory: 2048
+  partitions:
+    "/":
+      size: 4
+      type: ext4
+appliances:
+  - _include
+packages:
+  - squid
+  - rubygem-boxgrinder-build
+repos:
+  - name: boxgrinder-ci-repo
+    baseurl: http://repo.ci.boxgrinder.org/fedora/15/RPMS/
+    ephemeral: true
+  - name: test
+    baseurl: "http://example.com/repo/#BASE_ARCH#/"
+  - name: mirrorlist
+    mirrorlist: "http://example.com/"
+variables:
+  my_var: "bg rocks!"
+  something: "other"
+post:
+  base:
+    - "/bin/echo 'Hello, World!' > hello-world"
+  vmware:
+    - "/bin/echo 'Hello, World!' > hello-world-vmware" 

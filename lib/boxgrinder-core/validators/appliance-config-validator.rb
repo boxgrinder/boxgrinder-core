@@ -17,7 +17,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'boxgrinder-core/validators/errors'
-
+#TODO should not need this now due to parser & validator
 module BoxGrinder
   class ApplianceConfigValidator
     def initialize(appliance_config, options = {})

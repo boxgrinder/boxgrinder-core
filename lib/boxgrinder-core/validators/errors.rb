@@ -24,6 +24,11 @@ module BoxGrinder
   class ApplianceValidationError < ValidationError
 
   end
+
+  class SchemaValidationError < ValidationError
+
+  end
+
 end
 
 class StandardError
