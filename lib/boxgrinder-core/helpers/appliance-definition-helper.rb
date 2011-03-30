@@ -16,7 +16,6 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'boxgrinder-core'#TODO hack
 require 'boxgrinder-core/models/appliance-config'
 require 'boxgrinder-core/validators/appliance-parser-validator'
 
@@ -25,7 +24,7 @@ module BoxGrinder
     def initialize(options = {})
       @log = options[:log] || Logger.new(STDOUT)
       @appliance_configs = []
-      @appliance_validator = ApplianceParserValidator.new(Dir.glob("#{$BOXGRINDER_ROOT}/boxgrinder-core/schemas/{*.yaml,*.yml}"))
+      @appliance_validator = ApplianceParserValidator.new(Dir.glob("#{File.dirname(__FILE__)}/../schemas/{*.yaml,*.yml}"))
     end
 
     attr_reader :appliance_configs

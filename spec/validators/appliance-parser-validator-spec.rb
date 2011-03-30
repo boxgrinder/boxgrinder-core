@@ -16,14 +16,14 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'rubygems'
 require 'boxgrinder-core/validators/appliance-parser-validator'
-require 'boxgrinder-core'
 
 module BoxGrinder
   describe ApplianceParserValidator do
 
     before(:all) do#load in the schemas
-      @appliance_validator=ApplianceParserValidator.new(Dir.glob("#{$BOXGRINDER_ROOT}/boxgrinder-core/schemas/{*.yaml,*.yml}"))
+      @appliance_validator=ApplianceParserValidator.new(Dir.glob("#{File.dirname(__FILE__)}/../schemas/{*.yaml,*.yml}"))
     end
 
 #    describe ".load_schema" do
