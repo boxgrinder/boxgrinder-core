@@ -17,7 +17,6 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'kwalify'
-require 'boxgrinder-core/schemas/appliance-transformers'
 require 'boxgrinder-core/helpers/log-helper'
 
 module BoxGrinder
@@ -42,29 +41,4 @@ module BoxGrinder
       end
     end
   end
-
-  class TransformHelper
-    include ApplianceTransformers
-
-    def initialize(options = {})
-      @log = options[:log] || Logger.new(STDOUT)
-    end
-
-    def method_name(name)
-      name.gsub(/[-\.]/, '_')
-    end
-
-    def transform(name, doc)
-      begin
-        self.send(self.method_name(name), doc)
-      rescue
-        #No conversion
-      end
-    end
-
-    def method_missing(sym, *args, &block)
-      @log.trace "No document conversion method found for '#{sym}'. Available conversion methods: [#{ApplianceTransformers::instance_methods(false).sort.join(", ")}]"
-    end
-  end
-
 end

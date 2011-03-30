@@ -17,8 +17,8 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'kwalify'
-require 'boxgrinder-core/schemas/appliance-transformers'
 require 'boxgrinder-core/helpers/appliance-parser-helper'
+require 'boxgrinder-core/helpers/appliance-transformer-helper'
 require 'boxgrinder-core/helpers/log-helper'
 require 'boxgrinder-core/validators/errors'
 
@@ -78,7 +78,7 @@ module BoxGrinder
         specification_document = _validate_specification(schema[1], specification_yaml) { |errors| schema_errors=errors }
         if schema_errors.empty? # If succeeded in validating against an old schema
           # We're not at head, call for transformation to latest style, schema[0] is name
-          return TransformHelper.new(:log=> @log).transform(schema[0], specification_document)
+          return ApplianceTransformerHelper.new(:log=> @log).transform(specification_document, schema[0])
         end
       end
 
