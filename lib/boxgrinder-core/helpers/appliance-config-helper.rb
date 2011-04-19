@@ -145,6 +145,8 @@ module BoxGrinder
       merge_field('os.version') { |version| @appliance_config.os.version = version.to_s }
       merge_field('os.password') { |password| @appliance_config.os.password = password.to_s }
       merge_field('os.pae') { |pae| @appliance_config.os.pae = false unless pae }
+
+      @appliance_config.os.password = 'boxgrinder' if @appliance_config.os.password.nil?
     end
 
     def prepare_appliances

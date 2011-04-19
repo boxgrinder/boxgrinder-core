@@ -542,6 +542,78 @@ module BoxGrinder
         config = @helper.instance_variable_get(:@appliance_config)
         config.os.pae.should == false
       end
+
+      it "should set default value for pae" do
+        config_a = ApplianceConfig.new
+        config_a.name = 'a'
+        config_a.appliances << 'b'
+
+        config_b = ApplianceConfig.new
+        config_b.name = 'b'
+
+        prepare_helper([config_a, config_b])
+        @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+        @helper.prepare_os
+
+        config = @helper.instance_variable_get(:@appliance_config)
+        config.os.pae.should == true
+      end
+
+      context "root password" do
+        it "should set default password" do
+          config_a = ApplianceConfig.new
+          config_a.name = 'a'
+          config_a.appliances << 'b'
+
+          config_b = ApplianceConfig.new
+          config_b.name = 'b'
+
+          prepare_helper([config_a, config_b])
+          @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+          @helper.prepare_os
+
+          config = @helper.instance_variable_get(:@appliance_config)
+          config.os.password.should == 'boxgrinder'
+        end
+
+        it "should set password from top-level appliance" do
+          config_a = ApplianceConfig.new
+          config_a.name = 'a'
+          config_a.os.password = 'test'
+          config_a.appliances << 'b'
+
+          config_b = ApplianceConfig.new
+          config_b.name = 'b'
+
+          prepare_helper([config_a, config_b])
+          @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+          @helper.prepare_os
+
+          config = @helper.instance_variable_get(:@appliance_config)
+          config.os.password.should == 'test'
+        end
+
+        it "should set password from inherited appliance" do
+          config_a = ApplianceConfig.new
+          config_a.name = 'a'
+          config_a.appliances << 'b'
+
+          config_b = ApplianceConfig.new
+          config_b.name = 'b'
+          config_b.os.password = 'test'
+
+          prepare_helper([config_a, config_b])
+          @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+          @helper.prepare_os
+
+          config = @helper.instance_variable_get(:@appliance_config)
+          config.os.password.should == 'test'
+        end
+      end
     end
   end
 end
