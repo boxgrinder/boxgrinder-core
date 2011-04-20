@@ -16,12 +16,14 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires: ruby(abi) = %{rubyabi}
 Requires: rubygem(open4)
 Requires: rubygem(hashery)
+Requires: rubygem(kwalify)
 
 BuildRequires: rubygem(rake)
 BuildRequires: rubygem(rspec)
 BuildRequires: rubygem(open4)
 BuildRequires: rubygem(hashery)
 BuildRequires: rubygem(echoe)
+BuildRequires: rubygem(kwalify)
 
 BuildArch: noarch
 Provides: rubygem(%{gemname}) = %{version}
@@ -82,6 +84,7 @@ popd
 - [BGBUILD-190] Allow to specify kernel variant (PAE or not) for Fedora OS
 - [BGBUILD-192] Use IO.popen4 instead open4 gem on JRuby
 - [BGBUILD-198] root password is not inherited
+- [BGBUILD-156] Validate appliance definition files early and return meaningful error messages
 
 * Sat Mar 05 2011  <mgoldman@redhat.com> - 0.3.0-1
 - Upstream release: 0.3.0
