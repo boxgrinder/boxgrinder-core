@@ -17,7 +17,19 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 module BoxGrinder
-  class PluginValidationError < StandardError
+  class ValidationError < StandardError
+
+  end
+
+  class ApplianceValidationError < ValidationError
+
+  end
+
+  class SchemaValidationError < ValidationError
+
+  end
+
+  class PluginValidationError < ValidationError
 
   end
 
@@ -26,3 +38,8 @@ module BoxGrinder
   end
 end
 
+class StandardError
+  def info
+    "#{self.class}: #{message}#$/#{backtrace.join($/)}"
+  end
+end

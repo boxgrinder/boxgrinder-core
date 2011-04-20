@@ -16,24 +16,26 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'boxgrinder-core/helpers/log-helper'
 require 'boxgrinder-core/models/appliance-config'
-require 'boxgrinder-core/validators/appliance-parser-validator'
+require 'boxgrinder-core/appliance-parser'
 
 module BoxGrinder
   class ApplianceDefinitionHelper
     def initialize(options = {})
-      @log = options[:log] || Logger.new(STDOUT)
+      @log = options[:log] || LogHelper.new
       @appliance_configs = []
-      @appliance_validator = ApplianceParserValidator.new(Dir.glob("#{File.dirname(__FILE__)}/../schemas/{*.yaml,*.yml}"))
+      @appliance_parser = ApplianceParser.new(:log => @log)
     end
 
     attr_reader :appliance_configs
-    attr_reader :appliance_validator
+    attr_reader :appliance_parser
 
     # Reads definition provided as string. This string can be a YAML document. In this case
     # definition is parsed and an ApplianceConfig object is returned. In other cases it tries to search
     # for a file with provided name.
     def read_definitions(definition, content_type = nil)
+      @appliance_parser.load_schemas
       if File.exists?(definition)
         @log.debug "Reading definition from '#{definition}' file..."
 
@@ -42,14 +44,14 @@ module BoxGrinder
         appliance_config =
             case definition_file_extension
               when '.appl', '.yml', '.yaml'
-                parse_yaml( @appliance_validator.load_specification_files( definition ) )
+                read_yaml_file(definition)
               when '.xml'
                 read_xml_file(definition)
               else
                 unless content_type.nil?
                   case content_type
                     when 'application/x-yaml', 'text/yaml'
-                      parse_yaml( @appliance_validator.load_specification_files( definition ) )
+                      read_yaml_file(definition)
                     when 'application/xml', 'text/xml', 'application/x-xml'
                       read_xml_file(definition)
                   end
@@ -69,8 +71,13 @@ module BoxGrinder
       else
         @log.debug "Reading definition..."
 
-        @appliance_configs << parse_yaml( @appliance_validator.load_specification( definition ) )
+        @appliance_configs << parse_yaml(@appliance_parser.parse_definition(definition))
       end
+    end
+
+    def read_yaml_file(definition)
+      appliance_definition = @appliance_parser.parse_definition(File.read(definition))
+      parse_yaml(appliance_definition)
     end
 
     # TODO this needs to be rewritten - using kwalify it could be possible to instantiate document structure as objects[, or opencascade hash?]
@@ -82,12 +89,12 @@ module BoxGrinder
 
       appliance_config.name = definition['name'] unless definition['name'].nil?
       appliance_config.summary = definition['summary'] unless definition['summary'].nil?
-
+  
       definition['variables'].each { |key, value| appliance_config.variables[key] = value } unless definition['variables'].nil?
 
       @log.debug "Adding packages to appliance..."
 
-      appliance_config.packages = definition['packages']
+      appliance_config.packages = definition['packages'] unless definition['packages'].nil?
 
       @log.debug "#{appliance_config.packages.size} package(s) added to appliance." if appliance_config.packages
 

@@ -18,25 +18,37 @@
 
 require 'rubygems'
 require 'boxgrinder-core/helpers/appliance-definition-helper'
-require 'boxgrinder-core/validators/appliance-parser-validator'
+require 'boxgrinder-core/appliance-parser'
 
 module BoxGrinder
   describe ApplianceDefinitionHelper do
 
-    before(:each) do
+    def prepare_helper
+      #appliance_parser = mock(ApplianceParser)
+      #appliance_parser.should_receive(:load_schemas)
+      #ApplianceParser.should_receive(:new).and_return(appliance_parser)
+
       @helper = ApplianceDefinitionHelper.new(:log => LogHelper.new(:level => :trace, :type => :stdout))
+    end
+
+    before(:each) do
+      prepare_helper
     end
 
     describe ".read_definitions" do
       it "should read definition from files with different extensions" do
         appliance_config = ApplianceConfig.new
-
         ['appl', 'yml', 'yaml'].each do |ext|
-          @helper = ApplianceDefinitionHelper.new(:log => Logger.new('/dev/null'))
+          prepare_helper
+          @helper.appliance_parser.should_receive(:load_schemas)
           File.should_receive(:exists?).with("file.#{ext}").and_return(true)
-          @helper.appliance_validator.should_receive(:load_specification_files).with("file.#{ext}").and_return(appliance_config)
+          File.should_receive(:read).with("file.#{ext}").and_return('content')
+          @helper.appliance_parser.should_receive(:parse_definition).with("content").and_return(appliance_config)
           @helper.read_definitions("file.#{ext}")
           configs = @helper.appliance_configs
+
+          puts configs.size
+
           configs.should == [appliance_config]
         end
       end
@@ -45,10 +57,11 @@ module BoxGrinder
         appliance_config = ApplianceConfig.new
 
         ['application/x-yaml', 'text/yaml'].each do |type|
-          @helper = ApplianceDefinitionHelper.new(:log => Logger.new('/dev/null'))
+          prepare_helper
+          @helper.appliance_parser.should_receive(:load_schemas)
           File.should_receive(:exists?).with("file").and_return(true)
-         # @helper.should_receive(:read_yaml_file).with("file").and_return(appliance_config)
-          @helper.appliance_validator.should_receive(:load_specification_files).with("file").and_return(appliance_config)
+          File.should_receive(:read).with("file").and_return('content')
+          @helper.appliance_parser.should_receive(:parse_definition).with("content").and_return(appliance_config)
           @helper.read_definitions("file", type)
           configs = @helper.appliance_configs
           configs.should == [appliance_config]
@@ -60,7 +73,8 @@ module BoxGrinder
         appliance_config = ApplianceConfig.new
 
         ['application/xml', 'text/xml', 'application/x-xml'].each do |type|
-          @helper = ApplianceDefinitionHelper.new(:log => Logger.new('/dev/null'))
+          prepare_helper
+          @helper.appliance_parser.should_receive(:load_schemas)
           File.should_receive(:exists?).with("file").and_return(true)
           @helper.should_receive(:read_xml_file).with("file").and_return(appliance_config)
           @helper.read_definitions("file", type)
@@ -72,6 +86,8 @@ module BoxGrinder
       end
 
       it "should read definition from two files" do
+        @helper.appliance_parser.should_receive(:load_schemas).twice
+
         appliance_a = ApplianceConfig.new
         appliance_a.name = 'a'
         appliance_a.appliances << "b"
@@ -81,10 +97,11 @@ module BoxGrinder
 
         File.should_receive(:exists?).ordered.with('a.appl').and_return(true)
         File.should_receive(:exists?).ordered.with('./b.appl').and_return(true)
+        File.should_receive(:read).with("a.appl").and_return('contenta')
+        File.should_receive(:read).with("./b.appl").and_return('contentb')
 
-
-        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('a.appl').and_return(appliance_a)
-        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./b.appl').and_return(appliance_b)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contenta').and_return(appliance_a)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentb').and_return(appliance_b)
 
         @helper.read_definitions("a.appl")
 
@@ -94,6 +111,8 @@ module BoxGrinder
       end
 
       it "should read definitions from a tree file structure" do
+        @helper.appliance_parser.should_receive(:load_schemas).exactly(5).times
+
         appliance_a = ApplianceConfig.new
         appliance_a.name = 'a'
         appliance_a.appliances << "b1"
@@ -114,16 +133,21 @@ module BoxGrinder
         appliance_c2.name = 'c2'
 
         File.should_receive(:exists?).ordered.with('a.appl').and_return(true)
+        File.should_receive(:read).ordered.with('a.appl').and_return('contenta')
         File.should_receive(:exists?).ordered.with('./b2.appl').and_return(true)
+        File.should_receive(:read).ordered.with('./b2.appl').and_return('contentb2')
         File.should_receive(:exists?).ordered.with('./c2.appl').and_return(true)
+        File.should_receive(:read).ordered.with('./c2.appl').and_return('contentc2')
         File.should_receive(:exists?).ordered.with('./b1.appl').and_return(true)
+        File.should_receive(:read).ordered.with('./b1.appl').and_return('contentb1')
         File.should_receive(:exists?).ordered.with('./c1.appl').and_return(true)
+        File.should_receive(:read).ordered.with('./c1.appl').and_return('contentc1')
 
-        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('a.appl').and_return(appliance_a)
-        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./b2.appl').and_return(appliance_b2)
-        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./c2.appl').and_return(appliance_c2)
-        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./b1.appl').and_return(appliance_b1)
-        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./c1.appl').and_return(appliance_c1)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contenta').and_return(appliance_a)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentb2').and_return(appliance_b2)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentc2').and_return(appliance_c2)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentb1').and_return(appliance_b1)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentc1').and_return(appliance_c1)
 
         @helper.read_definitions("a.appl")
 
@@ -134,6 +158,8 @@ module BoxGrinder
 
       # https://issues.jboss.org/browse/BGBUILD-60
       it "should read definitions from a tree file structure based on same appliance" do
+        @helper.appliance_parser.should_receive(:load_schemas).exactly(4).times
+
         appliance_a = ApplianceConfig.new
         appliance_a.name = 'a'
         appliance_a.appliances << "b1"
@@ -151,17 +177,19 @@ module BoxGrinder
         appliance_c.name = 'c'
 
         File.should_receive(:exists?).ordered.with('a.appl').and_return(true)
+        File.should_receive(:read).ordered.with('a.appl').and_return('contenta')
         File.should_receive(:exists?).ordered.with('./b2.appl').and_return(true)
+        File.should_receive(:read).ordered.with('./b2.appl').and_return('contentb2')
         File.should_receive(:exists?).ordered.with('./c.appl').and_return(true)
+        File.should_receive(:read).ordered.with('./c.appl').and_return('contentc')
         File.should_receive(:exists?).ordered.with('./b1.appl').and_return(true)
+        File.should_receive(:read).ordered.with('./b1.appl').and_return('contentb1')
 
-        #@helper.appliance_validator.should_receive(:load_specification_files).ordered.with('a.appl').and_return(appliance_a)
-
-        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('a.appl').and_return(appliance_a)
-        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./b2.appl').and_return(appliance_b2)
-        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./c.appl').and_return(appliance_c)
-        @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./b1.appl').and_return(appliance_b1)
-        @helper.appliance_validator.should_not_receive(:load_specification_files).ordered.with('./c.appl').and_return(appliance_c)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contenta').and_return(appliance_a)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentb2').and_return(appliance_b2)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentc').and_return(appliance_c)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentb1').and_return(appliance_b1)
+        @helper.appliance_parser.should_not_receive(:parse_definition).ordered.with('contentc')
 
         @helper.read_definitions("a.appl")
 
@@ -179,16 +207,16 @@ module BoxGrinder
         appliance.hardware.partitions['/']['size'].should == 6
       end
 
-      it "should read invalid YAML content" do#ApplianceValidationError: :
-        lambda { @helper.read_definitions("@$FEWYERTH") }.should raise_error(ApplianceValidationError, /The appliance specification "(.*)" was invalid according to schema "(.*)"/)
+      it "should read invalid YAML content" do #ApplianceValidationError: :
+        lambda { @helper.read_definitions("@$FEWYERTH") }.should raise_error(ApplianceValidationError, "The appliance definition was invalid according to schema 0.9.0. See log for details.")
       end
 
       it "should catch exception if YAML parsing raises it" do
-        lambda { @helper.read_definitions("!!") }.should raise_error(ApplianceValidationError, /'!!': not a mapping/m)
+        lambda { @helper.read_definitions("!!") }.should raise_error(ApplianceValidationError, "The appliance definition was invalid according to schema 0.9.0. See log for details.")
       end
 
       it "should catch exception if YAML file parsing raises it" do
-        lambda { @helper.read_definitions("#{File.dirname(__FILE__)}/../rspec/src/appliances/invalid-yaml.appl") }.should raise_error(ApplianceValidationError, /'!!': not a mapping/m)
+        lambda { @helper.read_definitions("#{File.dirname(__FILE__)}/../rspec/src/appliances/invalid-yaml.appl") }.should raise_error(ApplianceValidationError, "The appliance definition was invalid according to schema 0.9.0. See log for details.")
       end
 
       it "should raise because xml files aren't supported yet" do
@@ -201,15 +229,18 @@ module BoxGrinder
         lambda { @helper.read_definitions("file.xmdfl") }.should raise_error(RuntimeError, "Unsupported file format for appliance definition file.")
       end
 
-       #Do more extensive tests in the parser/validator itself
-      it "should allow legacy package inclusion styles" do#@helper.appliance_validator.should_receive(:load_specification_files).
+      #Do more extensive tests in the parser/validator itself
+      it "should allow legacy package inclusion styles" do #@helper.appliance_validator.should_receive(:load_specification_files).
+        #@helper = ApplianceDefinitionHelper.new(:log => LogHelper.new(:level => :trace, :type => :stdout))
         @helper.read_definitions("#{File.dirname(__FILE__)}/../rspec/src/appliances/legacy.appl")
-        @helper.appliance_configs.last.packages.should == ['squid','boxgrinder-rest']
+        @helper.appliance_configs.last.packages.should == ['squid', 'boxgrinder-rest']
       end
 
       # https://issues.jboss.org/browse/BGBUILD-150
       context "cyclical dependency" do
         it "should stop reading appliances when appliance was already read" do
+          @helper.appliance_parser.should_receive(:load_schemas).twice
+
           appliance_a = ApplianceConfig.new
           appliance_a.name = 'a'
           appliance_a.appliances << "b"
@@ -220,12 +251,14 @@ module BoxGrinder
 
 
           File.should_receive(:exists?).with('a.appl').and_return(true)
+          File.should_receive(:read).with('a.appl').and_return('contenta')
           File.should_receive(:exists?).with('./b.appl').and_return(true)
+          File.should_receive(:read).with('./b.appl').and_return('contentb')
           File.should_not_receive(:exists?).ordered.with('./a.appl')
 
-          @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('a.appl').and_return(appliance_a)
-          @helper.appliance_validator.should_receive(:load_specification_files).ordered.with('./b.appl').and_return(appliance_b)
-          @helper.appliance_validator.should_not_receive(:load_specification_files).ordered.with('./a.appl')
+          @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contenta').and_return(appliance_a)
+          @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentb').and_return(appliance_b)
+          @helper.appliance_parser.should_not_receive(:parse_definition).ordered.with('./a.appl')
 
           @helper.read_definitions("a.appl")
         end

@@ -1,6 +1,6 @@
 name: 0.9.x test appliance
 summary: appliance to test 0.9.x schema 
-version: 0.1
+version: 0
 release: 0
 os:
   name: fedora
