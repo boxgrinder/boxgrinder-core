@@ -33,6 +33,10 @@ module BoxGrinder
 
   end
 
+  class UnknownFormatError < ValidationError
+
+  end
+
   class PluginError < StandardError
 
   end

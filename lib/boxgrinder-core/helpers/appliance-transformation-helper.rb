@@ -50,7 +50,7 @@ module BoxGrinder
 
     def to_0_9_0(appliance_definition)
       packages = appliance_definition['packages']['includes']
-      @log.warn "BoxGrinder no longer supports package exclusion, the following packages will be not be explicitly excluded: #{appliance_definition['packages']['excludes'].join(", ")}."
+      @log.warn "BoxGrinder no longer supports package exclusion, the following packages will be not be explicitly excluded: #{appliance_definition['packages']['excludes'].join(", ")}." unless appliance_definition['packages']['excludes'].nil?
       appliance_definition['packages'] = packages
       appliance_definition
     end

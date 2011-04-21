@@ -36,8 +36,13 @@ module BoxGrinder
       end
     end
 
-    def parse_definition(appliance_definition)
-      @log.info "Validating appliance definition..."
+    def parse_definition(appliance_definition, file = true)
+      if file
+        @log.info "Validating appliance definition from #{appliance_definition} file..."
+        appliance_definition = File.read(appliance_definition)
+      else
+        @log.info "Validating appliance definition from string..."
+      end
 
       failures = {}
       schema_versions = @schemas.keys.sort.reverse
@@ -47,7 +52,7 @@ module BoxGrinder
         appliance_config, errors = parse(@schemas[schema_version], appliance_definition)
 
         if errors.empty?
-          @log.info "Appliance definition was successfully validated."
+          @log.info "Appliance definition is valid."
           return ApplianceTransformationHelper.new(schema_versions.first, :log => @log).transform(appliance_config, schema_version)
         end
 
@@ -56,7 +61,7 @@ module BoxGrinder
 
       # If all schemas fail then we assume they are using the latest schema..
       failures[schema_versions.first].each do |error|
-        @log.error "[line #{error.linenum}, col #{error.column}] [#{error.path}] #{error.message}"
+        @log.error "Error: [line #{error.linenum}, col #{error.column}] [#{error.path}] #{error.message}"
       end
 
       raise ApplianceValidationError, "The appliance definition was invalid according to schema #{schema_versions.first}. See log for details."
@@ -69,6 +74,7 @@ module BoxGrinder
       begin
         parsed = parser.parse(appliance_definition)
       rescue Kwalify::KwalifyError => e
+        raise ApplianceValidationError, "The appliance definition couldn't be parsed. [line #{e.linenum}, col #{e.column}] [#{e.path}] Most probably you try to specify partition mount point starting with backslash (/), please quote it like this: \"/foo\"." if e.message =~ /document end expected \(maybe invalid tab char found\)/
         raise ApplianceValidationError, "The appliance definition couldn't be parsed. #{e}"
       end
 

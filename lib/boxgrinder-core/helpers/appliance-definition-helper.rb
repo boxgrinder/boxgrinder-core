@@ -37,23 +37,17 @@ module BoxGrinder
     def read_definitions(definition, content_type = nil)
       @appliance_parser.load_schemas
       if File.exists?(definition)
-        @log.debug "Reading definition from '#{definition}' file..."
-
         definition_file_extension = File.extname(definition)
 
         appliance_config =
             case definition_file_extension
               when '.appl', '.yml', '.yaml'
-                read_yaml_file(definition)
-              when '.xml'
-                read_xml_file(definition)
+                parse_yaml(@appliance_parser.parse_definition(definition))
               else
                 unless content_type.nil?
                   case content_type
                     when 'application/x-yaml', 'text/yaml'
-                      read_yaml_file(definition)
-                    when 'application/xml', 'text/xml', 'application/x-xml'
-                      read_xml_file(definition)
+                      parse_yaml(@appliance_parser.parse_definition(definition))
                   end
                 end
             end
@@ -69,15 +63,9 @@ module BoxGrinder
           read_definitions("#{File.dirname(definition)}/#{appliance_name}#{definition_file_extension}") unless appliances.include?(appliance_name)
         end unless appliance_config.appliances.nil? or !appliance_config.appliances.is_a?(Array)
       else
-        @log.debug "Reading definition..."
-
-        @appliance_configs << parse_yaml(@appliance_parser.parse_definition(definition))
+        # Assuming that the definition is provided as string
+        @appliance_configs << parse_yaml(@appliance_parser.parse_definition(definition, false))
       end
-    end
-
-    def read_yaml_file(definition)
-      appliance_definition = @appliance_parser.parse_definition(File.read(definition))
-      parse_yaml(appliance_definition)
     end
 
     # TODO this needs to be rewritten - using kwalify it could be possible to instantiate document structure as objects[, or opencascade hash?]
@@ -89,7 +77,7 @@ module BoxGrinder
 
       appliance_config.name = definition['name'] unless definition['name'].nil?
       appliance_config.summary = definition['summary'] unless definition['summary'].nil?
-  
+
       definition['variables'].each { |key, value| appliance_config.variables[key] = value } unless definition['variables'].nil?
 
       @log.debug "Adding packages to appliance..."
@@ -132,10 +120,6 @@ module BoxGrinder
       definition['post'].each { |key, value| appliance_config.post[key] = value } unless definition['post'].nil?
 
       appliance_config
-    end
-
-    def read_xml_file(file)
-      raise "Reading XML files is not supported presently. File '#{file}' could not be read."
     end
   end
 end

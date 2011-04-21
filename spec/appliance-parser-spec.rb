@@ -44,13 +44,13 @@ module BoxGrinder
         @parser.load_schemas
 
         lambda {
-          @parser.parse_definition(File.read("#{File.dirname(__FILE__)}/rspec/src/appliances/invalid-yaml.appl"))
+          @parser.parse_definition(File.read("#{File.dirname(__FILE__)}/rspec/src/appliances/invalid-yaml.appl"), false)
         }.should raise_error(ApplianceValidationError, "The appliance definition was invalid according to schema 0.9.0. See log for details.")
       end
 
       it "should validate 0.9.0 version definition without error" do
         @parser.load_schemas
-        definition = @parser.parse_definition(File.read("#{File.dirname(__FILE__)}/rspec/src/appliances/0.9.x.appl"))
+        definition = @parser.parse_definition(File.read("#{File.dirname(__FILE__)}/rspec/src/appliances/0.9.x.appl"), false)
 
         definition['os']['password'].should == 'boxgrinder-ftw'
         definition['packages'].size.should == 2
@@ -58,7 +58,7 @@ module BoxGrinder
 
       it "should validate 0.8.0 version definition without error" do
         @parser.load_schemas
-        definition = @parser.parse_definition(File.read("#{File.dirname(__FILE__)}/rspec/src/appliances/0.8.x.appl"))
+        definition = @parser.parse_definition("#{File.dirname(__FILE__)}/rspec/src/appliances/0.8.x.appl")
 
         definition['os']['password'].should == 'boxgrinder-ftw'
         definition['packages'].size.should == 3

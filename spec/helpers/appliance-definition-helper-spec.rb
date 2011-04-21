@@ -24,10 +24,6 @@ module BoxGrinder
   describe ApplianceDefinitionHelper do
 
     def prepare_helper
-      #appliance_parser = mock(ApplianceParser)
-      #appliance_parser.should_receive(:load_schemas)
-      #ApplianceParser.should_receive(:new).and_return(appliance_parser)
-
       @helper = ApplianceDefinitionHelper.new(:log => LogHelper.new(:level => :trace, :type => :stdout))
     end
 
@@ -42,8 +38,7 @@ module BoxGrinder
           prepare_helper
           @helper.appliance_parser.should_receive(:load_schemas)
           File.should_receive(:exists?).with("file.#{ext}").and_return(true)
-          File.should_receive(:read).with("file.#{ext}").and_return('content')
-          @helper.appliance_parser.should_receive(:parse_definition).with("content").and_return(appliance_config)
+          @helper.appliance_parser.should_receive(:parse_definition).with("file.#{ext}").and_return(appliance_config)
           @helper.read_definitions("file.#{ext}")
           configs = @helper.appliance_configs
 
@@ -60,25 +55,8 @@ module BoxGrinder
           prepare_helper
           @helper.appliance_parser.should_receive(:load_schemas)
           File.should_receive(:exists?).with("file").and_return(true)
-          File.should_receive(:read).with("file").and_return('content')
-          @helper.appliance_parser.should_receive(:parse_definition).with("content").and_return(appliance_config)
+          @helper.appliance_parser.should_receive(:parse_definition).with("file").and_return(appliance_config)
           @helper.read_definitions("file", type)
-          configs = @helper.appliance_configs
-          configs.should == [appliance_config]
-          configs.first.should == appliance_config
-        end
-      end
-
-      it "should read XML definition from files with different content types" do
-        appliance_config = ApplianceConfig.new
-
-        ['application/xml', 'text/xml', 'application/x-xml'].each do |type|
-          prepare_helper
-          @helper.appliance_parser.should_receive(:load_schemas)
-          File.should_receive(:exists?).with("file").and_return(true)
-          @helper.should_receive(:read_xml_file).with("file").and_return(appliance_config)
-          @helper.read_definitions("file", type)
-
           configs = @helper.appliance_configs
           configs.should == [appliance_config]
           configs.first.should == appliance_config
@@ -97,11 +75,9 @@ module BoxGrinder
 
         File.should_receive(:exists?).ordered.with('a.appl').and_return(true)
         File.should_receive(:exists?).ordered.with('./b.appl').and_return(true)
-        File.should_receive(:read).with("a.appl").and_return('contenta')
-        File.should_receive(:read).with("./b.appl").and_return('contentb')
 
-        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contenta').and_return(appliance_a)
-        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentb').and_return(appliance_b)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('a.appl').and_return(appliance_a)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('./b.appl').and_return(appliance_b)
 
         @helper.read_definitions("a.appl")
 
@@ -133,21 +109,16 @@ module BoxGrinder
         appliance_c2.name = 'c2'
 
         File.should_receive(:exists?).ordered.with('a.appl').and_return(true)
-        File.should_receive(:read).ordered.with('a.appl').and_return('contenta')
         File.should_receive(:exists?).ordered.with('./b2.appl').and_return(true)
-        File.should_receive(:read).ordered.with('./b2.appl').and_return('contentb2')
         File.should_receive(:exists?).ordered.with('./c2.appl').and_return(true)
-        File.should_receive(:read).ordered.with('./c2.appl').and_return('contentc2')
         File.should_receive(:exists?).ordered.with('./b1.appl').and_return(true)
-        File.should_receive(:read).ordered.with('./b1.appl').and_return('contentb1')
         File.should_receive(:exists?).ordered.with('./c1.appl').and_return(true)
-        File.should_receive(:read).ordered.with('./c1.appl').and_return('contentc1')
 
-        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contenta').and_return(appliance_a)
-        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentb2').and_return(appliance_b2)
-        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentc2').and_return(appliance_c2)
-        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentb1').and_return(appliance_b1)
-        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentc1').and_return(appliance_c1)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('a.appl').and_return(appliance_a)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('./b2.appl').and_return(appliance_b2)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('./c2.appl').and_return(appliance_c2)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('./b1.appl').and_return(appliance_b1)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('./c1.appl').and_return(appliance_c1)
 
         @helper.read_definitions("a.appl")
 
@@ -177,19 +148,15 @@ module BoxGrinder
         appliance_c.name = 'c'
 
         File.should_receive(:exists?).ordered.with('a.appl').and_return(true)
-        File.should_receive(:read).ordered.with('a.appl').and_return('contenta')
         File.should_receive(:exists?).ordered.with('./b2.appl').and_return(true)
-        File.should_receive(:read).ordered.with('./b2.appl').and_return('contentb2')
         File.should_receive(:exists?).ordered.with('./c.appl').and_return(true)
-        File.should_receive(:read).ordered.with('./c.appl').and_return('contentc')
         File.should_receive(:exists?).ordered.with('./b1.appl').and_return(true)
-        File.should_receive(:read).ordered.with('./b1.appl').and_return('contentb1')
 
-        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contenta').and_return(appliance_a)
-        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentb2').and_return(appliance_b2)
-        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentc').and_return(appliance_c)
-        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentb1').and_return(appliance_b1)
-        @helper.appliance_parser.should_not_receive(:parse_definition).ordered.with('contentc')
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('a.appl').and_return(appliance_a)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('./b2.appl').and_return(appliance_b2)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('./c.appl').and_return(appliance_c)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('./b1.appl').and_return(appliance_b1)
+        @helper.appliance_parser.should_not_receive(:parse_definition).ordered.with('./c.appl')
 
         @helper.read_definitions("a.appl")
 
@@ -219,11 +186,6 @@ module BoxGrinder
         lambda { @helper.read_definitions("#{File.dirname(__FILE__)}/../rspec/src/appliances/invalid-yaml.appl") }.should raise_error(ApplianceValidationError, "The appliance definition was invalid according to schema 0.9.0. See log for details.")
       end
 
-      it "should raise because xml files aren't supported yet" do
-        File.should_receive(:exists?).with("file.xml").and_return(true)
-        lambda { @helper.read_definitions("file.xml") }.should raise_error(RuntimeError, "Reading XML files is not supported presently. File 'file.xml' could not be read.")
-      end
-
       it "should raise because of unsupported file format" do
         File.should_receive(:exists?).with("file.xmdfl").and_return(true)
         lambda { @helper.read_definitions("file.xmdfl") }.should raise_error(RuntimeError, "Unsupported file format for appliance definition file.")
@@ -251,44 +213,17 @@ module BoxGrinder
 
 
           File.should_receive(:exists?).with('a.appl').and_return(true)
-          File.should_receive(:read).with('a.appl').and_return('contenta')
           File.should_receive(:exists?).with('./b.appl').and_return(true)
-          File.should_receive(:read).with('./b.appl').and_return('contentb')
           File.should_not_receive(:exists?).ordered.with('./a.appl')
 
-          @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contenta').and_return(appliance_a)
-          @helper.appliance_parser.should_receive(:parse_definition).ordered.with('contentb').and_return(appliance_b)
+          @helper.appliance_parser.should_receive(:parse_definition).ordered.with('a.appl').and_return(appliance_a)
+          @helper.appliance_parser.should_receive(:parse_definition).ordered.with('./b.appl').and_return(appliance_b)
           @helper.appliance_parser.should_not_receive(:parse_definition).ordered.with('./a.appl')
 
           @helper.read_definitions("a.appl")
         end
       end
     end
-# These should all be in the parser & validator now
-#    describe "read_yaml_file" do
-#      it "should read default_repos and set to false" do
-#        YAML.should_receive(:load_file).with('default_repos_false.appl').and_return({'default_repos'=>false})
-#        @helper.read_yaml_file('default_repos_false.appl').default_repos.should == false
-#      end
-#
-#      it "should read default_repos and set to true" do
-#        YAML.should_receive(:load_file).with('default_repos_true.appl').and_return({'default_repos'=>true})
-#        @helper.read_yaml_file('default_repos_true.appl').default_repos.should == true
-#      end
-#
-#      it "should read default_repos but not set it" do
-#        YAML.should_receive(:load_file).with('default_repos_empty.appl').and_return({})
-#        @helper.read_yaml_file('default_repos_empty.appl').default_repos.should == nil
-#      end
-#
-#      it "should read default_repos and raise" do
-#        YAML.should_receive(:load_file).with('default_repos_bad.appl').and_return({'default_repos'=>'something'})
-#
-#        lambda {
-#          @helper.read_yaml_file("default_repos_bad.appl")
-#        }.should raise_error(RuntimeError, 'default_repos should be set to true or false')
-#      end
-#    end
 
     describe ".parse_yaml" do
       context "partitions" do
