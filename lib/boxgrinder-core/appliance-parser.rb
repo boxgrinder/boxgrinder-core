@@ -66,7 +66,13 @@ module BoxGrinder
       validator = ApplianceValidator.new(schema_document)
       parser = Kwalify::Yaml::Parser.new(validator)
 
-      [parser.parse(appliance_definition), parser.errors]
+      begin
+        parsed = parser.parse(appliance_definition)
+      rescue Kwalify::KwalifyError => e
+        raise ApplianceValidationError, "The appliance definition couldn't be parsed. #{e}"
+      end
+
+      [parsed, parser.errors]
     end
   end
 end
