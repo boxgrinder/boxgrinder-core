@@ -43,7 +43,7 @@ mapping:
             mapping:             
               "size":
                 type: number
-                range: { min: 1 }
+                range: { min: 0.01 }
               "type":
                 type: str
                 enum: [ext3, ext4]                
