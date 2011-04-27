@@ -76,7 +76,7 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
-* Thu Mar 17 2011 <mgoldman@redhat.com> - 0.3.1-1
+* Wed Apr 27 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.1-1
 - Upstream release: 0.3.1
 - [BGBUILD-164] Guestfs writes to /tmp/ by default, potentially filling the root filesystem
 - [BGBUILD-97] some filesystems dont get unmounted on BG interruption
@@ -86,19 +86,12 @@ popd
 - [BGBUILD-198] root password is not inherited
 - [BGBUILD-156] Validate appliance definition files early and return meaningful error messages
 
-* Sat Mar 05 2011  <mgoldman@redhat.com> - 0.3.0-1
+* Sat Mar 05 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.0-1
 - Upstream release: 0.3.0
 - [BGBUILD-178] Remove sensitive data from logs
 - [BGBUILD-168] Support deprecated package inclusion format in appliance definitions
-
-* Tue Feb 16 2011  <mgoldman@redhat.com> - 0.2.1-1
-- Upstream release: 0.2.1
 - [BGBUILD-142] Backtraces make output unreadable - add option to enable them, and disable by default
 - [BGBUILD-150] Cyclical inclusion dependencies in appliance definition files are not detected/handled
-
-* Tue Jan 04 2011  <mgoldman@redhat.com> - 0.2.0-1
-- Upstream release: 0.2.0
-- Added BuildRoot tag to build for EPEL 5
 - [BGBUILD-79] Allow to use BoxGrinder Build as a library
 - [BGBUILD-127] Use appliance definition object instead of a file when using BG as a library
 - [BGBUILD-68] Global .boxgrinder/config or rc style file for config
@@ -107,38 +100,35 @@ popd
 - [BGBUILD-101] Don't use 'includes' subsection when specifying packages
 - [BGBUILD-60] Post section merging pattern for appliances depending on the same appliance
 - [BGBUILD-151] Overriding hardware partitions via inclusion in Appliance Definition File causes build failure
-
-* Tue Dec 21 2010  <mgoldman@redhat.com> - 0.1.6-1
-- Updated to upstream version: 0.1.6
 - [BGBUILD-100] Enable boxgrinder_build to create a Fedora image with encrypted partition(s)
 
-* Sun Dec 12 2010  <mgoldman@redhat.com> - 0.1.5-1
+* Sun Dec 12 2010 Marek Goldmann <mgoldman@redhat.com> - 0.1.5-1
 - Updated to upstream version: 0.1.5
 - [BGBUILD-73] Add support for kickstart files
 
-* Thu Dec 02 2010  <mgoldman@redhat.com> - 0.1.4-1
+* Thu Dec 02 2010 Marek Goldmann <mgoldman@redhat.com> - 0.1.4-1
 - Updated to new upstream release: 0.1.4
 
-* Wed Nov 17 2010  <mgoldman@redhat.com> - 0.1.3-3
+* Wed Nov 17 2010 Marek Goldmann <mgoldman@redhat.com> - 0.1.3-3
 - Added: BuildRequires: rubygem(echoe)
 - Changed the way Gem is installed and tests are exeuted
 
-* Mon Nov 15 2010  <mgoldman@redhat.com> - 0.1.3-2
+* Mon Nov 15 2010 Marek Goldmann <mgoldman@redhat.com> - 0.1.3-2
 - Removing unecessary Requires: rubygems
 
-* Mon Nov 15 2010  <mgoldman@redhat.com> - 0.1.3-1
+* Mon Nov 15 2010 Marek Goldmann <mgoldman@redhat.com> - 0.1.3-1
 - Removed BuildRoot tag
 - Adjusted Requires and BuildRequires
 - Different approach for testing
 - [BGBUILD-98] Use hashery gem
 
-* Tue Nov 09 2010  <mgoldman@redhat.com> - 0.1.2-1
+* Tue Nov 09 2010 Marek Goldmann <mgoldman@redhat.com> - 0.1.2-1
 - [BGBUILD-87] Set default filesystem to ext4 for Fedora 13+
 - [BGBUILD-65] Allow to specify own repos overriding default repos provided for selected OS
 
-* Tue Nov 09 2010  <mgoldman@redhat.com> - 0.1.1-2
+* Tue Nov 09 2010 Marek Goldmann <mgoldman@redhat.com> - 0.1.1-2
 - [BGBUILD-85] Adjust BoxGrinder spec files for review
 - Added 'check' section that executes tests
 
-* Mon Oct 18 2010  <mgoldman@redhat.com> - 0.1.1-1
+* Mon Oct 18 2010 Marek Goldmann <mgoldman@redhat.com> - 0.1.1-1
 - Initial package
