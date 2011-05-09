@@ -70,12 +70,12 @@ mapping:
         mapping:
           "name":
             type: str
-            pattern: /^[\w\-+.\043]+$/
+            pattern: /^[\w\-+.#]+$/
             length: { min: 1 }
             required: yes
           "baseurl": &pkg-mirror
             type: str
-            pattern: /(^((http|ftp):)(\/\/([^\/?\043]*))?([^?\043]*)(\?([^\043]*))?(\043(.*))?$|^file:\/\/.+$)/ #customised rfc3986 standard regexp for URIs
+            pattern: /(^((http|https|ftp):)(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$|^file:\/\/.+$)/ #customised rfc3986 standard regexp for URIs
           "mirrorlist": *pkg-mirror
           "ephemeral": 
             type: bool

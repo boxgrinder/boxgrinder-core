@@ -13,8 +13,6 @@ hardware:
     "/":
       size: 4
       type: ext4
-appliances:
-  - _include
 packages:
   - squid
   - rubygem-boxgrinder-build

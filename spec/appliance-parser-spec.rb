@@ -29,8 +29,8 @@ module BoxGrinder
 
     describe ".load_schemas" do
       it "should load all available schemas" do
-        Kwalify::Yaml.should_receive(:load_file).with('filea').and_return({'version' => '0.8.0'})
-        Kwalify::Yaml.should_receive(:load_file).with('fileb').and_return({'version' => '0.9.0'})
+        YAML.should_receive(:load_file).with('filea').and_return({'version' => '0.8.0'})
+        YAML.should_receive(:load_file).with('fileb').and_return({'version' => '0.9.0'})
 
         Dir.should_receive(:glob).with(an_instance_of(String)).and_return(['filea', 'fileb'])
 
@@ -62,6 +62,18 @@ module BoxGrinder
 
         definition['os']['password'].should == 'boxgrinder-ftw'
         definition['packages'].size.should == 3
+      end
+    end
+
+    describe ".parse" do
+      it "should parse the doc" do
+        @parser.load_schemas
+        definition = File.read("#{File.dirname(__FILE__)}/rspec/src/appliances/repo.appl")
+        schemas = @parser.instance_variable_get(:@schemas)
+        schema = schemas[schemas.keys.first]
+        schema.delete('version')
+        parsed, errors = @parser.parse(schema, definition)
+        parsed['repos'].first['baseurl'].should == 'http://repo.boxgrinder.org/packages/#OS_NAME#/#OS_VERSION#/RPMS/#ARCH#'
       end
     end
   end

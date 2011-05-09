@@ -57,7 +57,7 @@ mapping:
     type: seq
     sequence:
       - type: str
-        pattern: /^[\w\-+.@\043]+$/ #fedora packaging standard http://bit.ly/h0JN9u (plus a few more, disallow symbols/spaces)
+        pattern: /^[\w\-+.@#]+$/ #fedora packaging standard http://bit.ly/h0JN9u (plus a few more, disallow symbols/spaces)
         length: { min: 1 }
   "repos":
     type: seq
@@ -67,12 +67,12 @@ mapping:
         mapping:
           "name":
             type: str
-            pattern: /^[\w\-+.\043]+$/
+            pattern: /^[\w\-+.#]+$/
             length: { min: 1 }
             required: yes
           "baseurl": &pkg-mirror
             type: str
-            pattern: /(^((http|ftp):)(\/\/([^\/?\043]*))?([^?\043]*)(\?([^\043]*))?(\043(.*))?$|^file:\/\/.+$)/ #customised rfc3986 standard regexp for URIs
+            pattern: /(^((http|https|ftp):)(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$|^file:\/\/.+$)/ #customised rfc3986 standard regexp for URIs
           "mirrorlist": *pkg-mirror
           "ephemeral":
             type: bool    

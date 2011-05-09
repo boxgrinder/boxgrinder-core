@@ -32,6 +32,15 @@ module BoxGrinder
     end
 
     describe ".read_definitions" do
+      it "should pass all sample definitions that are not marked as invalid" do
+        prepare_helper
+
+        Dir.glob("#{File.dirname(__FILE__)}/../rspec/src/appliances/*.appl").each do |l|
+          next if l =~ /invalid/
+          @helper.read_definitions(l)
+        end
+      end
+
       it "should read definition from files with different extensions" do
         appliance_config = ApplianceConfig.new
         ['appl', 'yml', 'yaml'].each do |ext|
@@ -41,8 +50,6 @@ module BoxGrinder
           @helper.appliance_parser.should_receive(:parse_definition).with("file.#{ext}").and_return(appliance_config)
           @helper.read_definitions("file.#{ext}")
           configs = @helper.appliance_configs
-
-          puts configs.size
 
           configs.should == [appliance_config]
         end
