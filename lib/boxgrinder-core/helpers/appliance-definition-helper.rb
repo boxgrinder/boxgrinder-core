@@ -52,7 +52,7 @@ module BoxGrinder
                 end
             end
 
-        raise 'Unsupported file format for appliance definition file.' if appliance_config.nil?
+        return if appliance_config.nil?
 
         @appliance_configs << appliance_config
         appliances = []
