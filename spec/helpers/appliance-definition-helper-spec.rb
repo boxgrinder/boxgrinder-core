@@ -186,9 +186,9 @@ module BoxGrinder
         lambda { @helper.read_definitions("#{File.dirname(__FILE__)}/../rspec/src/appliances/invalid-yaml.appl") }.should raise_error(ApplianceValidationError, "The appliance definition was invalid according to schema 0.9.0. See log for details.")
       end
 
-      it "should raise because of unsupported file format" do
+      it "should return nil of unsupported file format" do
         File.should_receive(:exists?).with("file.xmdfl").and_return(true)
-        lambda { @helper.read_definitions("file.xmdfl") }.should raise_error(RuntimeError, "Unsupported file format for appliance definition file.")
+        @helper.read_definitions("file.xmdfl").should == nil
       end
 
       #Do more extensive tests in the parser/validator itself
