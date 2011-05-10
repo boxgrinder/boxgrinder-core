@@ -5,7 +5,7 @@
 
 Summary: Core library for BoxGrinder
 Name: rubygem-%{gemname}
-Version: 0.3.1
+Version: 0.3.2
 Release: 1%{?dist}
 Group: Development/Languages
 License: LGPLv3+
@@ -76,6 +76,11 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
+* Tue May 10 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.2-1
+- Upstream release: 0.3.2
+- [BGBUILD-210] In Fedora 14 parameters are not being expanded, and cause early string truncation.
+- [BGBUILD-208] Kickstart files not working with 0.9.1
+
 * Wed Apr 27 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.1-1
 - Upstream release: 0.3.1
 - [BGBUILD-164] Guestfs writes to /tmp/ by default, potentially filling the root filesystem
