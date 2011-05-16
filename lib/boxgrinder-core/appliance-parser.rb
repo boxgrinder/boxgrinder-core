@@ -76,7 +76,7 @@ module BoxGrinder
       begin
         parsed = parser.parse(appliance_definition)
       rescue Kwalify::KwalifyError => e
-        raise ApplianceValidationError, "The appliance definition couldn't be parsed. [line #{e.linenum}, col #{e.column}] [#{e.path}] Most probably you try to specify partition mount point starting with backslash (/), please quote it like this: \"/foo\"." if e.message =~ /document end expected \(maybe invalid tab char found\)/
+        raise ApplianceValidationError, "The appliance definition couldn't be parsed. [line #{e.linenum}, col #{e.column}] [#{e.path}] Make sure you use correct indentation (don't use tabs). If indentation is correct and you try to specify partition mount point, please quote it: \"/foo\" instead of /foo." if e.message =~ /document end expected \(maybe invalid tab char found\)/
         raise ApplianceValidationError, "The appliance definition couldn't be parsed. #{e}"
       end
 
