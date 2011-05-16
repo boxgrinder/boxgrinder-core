@@ -80,6 +80,7 @@ popd
 - Upstream release: 0.3.2
 - [BGBUILD-210] In Fedora 14 parameters are not being expanded, and cause early string truncation.
 - [BGBUILD-208] Kickstart files not working with 0.9.1
+- [BGBUILD-218] Incorrect error messages since revision of parser/validator
 
 * Wed Apr 27 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.1-1
 - Upstream release: 0.3.1

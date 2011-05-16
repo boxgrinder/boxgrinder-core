@@ -2,6 +2,7 @@ v0.3.2
 
 * [BGBUILD-210] In Fedora 14 parameters are not being expanded, and cause early string truncation.
 * [BGBUILD-208] Kickstart files not working with 0.9.1
+* [BGBUILD-218] Incorrect error messages since revision of parser/validator
 
 v0.3.1
 
