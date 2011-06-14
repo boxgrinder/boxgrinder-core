@@ -77,7 +77,7 @@ popd
 
 %changelog
 
-* Tue Jun 14 2011 Marc Savy <msavy@redhat.com - 0.3.3-1
+* Tue Jun 14 2011 Marc Savy <msavy@redhat.com> - 0.3.3-1
 - Upstream release: 0.3.3
 - [BGBUILD-233] BoxGrinder Build fails to report a missing config file
 
