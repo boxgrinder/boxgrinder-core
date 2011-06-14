@@ -1,3 +1,7 @@
+v0.3.3
+
+* [BGBUILD-233] BoxGrinder Build fails to report a missing config file
+
 v0.3.2
 
 * [BGBUILD-210] In Fedora 14 parameters are not being expanded, and cause early string truncation.

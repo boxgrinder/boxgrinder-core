@@ -21,8 +21,8 @@ require 'boxgrinder-core/models/config'
 
 module BoxGrinder
   describe Config do
-    it "should not load options from file if it doesn't exists" do
-      ENV['BG_CONFIG_FILE'] = "doesntexists"
+    it "should not load options from file if it doesn't exist" do
+      ENV['BG_CONFIG_FILE'] = ""
 
       config = Config.new
       config.force.should == false
@@ -46,8 +46,13 @@ module BoxGrinder
       config.dir.root.should == 'root/dir'
     end
 
+    it "should raise a file not found error if BG_CONFIG_FILE is set, but the path is invalid" do
+      ENV['BG_CONFIG_FILE'] = "leo/tol/stoy"
+      lambda { Config.new }.should raise_error(Errno::ENOENT)
+    end
+
     it "should merge platform" do
-      ENV['BG_CONFIG_FILE'] = "doesntexists"
+      ENV['BG_CONFIG_FILE'] = "  "
 
       config = Config.new.merge(:platform => :ec2)
 

@@ -45,6 +45,12 @@ module BoxGrinder
           :additional_plugins => []
       )
 
+      if ENV['BG_CONFIG_FILE']
+        unless ENV['BG_CONFIG_FILE'].strip.empty?
+          raise(Errno::ENOENT, ENV['BG_CONFIG_FILE']) unless File.exists? ENV['BG_CONFIG_FILE']
+        end
+      end
+
       deep_merge(self, YAML.load_file(self.file)) if File.exists?(self.file)
       merge!(values.inject({}) { |memo, (k, v)| memo[k.to_sym] = v; memo })
 
