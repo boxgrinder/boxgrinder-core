@@ -2,5 +2,6 @@ coverage
 .idea
 *.gem
 *.log
+*.swp
 pkg
 *.gemspec

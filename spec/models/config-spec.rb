@@ -24,8 +24,9 @@ module BoxGrinder
     it "should not load options from file if it doesn't exist" do
       ENV['BG_CONFIG_FILE'] = ""
 
-      config = Config.new
-      config.force.should == false
+      lambda {
+        config = Config.new
+      }.should raise_error(RuntimeError, "You specified empty configuration file path. Please make sure you set correct path for BG_CONFIG_FILE environment variable.")
     end
 
     it "should load empty config file" do
@@ -48,14 +49,21 @@ module BoxGrinder
 
     it "should raise a file not found error if BG_CONFIG_FILE is set, but the path is invalid" do
       ENV['BG_CONFIG_FILE'] = "leo/tol/stoy"
-      lambda { Config.new }.should raise_error(Errno::ENOENT)
+      lambda { Config.new }.should raise_error(RuntimeError, "Configuration file 'leo/tol/stoy' couldn't be found. Please make sure you set correct path for BG_CONFIG_FILE environment variable.")
+    end
+
+    it "should raise if the specified config file is whitespace" do
+      ENV['BG_CONFIG_FILE'] = "  "
+
+      lambda {
+        config = Config.new
+      }.should raise_error(RuntimeError, "You specified empty configuration file path. Please make sure you set correct path for BG_CONFIG_FILE environment variable.")
     end
 
     it "should merge platform" do
-      ENV['BG_CONFIG_FILE'] = "  "
-
+      # Make sure we don't have the variable defined anymore
+      ENV.delete('BG_CONFIG_FILE')
       config = Config.new.merge(:platform => :ec2)
-
       config.platform.should == :ec2
     end
   end

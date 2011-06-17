@@ -46,15 +46,22 @@ module BoxGrinder
       )
 
       if ENV['BG_CONFIG_FILE']
-        unless ENV['BG_CONFIG_FILE'].strip.empty?
-          raise(Errno::ENOENT, ENV['BG_CONFIG_FILE']) unless File.exists? ENV['BG_CONFIG_FILE']
-        end
+        raise "You specified empty configuration file path. Please make sure you set correct path for BG_CONFIG_FILE environment variable." if ENV['BG_CONFIG_FILE'].strip.empty?
+        raise "Configuration file '#{ENV['BG_CONFIG_FILE']}' couldn't be found. Please make sure you set correct path for BG_CONFIG_FILE environment variable." unless File.exists?(ENV['BG_CONFIG_FILE'])
       end
 
-      deep_merge(self, YAML.load_file(self.file)) if File.exists?(self.file)
-      merge!(values.inject({}) { |memo, (k, v)| memo[k.to_sym] = v; memo })
+      deep_merge!(YAML.load_file(self.file)) if File.exists?(self.file)
+      merge_with_symbols!(values)
 
       self.backtrace = true if [:debug, :trace].include?(self.log_level)
+    end
+
+    def merge_with_symbols!(values)
+      merge!(values.inject({}) { |memo, (k, v)| memo[k.to_sym] = v; memo })
+    end
+
+    def deep_merge!(h)
+      deep_merge(self, h)
     end
 
     def deep_merge(first, second)
