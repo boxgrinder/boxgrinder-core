@@ -220,7 +220,7 @@ module BoxGrinder
         config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4', "options"=>"barrier=0,nodelalloc,nobh,noatime"}, "/home" => {'size' => '2', 'type' => 'ext4'}}
       end
 
-      it "should merge partitions for default fs_types without options for RHEL 5 (ext3)" do
+      it "should merge partitions for default fs_types without options for RHEL 5 (ext4)" do
         config_a = ApplianceConfig.new
         config_a.name = 'a'
         config_a.appliances << 'b'
@@ -241,10 +241,10 @@ module BoxGrinder
 
         config = @helper.instance_variable_get(:@appliance_config)
         config.hardware.partitions.size.should == 3
-        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext3'}, "/home" => {'size' => '2', 'type' => 'ext3'}, "/boot" => {'type' => 'ext3', 'size' => 0.1}}
+        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4'}, "/home" => {'size' => '2', 'type' => 'ext4'}, "/boot" => {'type' => 'ext3', 'size' => 0.1}}
       end
 
-      it "should merge partitions for default fs_types without options for RHEL 5 (ext3) with /boot partition" do
+      it "should merge partitions for default fs_types without options for RHEL 5 (ext4) with /boot partition" do
         config_a = ApplianceConfig.new
         config_a.name = 'a'
         config_a.appliances << 'b'
@@ -265,7 +265,7 @@ module BoxGrinder
 
         config = @helper.instance_variable_get(:@appliance_config)
         config.hardware.partitions.size.should == 2
-        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext3'}, "/boot" => {'size' => '2', 'type' => 'ext3'}}
+        config.hardware.partitions.should == {"/" => {'size' => '4', 'type' => 'ext4'}, "/boot" => {'size' => '2', 'type' => 'ext4'}}
       end
 
       it "should merge partitions with different filesystem types" do
