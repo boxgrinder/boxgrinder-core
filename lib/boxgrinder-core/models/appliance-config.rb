@@ -93,13 +93,15 @@ module BoxGrinder
     def default_filesystem_type
       fs = 'ext4'
 
-      case @os.name
-        when 'rhel', 'centos'
-          case @os.version
-            when '5'
-              fs = 'ext3'
-          end
-      end
+# Since RHEL 5.6 the default filesystem is ext4
+#
+#      case @os.name
+#        when 'rhel', 'centos'
+#          case @os.version
+#            when '5'
+#              fs = 'ext3'
+#          end
+#      end
 
       fs
     end

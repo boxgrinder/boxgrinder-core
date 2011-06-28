@@ -131,7 +131,7 @@ module BoxGrinder
       end
 
       # https://bugzilla.redhat.com/show_bug.cgi?id=466275
-      partitions['/boot'] = {'type' => 'ext3', 'size' => 0.1} if partitions['/boot'].nil? and (@appliance_config.os.name == 'centos' or @appliance_config.os.name == 'rhel') and @appliance_config.os.version == '5'
+      partitions['/boot'] = {'type' => 'ext3', 'size' => 0.1} if partitions['/boot'].nil? and (@appliance_config.os.name == 'sl' or @appliance_config.os.name == 'centos' or @appliance_config.os.name == 'rhel') and @appliance_config.os.version == '5'
 
       @appliance_config.hardware.partitions = partitions
     end
