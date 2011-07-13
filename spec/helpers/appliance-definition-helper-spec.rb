@@ -17,6 +17,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'rubygems'
+require 'rspec'
 require 'boxgrinder-core/helpers/appliance-definition-helper'
 require 'boxgrinder-core/appliance-parser'
 
@@ -161,9 +162,8 @@ module BoxGrinder
 
         @helper.appliance_parser.should_receive(:parse_definition).ordered.with('a.appl').and_return(appliance_a)
         @helper.appliance_parser.should_receive(:parse_definition).ordered.with('./b2.appl').and_return(appliance_b2)
-        @helper.appliance_parser.should_receive(:parse_definition).ordered.with('./c.appl').and_return(appliance_c)
+        @helper.appliance_parser.should_receive(:parse_definition).ordered.once.with('./c.appl').and_return(appliance_c)
         @helper.appliance_parser.should_receive(:parse_definition).ordered.with('./b1.appl').and_return(appliance_b1)
-        @helper.appliance_parser.should_not_receive(:parse_definition).ordered.with('./c.appl')
 
         @helper.read_definitions("a.appl")
 

@@ -11,7 +11,6 @@ Group: Development/Languages
 License: LGPLv3+
 URL: http://boxgrinder.org/
 Source0: http://rubygems.org/gems/%{gemname}-%{version}.gem
-BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 Requires: ruby(abi) = %{rubyabi}
 Requires: rubygem(open4)
@@ -19,11 +18,12 @@ Requires: rubygem(hashery)
 Requires: rubygem(kwalify)
 
 BuildRequires: rubygem(rake)
-BuildRequires: rubygem(rspec)
 BuildRequires: rubygem(open4)
 BuildRequires: rubygem(hashery)
 BuildRequires: rubygem(echoe)
 BuildRequires: rubygem(kwalify)
+# Use rspec-core until rspec are migrated to RSpec 2.x
+BuildRequires: rubygem(rspec-core)
 
 BuildArch: noarch
 Provides: rubygem(%{gemname}) = %{version}
@@ -76,6 +76,10 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
+* Wed Jul 13 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.5-1
+- Upstream release: 0.3.5
+- [BGBUILD-273] Move to RSpec2
+
 * Tue Jun 28 2011 Marc Savy <msavy@redhat.com> - 0.3.4-1
 - Upstream release: 0.3.4
 

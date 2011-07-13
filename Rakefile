@@ -17,12 +17,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'rubygems'
-
-begin
-  require 'rake/dsl'
-rescue LoadError
-end
-
+require 'rspec/core/rake_task'
 require 'echoe'
 
 Echoe.new("boxgrinder-core") do |p|
@@ -35,16 +30,16 @@ Echoe.new("boxgrinder-core") do |p|
   p.runtime_dependencies << 'open4 >=1.0.0' unless RUBY_PLATFORM =~ /java/
 end
 
-Spec::Rake::SpecTask.new('spec') do |t|
+RSpec::Core::RakeTask.new('spec') do |t|
   t.rcov = false
-  t.spec_files = FileList["spec/**/*-spec.rb"]
-  t.spec_opts = ['--colour', '--format', 'specdoc', '-b']
+  t.pattern = "spec/**/*-spec.rb"
+  t.rspec_opts = ['--colour', '--format', 'doc', '-b']
   t.verbose = true
 end
 
-Spec::Rake::SpecTask.new('spec:coverage') do |t|
-  t.spec_files = FileList["spec/**/*-spec.rb"]
-  t.spec_opts = ['--colour', '--format', 'html:pkg/rspec_report.html', '-b']
+RSpec::Core::RakeTask.new('spec:coverage') do |t|
+  t.pattern = "spec/**/*-spec.rb"
+  t.rspec_opts = ['--colour', '--format', 'html', '--out', 'pkg/rspec_report.html', '-b']
   t.rcov = true
   t.rcov_opts = ['--exclude', 'spec,teamcity/*,/usr/lib/ruby/,.gem/ruby,/boxgrinder-build/,/gems/']
   t.verbose = true
