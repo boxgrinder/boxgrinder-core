@@ -5,7 +5,7 @@
 
 Summary: Core library for BoxGrinder
 Name: rubygem-%{gemname}
-Version: 0.3.4
+Version: 0.3.5
 Release: 1%{?dist}
 Group: Development/Languages
 License: LGPLv3+
