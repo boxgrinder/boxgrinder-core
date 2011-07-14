@@ -1,6 +1,7 @@
 v0.3.5
 
 * [BGBUILD-273] Move to RSpec2
+* [BGBUILD-275] default_repos setting is not included in schema and is not documented
 
 v0.3.4
 

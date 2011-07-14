@@ -79,6 +79,7 @@ popd
 * Wed Jul 13 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.5-1
 - Upstream release: 0.3.5
 - [BGBUILD-273] Move to RSpec2
+- [BGBUILD-275] default_repos setting is not included in schema and is not documented
 
 * Tue Jun 28 2011 Marc Savy <msavy@redhat.com> - 0.3.4-1
 - Upstream release: 0.3.4

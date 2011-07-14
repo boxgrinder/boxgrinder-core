@@ -179,6 +179,17 @@ module BoxGrinder
         appliance.name.should == 'abc'
         appliance.os.version.should == '13'
         appliance.hardware.partitions['/']['size'].should == 6
+        appliance.default_repos.should == true
+      end
+
+      it "should read YAML content instead of loading a file with default repos disabled" do
+        yaml = "name: abc\nos:\n  name: fedora\n  version: '13'\npackages:\n  - @core\nhardware:\n  partitions:\n    \"/\":\n      size: 6\ndefault_repos: false"
+        appliance = @helper.read_definitions(yaml).last
+
+        appliance.name.should == 'abc'
+        appliance.os.version.should == '13'
+        appliance.hardware.partitions['/']['size'].should == 6
+        appliance.default_repos.should == false
       end
 
       it "should read invalid YAML content" do #ApplianceValidationError: :

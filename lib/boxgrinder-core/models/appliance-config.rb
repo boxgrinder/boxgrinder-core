@@ -41,6 +41,8 @@ module BoxGrinder
       @hardware.network = 'NAT'
       @hardware.partitions = {"/" => {'size' => 1}}
 
+      @default_repos = true
+
       @post = {}
 
       @packages = []
