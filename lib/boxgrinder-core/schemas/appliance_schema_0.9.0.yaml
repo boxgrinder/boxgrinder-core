@@ -31,7 +31,7 @@ mapping:
     mapping:
       "cpus":
         type: int
-        range: { min: 1, max: 4 }
+        range: { min: 1, max: 16 }
       "memory":
         type: int
         range: { min: 1 }
