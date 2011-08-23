@@ -79,6 +79,7 @@ popd
 * Tue Aug 23 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.6-1
 - Upstream release: 0.3.6
 - [BGBUILD-295] Remove arbitrary 4 CPU limit
+- [BGBUILD-296] BG should refer to version and release when building new appliances
 
 * Wed Jul 13 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.5-1
 - Upstream release: 0.3.5

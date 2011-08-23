@@ -84,8 +84,9 @@ module BoxGrinder
       @path = OpenCascade.new
 
       @path.os = "#{@os.name}/#{@os.version}"
+      @path.version = "#{@version}.#{@release}"
       @path.main = "#{@hardware.arch}/#{@path.os}"
-      @path.appliance = "appliances/#{@path.main}/#{@name}"
+      @path.appliance = "appliances/#{@path.main}/#{@name}/#{@path.version}"
       @path.build = "build/#{@path.appliance}"
 
       self

@@ -26,6 +26,7 @@ spec/helpers/appliance-definition-helper-spec.rb
 spec/helpers/appliance-transformation-helper-spec.rb
 spec/helpers/exec-helper-spec.rb
 spec/helpers/log-helper-spec.rb
+spec/models/appliance-config-spec.rb
 spec/models/config-spec.rb
 spec/rspec/ls/one
 spec/rspec/ls/two

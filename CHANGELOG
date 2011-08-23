@@ -1,6 +1,7 @@
 v0.3.6
 
 * [BGBUILD-295] Remove arbitrary 4 CPU limit
+* [BGBUILD-296] BG should refer to version and release when building new appliances
 
 v0.3.5
 
