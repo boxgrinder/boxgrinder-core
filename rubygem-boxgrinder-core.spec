@@ -5,7 +5,7 @@
 
 Summary: Core library for BoxGrinder
 Name: rubygem-%{gemname}
-Version: 0.3.5
+Version: 0.3.6
 Release: 1%{?dist}
 Group: Development/Languages
 License: LGPLv3+
@@ -76,6 +76,10 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
+* Tue Aug 23 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.6-1
+- Upstream release: 0.3.6
+- [BGBUILD-295] Remove arbitrary 4 CPU limit
+
 * Wed Jul 13 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.5-1
 - Upstream release: 0.3.5
 - [BGBUILD-273] Move to RSpec2
