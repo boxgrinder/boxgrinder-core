@@ -37,6 +37,7 @@ module BoxGrinder
       merge_repos
       merge_default_repos
       merge_packages
+      merge_files
       merge_post_operations
 
       @appliance_config
@@ -187,6 +188,23 @@ module BoxGrinder
         appliance_config.packages.each do |package|
           @appliance_config.packages << package
         end
+      end
+    end
+
+    # [BGBUILD-276] Import files into appliance via appliance definition file (Files section)
+    # https://issues.jboss.org/browse/BGBUILD-276
+    def merge_files
+      @appliance_config.files.each_value { |dirs| dirs.clear }
+
+      included = []
+
+      @appliance_configs.each do |appliance_config|
+        next if included.include?(appliance_config)
+        appliance_config.files.each do |dir, files|
+          @appliance_config.files[dir] = [] if @appliance_config.files[dir].nil?
+          files.each { |f| @appliance_config.files[dir] << substitute_vars(f) }
+        end
+        included << appliance_config
       end
     end
 

@@ -1,3 +1,7 @@
+v0.3.7
+
+* [BGBUILD-276] Import files into appliance via appliance definition file (Files section)
+
 v0.3.6
 
 * [BGBUILD-295] Remove arbitrary 4 CPU limit

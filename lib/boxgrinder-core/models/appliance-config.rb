@@ -44,6 +44,7 @@ module BoxGrinder
       @default_repos = true
 
       @post = {}
+      @files = {}
 
       @packages = []
       @appliances = []
@@ -58,6 +59,7 @@ module BoxGrinder
     attr_reader :hardware
     attr_reader :path
     attr_reader :post
+    attr_reader :files
 
     attr_accessor :packages
     attr_accessor :repos

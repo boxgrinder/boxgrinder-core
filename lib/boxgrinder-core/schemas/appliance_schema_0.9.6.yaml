@@ -1,0 +1,103 @@
+#0.9.x schema
+version: 0.9.0
+type: map
+mapping:
+  "name":
+    type: str
+    length: { min: 1 }
+    required: yes
+  "summary":
+    type: str
+    length: { min: 1 }
+  "version":
+    type: int
+  "release":
+    type: int
+  "os":
+    type: map
+    mapping:
+      "name":
+        type: str
+        length: { min: 1 }
+        required: yes
+      "version":
+        type: text
+        required: yes
+      "password":
+        type: str
+  "hardware":
+    type: map
+    name: Hardware
+    mapping:
+      "cpus":
+        type: int
+        range: { min: 1, max: 16 }
+      "memory":
+        type: int
+        range: { min: 1 }
+      "partitions":
+        type: map
+        mapping:
+          "=": #No way of providing validation regex for wildcard name.
+            type: map
+            mapping:
+              "size":
+                type: number
+                range: { min: 0.01 }
+              "type":
+                type: str
+                enum: [ext3, ext4]
+  "appliances":
+    type: seq
+    sequence:
+      - type: str
+        pattern: /^[^\/]+$/ #dont support path resolution yet
+        length: { min: 1 }
+  "packages":
+    type: seq
+    sequence:
+      - type: str # Now allowing spaces due to group labels (these map to real groups with no spaces, but confuses users) https://issues.jboss.org/browse/BGBUILD-220
+        pattern: /^[\w\-+.@#\s]+$/ #fedora packaging standard http://bit.ly/h0JN9u (plus a few more, disallow symbols) 
+        length: { min: 1 }
+  "default_repos":
+    type: bool
+    default: true
+  "repos":
+    type: seq
+    sequence:
+      - type: map
+        name: Repository
+        mapping:
+          "name":
+            type: str
+            pattern: /^[\w\-+.#]+$/
+            length: { min: 1 }
+            required: yes
+          "baseurl": &pkg-mirror
+            type: str
+            pattern: /(^((http|https|ftp):)(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$|^file:\/\/.+$)/ #customised rfc3986 standard regexp for URIs
+          "mirrorlist": *pkg-mirror
+          "ephemeral":
+            type: bool
+  "files":
+    type: map
+    mapping:
+      "=":
+        type: seq
+        sequence:
+          - type: str
+            length: { min: 1 }
+  "post":
+    type: map
+    mapping:
+      "=":
+        type: seq
+        sequence:
+          - type: str
+            length: { min: 1 }
+  "variables":
+    type: map
+    mapping:
+      "=": # wibble: value
+        type: str
+        length: { min: 1 }

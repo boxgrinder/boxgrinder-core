@@ -117,6 +117,7 @@ module BoxGrinder
         end
       end
 
+      definition['files'].each { |key, value| appliance_config.files[key] = value } unless definition['files'].nil?
       definition['post'].each { |key, value| appliance_config.post[key] = value } unless definition['post'].nil?
 
       appliance_config
