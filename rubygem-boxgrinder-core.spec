@@ -5,7 +5,7 @@
 
 Summary: Core library for BoxGrinder
 Name: rubygem-%{gemname}
-Version: 0.3.7
+Version: 0.3.8
 Release: 1%{?dist}
 Group: Development/Languages
 License: LGPLv3+
@@ -76,10 +76,12 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
+* Wed Sep 7 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.8-1
+- [BGBUILD-305] Incorrect version information in 0.9.6 schema causing validation errors
+
 * Tue Aug 30 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.7-1
 - Upstream release: 0.3.7
 - [BGBUILD-276] Import files into appliance via appliance definition file (Files section)
-- [BGBUILD-305] Incorrect version information in 0.9.6 schema causing validation errors
 
 * Tue Aug 23 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.6-1
 - Upstream release: 0.3.6
