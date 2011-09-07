@@ -79,6 +79,7 @@ popd
 * Tue Aug 30 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.7-1
 - Upstream release: 0.3.7
 - [BGBUILD-276] Import files into appliance via appliance definition file (Files section)
+- [BGBUILD-305] Incorrect version information in 0.9.6 schema causing validation errors
 
 * Tue Aug 23 2011 Marek Goldmann <mgoldman@redhat.com> - 0.3.6-1
 - Upstream release: 0.3.6

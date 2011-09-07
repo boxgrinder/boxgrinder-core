@@ -46,7 +46,7 @@ module BoxGrinder
 
         lambda {
           @parser.parse_definition(File.read("#{File.dirname(__FILE__)}/rspec/src/appliances/invalid-yaml.appl"), false)
-        }.should raise_error(ApplianceValidationError, "The appliance definition was invalid according to schema 0.9.0. See log for details.")
+        }.should raise_error(ApplianceValidationError, "The appliance definition was invalid according to schema 0.9.6. See log for details.")
       end
 
       it "should validate 0.9.0 version definition without error" do

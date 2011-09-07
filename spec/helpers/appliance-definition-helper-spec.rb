@@ -193,15 +193,15 @@ module BoxGrinder
       end
 
       it "should read invalid YAML content" do #ApplianceValidationError: :
-        lambda { @helper.read_definitions("@$FEWYERTH") }.should raise_error(ApplianceValidationError, "The appliance definition was invalid according to schema 0.9.0. See log for details.")
+        lambda { @helper.read_definitions("@$FEWYERTH") }.should raise_error(ApplianceValidationError, "The appliance definition was invalid according to schema 0.9.6. See log for details.")
       end
 
       it "should catch exception if YAML parsing raises it" do
-        lambda { @helper.read_definitions("!!") }.should raise_error(ApplianceValidationError, "The appliance definition was invalid according to schema 0.9.0. See log for details.")
+        lambda { @helper.read_definitions("!!") }.should raise_error(ApplianceValidationError, "The appliance definition was invalid according to schema 0.9.6. See log for details.")
       end
 
       it "should catch exception if YAML file parsing raises it" do
-        lambda { @helper.read_definitions("#{File.dirname(__FILE__)}/../rspec/src/appliances/invalid-yaml.appl") }.should raise_error(ApplianceValidationError, "The appliance definition was invalid according to schema 0.9.0. See log for details.")
+        lambda { @helper.read_definitions("#{File.dirname(__FILE__)}/../rspec/src/appliances/invalid-yaml.appl") }.should raise_error(ApplianceValidationError, "The appliance definition was invalid according to schema 0.9.6. See log for details.")
       end
 
       it "should return nil of unsupported file format" do
