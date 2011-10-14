@@ -19,6 +19,7 @@
 require 'rubygems'
 require 'hashery/opencascade'
 require 'yaml'
+require 'etc'
 
 module BoxGrinder
   class Config < OpenCascade
@@ -54,6 +55,8 @@ module BoxGrinder
       merge_with_symbols!(values)
 
       self.backtrace = true if [:debug, :trace].include?(self.log_level)
+
+      add_user_ids!(self)
     end
 
     def merge_with_symbols!(values)
@@ -72,6 +75,22 @@ module BoxGrinder
           first[k.to_sym] = second[k]
         end
       end if second
+    end
+
+    def add_user_ids!(hash)
+      user = Etc.getpwnam('root')
+      begin
+        ['SUDO_USER', 'LOGNAME'].each do |name|
+          env = ENV[name]
+          if env
+            user = Etc.getpwnam(env)
+            break
+          end
+        end
+      rescue ArgumentError => e
+        @log.debug "Could not find user. Falling back to defaults (#{e.message})."
+      end
+      [hash.uid = user.uid, hash.gid = user.gid]
     end
   end
 end

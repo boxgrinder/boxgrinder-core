@@ -1,3 +1,7 @@
+v0.3.9
+
+* [BGBUILD-312] Discover which user to switch to after root dependent sections have been executed
+
 v0.3.8
 
 * [BGBUILD-305] Incorrect version information in 0.9.6 schema causing validation errors
