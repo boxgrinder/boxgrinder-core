@@ -19,6 +19,7 @@
 require 'rubygems'
 require 'hashery/opencascade'
 require 'yaml'
+require 'etc'
 
 module BoxGrinder
   class Config < OpenCascade
@@ -54,6 +55,8 @@ module BoxGrinder
       merge_with_symbols!(values)
 
       self.backtrace = true if [:debug, :trace].include?(self.log_level)
+
+      populate_user_ids!
     end
 
     def merge_with_symbols!(values)
@@ -72,6 +75,19 @@ module BoxGrinder
           first[k.to_sym] = second[k]
         end
       end if second
+    end
+
+    def populate_user_ids!
+      self.uid = Process.uid
+      self.gid = Process.gid
+      begin
+        if env = ENV['SUDO_USER'] || ENV['LOGNAME']
+          user = Etc.getpwnam(env)
+          self.uid = user.uid
+          self.gid = user.gid
+        end
+      rescue ArgumentError #No such name, just use initial defaults.
+      end
     end
   end
 end
