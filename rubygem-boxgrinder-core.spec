@@ -5,7 +5,7 @@
 
 Summary: Core library for BoxGrinder
 Name: rubygem-%{gemname}
-Version: 0.3.9
+Version: 0.3.10
 Release: 1%{?dist}
 Group: Development/Languages
 License: LGPLv3+
@@ -76,6 +76,10 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
+* Thu Dec 1 2011 Marc Savy <mgoldman@redhat.com> - 0.3.10
+- Upstream release: 0.3.10
+- [BGBUILD-324] Add wildcard to packages schema
+
 * Fri Oct 14 2011 Marc Savy <msavy@redhat.com> - 0.3.9-1
 - Upstream release: 0.3.9
 - [BGBUILD-312] Discover which user to switch to after root dependent sections have been executed

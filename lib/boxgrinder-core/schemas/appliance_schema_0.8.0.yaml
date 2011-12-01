@@ -60,7 +60,7 @@ mapping:
         type: seq
         sequence:
           - type: str # Now allowing spaces due to group labels (these map to real groups with no spaces, but confuses users) https://issues.jboss.org/browse/BGBUILD-220
-            pattern: /^[\w\-+.@#\s]+$/ #fedora packaging standard http://bit.ly/h0JN9u (plus a few more, disallow symbols) 
+            pattern: /^[\*\w\-+.@#\s]+$/ #fedora packaging standard http://bit.ly/h0JN9u (plus a few more, disallow symbols)
             length: { min: 1 }
       "excludes": *pkg
   "default_repos":

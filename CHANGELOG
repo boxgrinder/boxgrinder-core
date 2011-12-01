@@ -1,3 +1,6 @@
+v0.3.10
+* [BGBUILD-324] Add wildcard to packages schema
+
 v0.3.9
 
 * [BGBUILD-312] Discover which user to switch to after root dependent sections have been executed
