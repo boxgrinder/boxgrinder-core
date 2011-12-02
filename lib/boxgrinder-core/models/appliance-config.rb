@@ -94,6 +94,25 @@ module BoxGrinder
       self
     end
 
+    def all_values(input=nil)
+      avoid	= ['@variables']
+      input = (self.instance_variables - avoid).
+        collect{ |v| self.instance_variable_get(v) } if input.nil?
+
+      vars = input.inject([]) do |arr, var|
+        case var
+          when Hash
+            arr.concat(all_values(var.values))
+          when Array
+            arr.concat(all_values(var))
+          when String
+            arr.push var
+          end
+        arr
+        end
+      vars
+    end
+
     # Returns default filesystem type for current OS
     def default_filesystem_type
       fs = 'ext4'

@@ -18,6 +18,7 @@
 
 require 'boxgrinder-core/errors'
 require 'set'
+require 'cartesian'
 
 module BoxGrinder
   class ApplianceConfigHelper
@@ -68,6 +69,7 @@ module BoxGrinder
       @appliance_config.variables["BASE_ARCH"] = @appliance_config.hardware.base_arch
 
       resolve
+      substitute_variables
     end
 
     def resolve(resolve_stack = nil, resolved_set = Set.new())
@@ -87,6 +89,12 @@ module BoxGrinder
           end
         end
         resolved_set << var
+      end
+    end
+
+    def substitute_variables
+      @appliance_config.all_values.each do |value|
+        value.gsub!(/(?:#(.*?)#)+/){ |m| @appliance_config.variables.has_key?($1) ? @appliance_config.variables[$1] : m }
       end
     end
 
@@ -163,9 +171,9 @@ module BoxGrinder
 
       @appliance_configs.each do |appliance_config|
         for repo in appliance_config.repos
-          repo['name'] = substitute_vars(repo['name'])
+          #repo['name'] = substitute_vars(repo['name'])
           ['baseurl', 'mirrorlist'].each do |type|
-            repo[type] = substitute_vars(repo[type]) unless repo[type].nil?
+            repo[type] = repo[type] unless repo[type].nil?
           end
 
           @appliance_config.repos << repo
@@ -173,13 +181,6 @@ module BoxGrinder
       end
     end
 
-    def substitute_vars(str)
-      return if str.nil?
-      @appliance_config.variables.keys.each do |var|
-        str = str.gsub("##{var}#", @appliance_config.variables[var])
-      end
-      str
-    end
 
     def merge_packages
       @appliance_config.packages.clear
@@ -202,7 +203,7 @@ module BoxGrinder
         next if included.include?(appliance_config)
         appliance_config.files.each do |dir, files|
           @appliance_config.files[dir] = [] if @appliance_config.files[dir].nil?
-          files.each { |f| @appliance_config.files[dir] << substitute_vars(f) }
+          files.each { |f| @appliance_config.files[dir] << f }
         end
         included << appliance_config
       end
@@ -217,7 +218,7 @@ module BoxGrinder
         next if included.include?(appliance_config)
         appliance_config.post.each do |platform, cmds|
           @appliance_config.post[platform] = [] if @appliance_config.post[platform].nil?
-          cmds.each { |cmd| @appliance_config.post[platform] << substitute_vars(cmd) }
+          cmds.each { |cmd| @appliance_config.post[platform] << cmd }
         end
         included << appliance_config
       end
