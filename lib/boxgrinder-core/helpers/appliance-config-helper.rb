@@ -169,12 +169,7 @@ module BoxGrinder
       @appliance_config.repos.clear
 
       @appliance_configs.each do |appliance_config|
-        for repo in appliance_config.repos
-          #repo['name'] = substitute_vars(repo['name'])
-          ['baseurl', 'mirrorlist'].each do |type|
-            repo[type] = repo[type] unless repo[type].nil?
-          end
-
+        appliance_config.repos.each |repo|
           @appliance_config.repos << repo
         end
       end
