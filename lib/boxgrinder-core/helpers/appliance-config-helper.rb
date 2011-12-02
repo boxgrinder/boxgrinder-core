@@ -18,7 +18,6 @@
 
 require 'boxgrinder-core/errors'
 require 'set'
-require 'cartesian'
 
 module BoxGrinder
   class ApplianceConfigHelper
