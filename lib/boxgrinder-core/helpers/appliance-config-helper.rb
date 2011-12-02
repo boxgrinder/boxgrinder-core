@@ -93,7 +93,7 @@ module BoxGrinder
 
     def substitute_variables
       @appliance_config.all_values.each do |value|
-        value.gsub!(/(?:#(.*?)#)+/){ |m| @appliance_config.variables.has_key?($1) ? @appliance_config.variables[$1] : m }
+        value.gsub!(/(?:#(.*?)#)+?/){ |m| @appliance_config.variables.has_key?($1) ? @appliance_config.variables[$1] : m }
       end
     end
 
@@ -169,12 +169,11 @@ module BoxGrinder
       @appliance_config.repos.clear
 
       @appliance_configs.each do |appliance_config|
-        appliance_config.repos.each |repo|
+        appliance_config.repos.each do |repo|
           @appliance_config.repos << repo
         end
       end
     end
-
 
     def merge_packages
       @appliance_config.packages.clear
