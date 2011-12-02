@@ -405,6 +405,7 @@ module BoxGrinder
 
       @helper.merge_variables
       @helper.merge_repos
+      @helper.substitute_variables
 
       config = @helper.instance_variable_get(:@appliance_config)
       config.repos.size.should == 1
@@ -425,6 +426,7 @@ module BoxGrinder
 
       @helper.merge_variables
       @helper.merge_post_operations
+      @helper.substitute_variables
 
       config = @helper.instance_variable_get(:@appliance_config)
       config.post.size.should == 2
@@ -447,10 +449,33 @@ module BoxGrinder
 
       @helper.merge_variables
       @helper.merge_post_operations
+      @helper.substitute_variables
 
       config = @helper.instance_variable_get(:@appliance_config)
       config.post.size.should == 1
       config.post['base'].should == [@arch, @base_arch, '12', 'fedora', 'AAA', 'BBB']
+    end
+
+    it "should allow variable substitution for any string value" do
+      config_a = ApplianceConfig.new
+      config_a.name = 'a'
+      config_a.os.name = "fedora-#CUSTOM_B#"
+      config_a.summary = "boxgrinder-#CUSTOM_A#"
+      config_a.os.version = '12'
+      config_a.variables['CUSTOM_A'] = "AAA"
+      config_a.variables['CUSTOM_B'] = "BBB"
+      config_a.init_arch
+
+      prepare_helper([config_a])
+      @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+      @helper.merge_variables
+      @helper.merge_post_operations
+      @helper.substitute_variables
+
+      config = @helper.instance_variable_get(:@appliance_config)
+      config.os.name.should == "fedora-BBB"
+      config.summary.should == "boxgrinder-AAA"
     end
 
     describe ".merge_default_repos" do
