@@ -1,5 +1,6 @@
 v0.3.10
 * [BGBUILD-324] Add wildcard to packages schema
+* [BGBUILD-320] Support variable substitution in any string value field of appliance definition
 
 v0.3.9
 
