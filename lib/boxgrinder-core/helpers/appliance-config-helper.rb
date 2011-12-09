@@ -22,6 +22,8 @@ require 'set'
 module BoxGrinder
   class ApplianceConfigHelper
 
+    VAR_SUBSTITUTION_MAX_DEPTH = 20
+
     def initialize(appliance_configs)
       @appliance_configs = appliance_configs.reverse
     end
@@ -93,8 +95,17 @@ module BoxGrinder
 
     def substitute_variables
       @appliance_config.all_values.each do |value|
-        value.gsub!(/(?:#(.*?)#)+?/){ |m| @appliance_config.variables.has_key?($1) ? @appliance_config.variables[$1] : m }
+        substitute(value.clone, value, 0)
       end
+    end
+
+    def substitute(init, value, depth)
+      if depth > VAR_SUBSTITUTION_MAX_DEPTH
+        raise SystemStackError, "Maximal recursive depth (#{VAR_SUBSTITUTION_MAX_DEPTH})
+          reached for resolving variable #{init}, reached #{value} before stopping."
+      end
+      substitution = value.gsub!(/(?:#(.*?)#)+?/){ |m| @appliance_config.variables.has_key?($1) ? @appliance_config.variables[$1] : m }
+      substitute(init, value, depth+1) if substitution
     end
 
     def merge_hardware

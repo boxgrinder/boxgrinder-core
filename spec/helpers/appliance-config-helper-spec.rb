@@ -478,6 +478,30 @@ module BoxGrinder
       config.summary.should == "boxgrinder-AAA"
     end
 
+    it "should allow recursive variable substitution" do
+      config_a = ApplianceConfig.new
+      config_a.name = 'a'
+      config_a.os.name = "fedora-#CUSTOM_B#"
+      config_a.summary = "boxgrinder-#CUSTOM_A#"
+      config_a.os.version = '#CUSTOM_A#'
+      config_a.variables['CUSTOM_A'] = "#CUSTOM_B#"
+      config_a.variables['CUSTOM_B'] = "ni-ni-ni"
+      config_a.post['base'] = ['#ARCH#', '#BASE_ARCH#', '#OS_VERSION#', '#OS_NAME#', '#CUSTOM_A#', '#CUSTOM_B#']
+      config_a.init_arch
+
+      prepare_helper([config_a])
+      @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+      @helper.merge_variables
+      @helper.merge_post_operations
+      @helper.substitute_variables
+
+      config = @helper.instance_variable_get(:@appliance_config)
+      config.os.name.should == "fedora-ni-ni-ni"
+      config.summary.should == "boxgrinder-ni-ni-ni"
+      config.post['base'].should == [@arch, @base_arch, 'ni-ni-ni', 'fedora-ni-ni-ni', 'ni-ni-ni', 'ni-ni-ni']
+    end
+
     describe ".merge_default_repos" do
       it "should set default_repos option to true when not specified" do
         config_a = ApplianceConfig.new
