@@ -80,6 +80,7 @@ popd
 - Upstream release: 0.3.10
 - [BGBUILD-324] Add wildcard to packages schema
 - [BGBUILD-320] Support variable substitution in any string value field of appliance definition
+- [BGBUILD-327] Resolve appliance definition variables in ENV if they are not defined
 
 * Fri Oct 14 2011 Marc Savy <msavy@redhat.com> - 0.3.9-1
 - Upstream release: 0.3.9

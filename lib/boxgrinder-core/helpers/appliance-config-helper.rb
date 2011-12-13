@@ -93,19 +93,31 @@ module BoxGrinder
       end
     end
 
+    # Get all leaf text values in the appliance definition, then substitute any
+    # variable values.
     def substitute_variables
       @appliance_config.all_values.each do |value|
         substitute(value.clone, value, 0)
       end
     end
 
+    # Replace variables with values. This will occur recursively upto a limited
+    # depth if the resolved values themselves contain variables.
     def substitute(init, value, depth)
       if depth > VAR_SUBSTITUTION_MAX_DEPTH
         raise SystemStackError, "Maximal recursive depth (#{VAR_SUBSTITUTION_MAX_DEPTH})
           reached for resolving variable #{init}, reached #{value} before stopping."
       end
-      substitution = value.gsub!(/(?:#(.*?)#)+?/){ |m| @appliance_config.variables.has_key?($1) ? @appliance_config.variables[$1] : m }
-      substitute(init, value, depth+1) if substitution
+      original = value.clone
+      value.gsub!(/(#(.*?)#)+?/) do
+       # 1. Match pre-defined variable, or variable defined in appliance definition.
+       next @appliance_config.variables[$2] if @appliance_config.variables.has_key?($2)
+       # 2. Match from environment variables.
+       next ENV[$2] unless ENV[$2].nil?
+       # 3. No match, replace the original string.
+       $1
+      end
+      substitute(init, value, depth+1) unless original == value
     end
 
     def merge_hardware

@@ -502,6 +502,29 @@ module BoxGrinder
       config.post['base'].should == [@arch, @base_arch, 'ni-ni-ni', 'fedora-ni-ni-ni', 'ni-ni-ni', 'ni-ni-ni']
     end
 
+    it "should fall back onto ENV if no variable is explicitly defined in the appliance" do
+      config_a = ApplianceConfig.new
+      config_a.name = 'a'
+      config_a.os.name = "fedora-#CUSTOM_B#"
+      config_a.os.version = '#CUSTOM_A#'
+      ENV['CUSTOM_A'] = 'shrubbery'
+      config_a.variables['CUSTOM_B'] = "ni-ni-ni"
+      config_a.post['base'] = ['#ARCH#', '#BASE_ARCH#', '#OS_VERSION#', '#OS_NAME#', '#CUSTOM_A#',
+                               '#CUSTOM_B#', '#CUSTOM_A#-#NOT_DEF#', '#NOT_DEF#-#CUSTOM_A#', "##"]
+      config_a.init_arch
+
+      prepare_helper([config_a])
+      @helper.instance_variable_set(:@appliance_config, config_a.clone)
+
+      @helper.merge_variables
+      @helper.merge_post_operations
+      @helper.substitute_variables
+
+      config = @helper.instance_variable_get(:@appliance_config)
+      config.post['base'].should == [@arch, @base_arch, 'shrubbery', 'fedora-ni-ni-ni', 'shrubbery',
+                                     'ni-ni-ni', 'shrubbery-#NOT_DEF#', '#NOT_DEF#-shrubbery', '##']
+    end
+
     describe ".merge_default_repos" do
       it "should set default_repos option to true when not specified" do
         config_a = ApplianceConfig.new
