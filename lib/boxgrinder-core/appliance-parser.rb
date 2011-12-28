@@ -50,6 +50,7 @@ module BoxGrinder
       schema_versions = @schemas.keys.sort.reverse
 
       schema_versions.each do |schema_version|
+        @log.debug "Parsing definition using schema version #{schema_version}."
         @schemas[schema_version].delete('version')
         appliance_config, errors = parse(@schemas[schema_version], appliance_definition)
 
@@ -72,6 +73,7 @@ module BoxGrinder
     def parse(schema_document, appliance_definition)
       validator = ApplianceValidator.new(schema_document)
       parser = Kwalify::Yaml::Parser.new(validator)
+      parser.data_binding = true
 
       begin
         parsed = parser.parse(appliance_definition)

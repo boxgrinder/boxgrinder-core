@@ -242,24 +242,5 @@ module BoxGrinder
         end
       end
     end
-
-    describe ".parse_yaml" do
-      context "partitions" do
-        it "should add default partition when no partitions are specified" do
-          appliance_config = @helper.parse_yaml({})
-          appliance_config.hardware.partitions.size.should == 1
-          appliance_config.hardware.partitions['/'].should == {'size' => 1}
-        end
-
-        it "should merge partitions with the default one specified in appliance config" do
-          appliance_config = @helper.parse_yaml({'hardware' => {'partitions' => {'/home' => {'size' => 1}}}})
-
-          appliance_config.hardware.partitions.size.should == 2
-          appliance_config.hardware.partitions['/'].should == {'size' => 1}
-          appliance_config.hardware.partitions['/home'].should == {'size' => 1}
-        end
-
-      end
-    end
   end
 end

@@ -21,11 +21,12 @@ require 'hashery/opencascade'
 
 module BoxGrinder
   class ApplianceConfig
+
     def initialize
       @name = nil
       @summary = nil
 
-      @variables = {}
+      @default_repos = true
 
       @os = OpenCascade.new
 
@@ -41,8 +42,7 @@ module BoxGrinder
       @hardware.network = 'NAT'
       @hardware.partitions = {"/" => {'size' => 1}}
 
-      @default_repos = true
-
+      @variables = {}
       @post = {}
       @files = {}
 
@@ -69,6 +69,29 @@ module BoxGrinder
     attr_accessor :version
     attr_accessor :release
     attr_accessor :default_repos
+
+    def [](k)
+      instance_variable_get("@#{k}")
+    end
+
+    def []=(k, v)
+      case k
+        when "hardware":
+          @hardware.cpus = v['cpus'] if v['cpus']
+          @hardware.memory = v['memory'] if v['memory']
+          @hardware.network = v['network'] if v['network']
+          @hardware.partitions = v['partitions'] if v['partitions']
+        when "os":
+          @os.name = v['name'] if v['name']
+          @os.version = v['version'] if v['version']
+          @os.password = v['password'] if v['password']
+          # TODO this is OS specific, move it to OS plugin!
+          @os.pae = false if v['pae'] == false
+        else
+          instance_variable_set("@#{k}", v)
+      end
+
+    end
 
     def init
       init_arch

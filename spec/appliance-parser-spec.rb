@@ -53,16 +53,16 @@ module BoxGrinder
         @parser.load_schemas
         definition = @parser.parse_definition(File.read("#{File.dirname(__FILE__)}/rspec/src/appliances/0.9.x.appl"), false)
 
-        definition['os']['password'].should == 'boxgrinder-ftw'
-        definition['packages'].size.should == 2
+        definition.os.password.should == 'boxgrinder-ftw'
+        definition.packages.size.should == 2
       end
 
       it "should validate 0.8.0 version definition without error" do
         @parser.load_schemas
         definition = @parser.parse_definition("#{File.dirname(__FILE__)}/rspec/src/appliances/0.8.x.appl")
 
-        definition['os']['password'].should == 'boxgrinder-ftw'
-        definition['packages'].size.should == 3
+        definition.os.password.should == 'boxgrinder-ftw'
+        definition.packages.size.should == 3
       end
     end
 
@@ -74,7 +74,7 @@ module BoxGrinder
         schema = schemas[schemas.keys.first]
         schema.delete('version')
         parsed, errors = @parser.parse(schema, definition)
-        parsed['repos'].first['baseurl'].should == 'http://repo.boxgrinder.org/packages/#OS_NAME#/#OS_VERSION#/RPMS/#ARCH#'
+        parsed.repos.first['baseurl'].should == 'http://repo.boxgrinder.org/packages/#OS_NAME#/#OS_VERSION#/RPMS/#ARCH#'
       end
     end
   end

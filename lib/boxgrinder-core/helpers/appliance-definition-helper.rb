@@ -42,12 +42,12 @@ module BoxGrinder
         appliance_config =
             case definition_file_extension
               when '.appl', '.yml', '.yaml'
-                parse_yaml(@appliance_parser.parse_definition(definition))
+                @appliance_parser.parse_definition(definition)
               else
                 unless content_type.nil?
                   case content_type
                     when 'application/x-yaml', 'text/yaml'
-                      parse_yaml(@appliance_parser.parse_definition(definition))
+                      @appliance_parser.parse_definition(definition)
                   end
                 end
             end
@@ -64,63 +64,8 @@ module BoxGrinder
         end unless appliance_config.appliances.nil? or !appliance_config.appliances.is_a?(Array)
       else
         # Assuming that the definition is provided as string
-        @appliance_configs << parse_yaml(@appliance_parser.parse_definition(definition, false))
+        @appliance_configs << @appliance_parser.parse_definition(definition, false)
       end
-    end
-
-    # TODO this needs to be rewritten - using kwalify it could be possible to instantiate document structure as objects[, or opencascade hash?]
-    def parse_yaml(definition)
-      return definition if definition.is_a?(ApplianceConfig)
-      raise "Provided definition is not a Hash." unless definition.is_a?(Hash)
-
-      appliance_config = ApplianceConfig.new
-
-      appliance_config.name = definition['name'] unless definition['name'].nil?
-      appliance_config.summary = definition['summary'] unless definition['summary'].nil?
-
-      definition['variables'].each { |key, value| appliance_config.variables[key] = value } unless definition['variables'].nil?
-
-      @log.debug "Adding packages to appliance..."
-
-      appliance_config.packages = definition['packages'] unless definition['packages'].nil?
-
-      @log.debug "#{appliance_config.packages.size} package(s) added to appliance." if appliance_config.packages
-
-      appliance_config.appliances = definition['appliances'] unless definition['appliances'].nil?
-      appliance_config.repos = definition['repos'] unless definition['repos'].nil?
-
-      appliance_config.version = definition['version'] unless definition['version'].nil?
-      appliance_config.release = definition['release'] unless definition['release'].nil?
-
-      unless definition['default_repos'].nil?
-        appliance_config.default_repos = definition['default_repos']
-        raise "default_repos should be set to true or false" unless appliance_config.default_repos.is_a?(TrueClass) or appliance_config.default_repos.is_a?(FalseClass)
-      end
-
-      unless definition['os'].nil?
-        appliance_config.os.name = definition['os']['name'] unless definition['os']['name'].nil?
-        appliance_config.os.version = definition['os']['version'] unless definition['os']['version'].nil?
-        appliance_config.os.password = definition['os']['password'] unless definition['os']['password'].nil?
-        appliance_config.os.pae = definition['os']['pae'] unless definition['os']['pae'].nil?
-      end
-
-      unless definition['hardware'].nil?
-        appliance_config.hardware.arch = definition['hardware']['arch'] unless definition['hardware']['arch'].nil?
-        appliance_config.hardware.cpus = definition['hardware']['cpus'] unless definition['hardware']['cpus'].nil?
-        appliance_config.hardware.memory = definition['hardware']['memory'] unless definition['hardware']['memory'].nil?
-        appliance_config.hardware.network = definition['hardware']['network'] unless definition['hardware']['network'].nil?
-
-        unless definition['hardware']['partitions'].nil?
-          definition['hardware']['partitions'].each do |key, part|
-            appliance_config.hardware.partitions[key] = part
-          end if definition['hardware']['partitions'].is_a?(Hash)
-        end
-      end
-
-      definition['files'].each { |key, value| appliance_config.files[key] = value } unless definition['files'].nil?
-      definition['post'].each { |key, value| appliance_config.post[key] = value } unless definition['post'].nil?
-
-      appliance_config
     end
   end
 end
