@@ -76,12 +76,12 @@ module BoxGrinder
 
     def []=(k, v)
       case k
-        when "hardware":
+        when "hardware"
           @hardware.cpus = v['cpus'] if v['cpus']
           @hardware.memory = v['memory'] if v['memory']
           @hardware.network = v['network'] if v['network']
           @hardware.partitions = v['partitions'] if v['partitions']
-        when "os":
+        when "os"
           @os.name = v['name'] if v['name']
           @os.version = v['version'] if v['version']
           @os.password = v['password'] if v['password']

@@ -31,16 +31,26 @@ Echoe.new("boxgrinder-core") do |p|
 end
 
 RSpec::Core::RakeTask.new('spec') do |t|
-  t.rcov = false
-  t.pattern = "spec/**/*-spec.rb"
-  t.rspec_opts = ['--colour', '--format', 'doc', '-b']
+  t.pattern = ["spec/**/*-spec.rb"]
+  t.rspec_opts = ['-r', 'boxgrinder-core', '--colour', '--format', 'doc', '-b']
   t.verbose = true
 end
 
-RSpec::Core::RakeTask.new('spec:coverage') do |t|
-  t.pattern = "spec/**/*-spec.rb"
-  t.rspec_opts = ['--colour', '--format', 'html', '--out', 'pkg/rspec_report.html', '-b']
+def coverage18(t)
+  require 'rcov'
   t.rcov = true
   t.rcov_opts = ['--exclude', 'spec,teamcity/*,/usr/lib/ruby/,.gem/ruby,/boxgrinder-build/,/gems/']
-  t.verbose = true
+end
+
+RSpec::Core::RakeTask.new('spec:coverage') do |t|  
+  t.pattern = "spec/**/*-spec.rb"
+  t.rspec_opts = ['-r spec_helper', '-r boxgrinder-core', '--colour', 
+    '--format', 'html', '--out', 'pkg/rspec_report.html', '-b']
+  t.verbose = true  
+
+  if RUBY_VERSION =~ /^1.8/
+    coverage18(t) 
+  else
+    ENV['COVERAGE'] = 'true'
+  end
 end

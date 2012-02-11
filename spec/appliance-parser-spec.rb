@@ -74,7 +74,8 @@ module BoxGrinder
         schema = schemas[schemas.keys.first]
         schema.delete('version')
         parsed, errors = @parser.parse(schema, definition)
-        parsed.repos.first['baseurl'].should == 'http://repo.boxgrinder.org/packages/#OS_NAME#/#OS_VERSION#/RPMS/#ARCH#'
+
+        parsed['repos'].first['baseurl'].should == 'http://repo.boxgrinder.org/packages/#OS_NAME#/#OS_VERSION#/RPMS/#ARCH#'
       end
     end
   end

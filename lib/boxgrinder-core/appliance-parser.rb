@@ -32,7 +32,7 @@ module BoxGrinder
     def load_schemas
       Dir.glob("#{File.dirname(__FILE__)}/schemas/{*.yaml,*.yml}").each do |f|
         # DON'T use Kwalify::Yaml here!
-        # This will not threat '#' sign in schema files correctly
+        # This will not treat '#' sign in schema files correctly
         schema = YAML.load_file(f)
         @schemas[schema['version']] = schema
       end

@@ -88,7 +88,6 @@ module BoxGrinder
 
       it "should discover a user and group when under su" do
         ENV['LOGNAME'] = 'gravy1'
-        ['SUDO_USER', 'LOGNAME'].each{|v| puts "From config-spec.rb: #{ENV[v]}"}
 
         Process.should_receive(:uid).and_return(99)
         Process.should_receive(:gid).and_return(79)
