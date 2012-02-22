@@ -32,7 +32,7 @@ end
 
 RSpec::Core::RakeTask.new('spec') do |t|
   t.pattern = ["spec/**/*-spec.rb"]
-  t.rspec_opts = ['-r', 'boxgrinder-core', '--colour', '--format', 'doc', '-b']
+  t.rspec_opts = ['-r rubygems', '-r boxgrinder-core', '--colour', '--format', 'doc', '-b']
   t.verbose = true
 end
 
@@ -44,7 +44,7 @@ end
 
 RSpec::Core::RakeTask.new('spec:coverage') do |t|  
   t.pattern = "spec/**/*-spec.rb"
-  t.rspec_opts = ['-r spec_helper', '-r boxgrinder-core', '--colour', 
+  t.rspec_opts = ['-r rubygems', '-r spec_helper', '-r boxgrinder-core', '--colour', 
     '--format', 'html', '--out', 'pkg/rspec_report.html', '-b']
   t.verbose = true  
 
