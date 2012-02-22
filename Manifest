@@ -30,6 +30,7 @@ spec/helpers/exec-helper-spec.rb
 spec/helpers/log-helper-spec.rb
 spec/models/appliance-config-spec.rb
 spec/models/config-spec.rb
+spec/rcov_helper.rb
 spec/rspec/ls/one
 spec/rspec/ls/two
 spec/rspec/src/appliances/0.8.x.appl
