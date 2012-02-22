@@ -7,6 +7,7 @@ boxgrinder-core.gemspec
 lib/boxgrinder-core.rb
 lib/boxgrinder-core/appliance-parser.rb
 lib/boxgrinder-core/appliance-validator.rb
+lib/boxgrinder-core/compat/yaml19.rb
 lib/boxgrinder-core/errors.rb
 lib/boxgrinder-core/helpers/appliance-config-helper.rb
 lib/boxgrinder-core/helpers/appliance-definition-helper.rb
@@ -42,3 +43,4 @@ spec/rspec/src/appliances/legacy.appl
 spec/rspec/src/appliances/repo.appl
 spec/rspec/src/config/empty
 spec/rspec/src/config/valid
+spec/spec_helper.rb
