@@ -36,12 +36,6 @@ RSpec::Core::RakeTask.new('spec') do |t|
   t.verbose = true
 end
 
-def coverage18(t)
-  require 'rcov'
-  t.rcov = true
-  t.rcov_opts = ["-Ispec:lib spec/rcov_helper.rb", '--exclude', 'spec,teamcity/*,/usr/lib/ruby/,.gem/ruby,/boxgrinder-build/,/gems/']
-end
-
 RSpec::Core::RakeTask.new('spec:coverage') do |t|  
   t.pattern = "spec/**/*-spec.rb"
   t.rspec_opts = ['-r rubygems', '-r spec_helper', '-r boxgrinder-core', '--colour', 
@@ -49,7 +43,9 @@ RSpec::Core::RakeTask.new('spec:coverage') do |t|
   t.verbose = true  
 
   if RUBY_VERSION =~ /^1.8/
-    coverage18(t) 
+    require 'rcov'
+    t.rcov = true
+    t.rcov_opts = ["-Ispec:lib spec/rcov_helper.rb", '--exclude', 'spec,teamcity/*,/usr/lib/ruby/,.gem/ruby,/boxgrinder-build/,/gems/']
   else
     ENV['COVERAGE'] = 'true'
   end
