@@ -18,4 +18,5 @@
 
 module BoxGrinder
   require 'boxgrinder-core/compat/yaml19'
+  require 'boxgrinder-core/compat/color'
 end

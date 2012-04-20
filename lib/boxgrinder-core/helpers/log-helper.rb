@@ -91,5 +91,4 @@ module BoxGrinder
 
   attr_accessor :file_log
   attr_accessor :stdout_log
-
 end
