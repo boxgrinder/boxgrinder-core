@@ -5,7 +5,7 @@
 
 Summary: Core library for BoxGrinder
 Name: rubygem-%{gemname}
-Version: 0.3.11
+Version: 0.3.12
 Release: 1%{?dist}
 Group: Development/Languages
 License: LGPLv3+
@@ -16,6 +16,7 @@ Requires: ruby(abi) = %{rubyabi}
 Requires: rubygem(open4)
 Requires: rubygem(hashery)
 Requires: rubygem(kwalify)
+Requires: rubygem(term-ansicolor)
 
 BuildRequires: rubygem(rake)
 BuildRequires: rubygem(open4)
@@ -24,6 +25,7 @@ BuildRequires: rubygem(echoe)
 BuildRequires: rubygem(kwalify)
 # Use rspec-core until rspec are migrated to RSpec 2.x
 BuildRequires: rubygem(rspec-core)
+BuildRequires: rubygem(term-ansicolor)
 
 BuildArch: noarch
 Provides: rubygem(%{gemname}) = %{version}
@@ -76,6 +78,10 @@ popd
 %{gemdir}/doc/%{gemname}-%{version}
 
 %changelog
+* Thu May 24 2012 Marc Savy <msavy@redhat.com> - 0.3.12
+- Upstream release: 0.3.11
+- Support for printing coloured terminal output 
+
 * Wed Feb 29 2012 Marc Savy <msavy@redhat.com> - 0.3.11
 - Upstream release: 0.3.11
 - [BGBUILD-346] Confirm Ruby 1.9.3 support

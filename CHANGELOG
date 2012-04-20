@@ -1,3 +1,6 @@
+v0.3.12
+* Support for printing coloured terminal output 
+
 v0.3.11
 
 * [BGBUILD-346] Confirm Ruby 1.9.3 support
