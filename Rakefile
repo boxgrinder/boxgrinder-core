@@ -31,15 +31,15 @@ Echoe.new("boxgrinder-core") do |p|
 end
 
 RSpec::Core::RakeTask.new('spec') do |t|
-  t.pattern = ["spec/**/*-spec.rb"]
   t.rspec_opts = ['-r rubygems', '-r boxgrinder-core', '--colour', '--format', 'doc', '-b']
+  t.pattern = ["spec/**/*-spec.rb"]
   t.verbose = true
 end
 
 RSpec::Core::RakeTask.new('spec:coverage') do |t|  
-  t.pattern = "spec/**/*-spec.rb"
   t.rspec_opts = ['-r rubygems', '-r spec_helper', '-r boxgrinder-core', '--colour', 
     '--format', 'html', '--out', 'pkg/rspec_report.html', '-b']
+  t.pattern = "spec/**/*-spec.rb"
   t.verbose = true  
 
   if RUBY_VERSION =~ /^1.8/
