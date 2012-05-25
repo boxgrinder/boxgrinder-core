@@ -1,16 +1,22 @@
-%global gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
-%global gemname boxgrinder-core
-%global geminstdir %{gemdir}/gems/%{gemname}-%{version}
-%global rubyabi 1.8
+%global gem_name boxgrinder-core
 
-Summary: Core library for BoxGrinder
-Name: rubygem-%{gemname}
-Version: 0.3.12
-Release: 1%{?dist}
-Group: Development/Languages
-License: LGPLv3+
-URL: http://boxgrinder.org/
-Source0: http://rubygems.org/gems/%{gemname}-%{version}.gem
+%{!?gem_dir: %global gem_dir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)}
+%{!?gem_instdir: %global gem_instdir %{gem_dir}/gems/%{gem_name}-%{version}}
+
+%if 0%{?fedora} >= 17
+%global rubyabi 1.9.1
+%else
+%global rubyabi 1.8
+%endif
+
+Summary:     Core library for BoxGrinder
+Name:        rubygem-%{gem_name}
+Version:     0.3.12
+Release:     1%{?dist}
+Group:       Development/Languages
+License:     LGPLv3+
+URL:         http://boxgrinder.org/
+Source0:     http://rubygems.org/gems/%{gem_name}-%{version}.gem
 
 Requires: ruby(abi) = %{rubyabi}
 Requires: rubygem(open4)
@@ -23,12 +29,17 @@ BuildRequires: rubygem(open4)
 BuildRequires: rubygem(hashery)
 BuildRequires: rubygem(echoe)
 BuildRequires: rubygem(kwalify)
-# Use rspec-core until rspec are migrated to RSpec 2.x
-BuildRequires: rubygem(rspec-core)
+BuildRequires: rubygems-devel
 BuildRequires: rubygem(term-ansicolor)
 
+%if 0%{?fedora} >= 17
+BuildRequires: rubygem(rspec)
+%else
+BuildRequires: rubygem(rspec-core)
+%endif
+
 BuildArch: noarch
-Provides: rubygem(%{gemname}) = %{version}
+Provides: rubygem(%{gem_name}) = %{version}
 
 %description
 Core library containing files required by BoxGrinder family of projects
@@ -43,39 +54,39 @@ Documentation for %{name}
 
 %prep
 %setup -q -c -T
-mkdir -p .%{gemdir}
-gem install --local --install-dir .%{gemdir} \
+mkdir -p .%{gem_dir}
+gem install --local --install-dir .%{gem_dir} \
             --force --rdoc %{SOURCE0}
 
 %build
 
 %install
-mkdir -p %{buildroot}%{gemdir}
-cp -a .%{gemdir}/* %{buildroot}%{gemdir}/
+mkdir -p %{buildroot}%{gem_dir}
+cp -a .%{gem_dir}/* %{buildroot}%{gem_dir}/
 
 %check
-pushd .%{geminstdir}
-rake spec
+pushd .%{gem_instdir}
+rspec -r spec_helper -r boxgrinder-core spec/**/*-spec.rb
 popd
 
 %files
 %defattr(-, root, root, -)
-%dir %{geminstdir}
-%{geminstdir}/lib
-%doc %{geminstdir}/CHANGELOG
-%doc %{geminstdir}/LICENSE
-%doc %{geminstdir}/README
-%doc %{geminstdir}/Manifest
-%{gemdir}/cache/%{gemname}-%{version}.gem
-%{gemdir}/specifications/%{gemname}-%{version}.gemspec
+%dir %{gem_instdir}
+%{gem_libdir}
+%doc %{gem_instdir}/CHANGELOG
+%doc %{gem_instdir}/LICENSE
+%doc %{gem_instdir}/README
+%doc %{gem_instdir}/Manifest
+%{gem_cache}
+%{gem_spec}
 
 %files doc
 %defattr(-, root, root, -)
-%{geminstdir}/spec
-%{geminstdir}/Rakefile
-%{geminstdir}/rubygem-%{gemname}.spec
-%{geminstdir}/%{gemname}.gemspec
-%{gemdir}/doc/%{gemname}-%{version}
+%{gem_instdir}/spec
+%{gem_instdir}/Rakefile
+%{gem_instdir}/rubygem-%{gem_name}.spec
+%{gem_instdir}/%{gem_name}.gemspec
+%{gem_docdir}
 
 %changelog
 * Thu May 24 2012 Marc Savy <msavy@redhat.com> - 0.3.12
