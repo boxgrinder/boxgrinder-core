@@ -1,5 +1,10 @@
+v0.3.13
+
+* [BGBUILD-364] Validate length of appliance name
+
 v0.3.12
-* Support for printing coloured terminal output 
+
+* Support for printing coloured terminal output
 
 v0.3.11
 
