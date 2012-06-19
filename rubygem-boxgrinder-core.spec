@@ -89,7 +89,7 @@ popd
 %{gem_docdir}
 
 %changelog
-* Thu June 18 2012 Marc Savy <msavy@redhat.com> - 0.3.13
+* Mon Jun 18 2012 Marc Savy <msavy@redhat.com> - 0.3.13
 - Upstream release: 0.3.13
 - [BGBUILD-364] Validate length of appliance name
 
