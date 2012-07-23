@@ -17,10 +17,11 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'rubygems'
-require 'hashery/opencascade'
+require 'hashery/open_cascade'
 
 module BoxGrinder
   class ApplianceConfig
+    include Hashery
 
     def initialize
       @name = nil
@@ -164,10 +165,6 @@ module BoxGrinder
 
     def is64bit?
       @hardware.arch.eql?("x86_64")
-    end
-
-    def clone
-      Marshal::load(Marshal.dump(self))
     end
   end
 end

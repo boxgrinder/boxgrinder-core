@@ -17,14 +17,15 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'rubygems'
-require 'hashery/opencascade'
+require 'hashery/open_cascade'
 require 'yaml'
 require 'etc'
 
 module BoxGrinder
-  class Config < OpenCascade
+  class Config < Hashery::OpenCascade
     def initialize(values = {})
-      super({})
+      super()
+      send(:[], values)
 
       merge!(
           :file => ENV['BG_CONFIG_FILE'] || "#{ENV['HOME']}/.boxgrinder/config",

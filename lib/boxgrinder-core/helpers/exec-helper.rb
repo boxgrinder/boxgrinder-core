@@ -17,7 +17,6 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'logger'
-require 'rubygems'
 require 'open4' unless RUBY_PLATFORM =~ /java/
 
 module BoxGrinder
@@ -30,6 +29,8 @@ module BoxGrinder
   end
 
   class ExecHelper
+    include Hashery
+
     def initialize(options = {})
       @log = options[:log] || Logger.new(STDOUT)
     end
@@ -78,7 +79,7 @@ module BoxGrinder
         # to get reliable status for processes both on MRI and JRuby
         #
         # http://jira.codehaus.org/browse/JRUBY-5673
-        status = OpenCascade.new(:exitstatus => 0)
+        status = OpenCascade[:exitstatus => 0]
         
         fakepid, status = Process.waitpid2(pid) if process_alive?(pid)
 

@@ -58,7 +58,7 @@ module BoxGrinder
     end
 
     def merge_variables
-      @appliance_config.variables = {} if @appliance_config.variables.nil?
+      @appliance_config.variables || @appliance_config.variables = {} 
       @appliance_configs.each do |appliance_config|
         appliance_config.variables.each do |var, val|
           @appliance_config.variables[var] = val
@@ -127,7 +127,7 @@ module BoxGrinder
     end
 
     def merge_cpus
-      merge_field('hardware.cpus') { |cpus| @appliance_config.hardware.cpus = cpus if cpus > @appliance_config.hardware.cpus }
+      merge_field('hardware.cpus') { |cpus| @appliance_config.hardware.cpus = cpus if cpus > @appliance_config.hardware.cpus? }
     end
 
     # This will merge partitions from multiple appliances.
@@ -177,7 +177,7 @@ module BoxGrinder
       merge_field('os.password') { |password| @appliance_config.os.password = password.to_s }
       merge_field('os.pae') { |pae| @appliance_config.os.pae = false unless pae }
 
-      @appliance_config.os.password = 'boxgrinder' if @appliance_config.os.password.nil?
+      @appliance_config.os.password? || @appliance_config.os.password = 'boxgrinder'
     end
 
     def prepare_appliances
@@ -218,7 +218,7 @@ module BoxGrinder
       @appliance_configs.each do |appliance_config|
         next if included.include?(appliance_config)
         appliance_config.files.each do |dir, files|
-          @appliance_config.files[dir] = [] if @appliance_config.files[dir].nil?
+          @appliance_config.files[dir] || @appliance_config.files[dir] = []
           files.each { |f| @appliance_config.files[dir] << f }
         end
         included << appliance_config
@@ -233,7 +233,7 @@ module BoxGrinder
       @appliance_configs.each do |appliance_config|
         next if included.include?(appliance_config)
         appliance_config.post.each do |platform, cmds|
-          @appliance_config.post[platform] = [] if @appliance_config.post[platform].nil?
+          @appliance_config.post[platform] || @appliance_config.post[platform] = []
           cmds.each { |cmd| @appliance_config.post[platform] << cmd }
         end
         included << appliance_config
@@ -242,7 +242,7 @@ module BoxGrinder
 
     def merge_field(field, force = false)
       @appliance_configs.each do |appliance_config|
-        value = eval("appliance_config.#{field}")
+        value = eval("appliance_config.#{field}?")
         next if value.nil? and !force
         yield value
       end
