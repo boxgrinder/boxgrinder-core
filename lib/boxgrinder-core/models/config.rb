@@ -17,7 +17,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'rubygems'
-require 'hashery/opencascade'
+require 'boxgrinder-core/astruct'
 require 'yaml'
 require 'etc'
 

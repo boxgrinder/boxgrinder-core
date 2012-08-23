@@ -20,13 +20,11 @@ Source0:     http://rubygems.org/gems/%{gem_name}-%{version}.gem
 
 Requires: ruby(abi) = %{rubyabi}
 Requires: rubygem(open4)
-Requires: rubygem(hashery)
 Requires: rubygem(kwalify)
 Requires: rubygem(term-ansicolor)
 
 BuildRequires: rubygem(rake)
 BuildRequires: rubygem(open4)
-BuildRequires: rubygem(hashery)
 BuildRequires: rubygem(echoe)
 BuildRequires: rubygem(kwalify)
 BuildRequires: rubygems-devel

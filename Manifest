@@ -3,10 +3,11 @@ LICENSE
 Manifest
 README
 Rakefile
-boxgrinder-core.gemspec
 lib/boxgrinder-core.rb
 lib/boxgrinder-core/appliance-parser.rb
 lib/boxgrinder-core/appliance-validator.rb
+lib/boxgrinder-core/astruct.rb
+lib/boxgrinder-core/astruct_mixin.rb
 lib/boxgrinder-core/compat/color.rb
 lib/boxgrinder-core/compat/yaml19.rb
 lib/boxgrinder-core/errors.rb
