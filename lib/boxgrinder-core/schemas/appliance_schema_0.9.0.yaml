@@ -15,7 +15,7 @@ mapping:
   "release":
     type: int
   "os":
-    class: OpenCascade
+    class: AStruct
     type: map
     mapping:
       "name":
@@ -28,7 +28,7 @@ mapping:
       "password":
         type: str  
   "hardware":
-    class: OpenCascade
+    class: AStruct
     type: map
     name: Hardware
     mapping:

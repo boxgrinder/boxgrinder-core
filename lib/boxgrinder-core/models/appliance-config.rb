@@ -28,14 +28,14 @@ module BoxGrinder
 
       @default_repos = true
 
-      @os = OpenCascade.new
+      @os = AStruct.new
 
       @os.name = nil
       @os.version = nil
       @os.password = nil
       @os.pae = true
 
-      @hardware = OpenCascade.new
+      @hardware = AStruct.new
 
       @hardware.cpus = 1
       @hardware.memory = 256
@@ -106,7 +106,7 @@ module BoxGrinder
     end
 
     def initialize_paths
-      @path = OpenCascade.new
+      @path = AStruct.new
 
       @path.os = "#{@os.name}/#{@os.version}"
       @path.version = "#{@version}.#{@release}"

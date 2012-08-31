@@ -40,7 +40,7 @@ module BoxGrinder
         @stdout.should_receive(:each)
         @stderr.should_receive(:each)
         Process.should_receive(:getpgid)
-        Process.should_receive(:waitpid2).with(1234).and_return([1234, OpenCascade.new(:exitstatus => 1)])
+        Process.should_receive(:waitpid2).with(1234).and_return([1234, AStruct.new(:exitstatus => 1)])
 
         @o4.should_receive(:send).with(:popen4, 'exitstatus').and_return([@pid, @stdin, @stdout, @stderr])
 
@@ -51,7 +51,7 @@ module BoxGrinder
         @stdout.should_receive(:each)
         @stderr.should_receive(:each)
         Process.should_receive(:getpgid)
-        Process.should_receive(:waitpid2).with(1234).and_return([1234, OpenCascade.new(:exitstatus => 1)])
+        Process.should_receive(:waitpid2).with(1234).and_return([1234, AStruct.new(:exitstatus => 1)])
 
         @o4.should_receive(:send).with(:popen4, 'exitstatus').and_return([@pid, @stdin, @stdout, @stderr])
 
@@ -63,7 +63,7 @@ module BoxGrinder
       @stdout.should_receive(:each)
       @stderr.should_receive(:each)
       Process.should_receive(:getpgid)
-      Process.should_receive(:waitpid2).with(1234).and_return([1234, OpenCascade.new(:exitstatus => 0)])
+      Process.should_receive(:waitpid2).with(1234).and_return([1234, AStruct.new(:exitstatus => 0)])
 
       @o4.should_receive(:send).with(:popen4, 'abc').and_return([@pid, @stdin, @stdout, @stderr])
 
@@ -85,7 +85,7 @@ module BoxGrinder
       @stdout.should_receive(:each)
       @stderr.should_receive(:each)
       Process.should_receive(:getpgid)
-      Process.should_receive(:waitpid2).with(1234).and_return([1234, OpenCascade.new(:exitstatus => 0)])
+      Process.should_receive(:waitpid2).with(1234).and_return([1234, AStruct.new(:exitstatus => 0)])
 
       @helper = ExecHelper.new(:log => log)
       @o4.should_receive(:send).with(:popen4, "ala ma kota i jest fajnie").and_return([@pid, @stdin, @stdout, @stderr])

@@ -78,7 +78,7 @@ module BoxGrinder
         # to get reliable status for processes both on MRI and JRuby
         #
         # http://jira.codehaus.org/browse/JRUBY-5673
-        status = OpenCascade.new(:exitstatus => 0)
+        status = AStruct.new(:exitstatus => 0)
         
         fakepid, status = Process.waitpid2(pid) if process_alive?(pid)
 

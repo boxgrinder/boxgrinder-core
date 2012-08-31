@@ -22,7 +22,7 @@ require 'yaml'
 require 'etc'
 
 module BoxGrinder
-  class Config < OpenCascade
+  class Config < AStruct
     def initialize(values = {})
       super({})
 
