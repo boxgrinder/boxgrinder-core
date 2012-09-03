@@ -11,7 +11,7 @@
 
 Summary:     Core library for BoxGrinder
 Name:        rubygem-%{gem_name}
-Version:     0.3.13
+Version:     0.3.14
 Release:     1%{?dist}
 Group:       Development/Languages
 License:     LGPLv3+
@@ -87,6 +87,10 @@ popd
 %{gem_docdir}
 
 %changelog
+* Tue Sep 4 2012 Marc Savy <msavy@redhat.com> - 0.3.14
+- Upstream release: 0.3.14
+- [BGBUILD-373] Remove hashery dependency
+
 * Mon Jun 18 2012 Marc Savy <msavy@redhat.com> - 0.3.13
 - Upstream release: 0.3.13
 - [BGBUILD-364] Validate length of appliance name

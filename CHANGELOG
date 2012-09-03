@@ -1,3 +1,7 @@
+v0.3.14
+
+* [BGBUILD-373] Remove hashery dependency
+
 v0.3.13
 
 * [BGBUILD-364] Validate length of appliance name
