@@ -12,8 +12,8 @@ module BoxGrinder
     end
 
     def [](key)
-      r = super( key ) || super( key.to_sym ) || super( key.to_s  )
-      transform_entry( key, r )
+      r = [key, key.to_sym, key.to_s].find { |fk| !super(fk).nil? }
+      transform_entry( key, super(r) )
     end
 
     def method_missing(sym, *args, &blk)
